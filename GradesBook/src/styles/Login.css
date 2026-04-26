@@ -1,0 +1,265 @@
+.login-page {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.login-page .login-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card */
+.login-page .login-card {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 25px;
+  width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Logo */
+.login-page .logo-img {
+  width: 60px;
+  height: 60px;
+  background-color: #18658d;
+  border-radius: 20px;
+}
+
+/* Textos */
+.login-page h2 {
+  margin: 10px 0 5px;
+  color: #18658d;
+}
+
+.login-page .subtitle {
+  font-size: 12px;
+  color: #575c57;
+}
+
+/* Inputs */
+.login-page .input-group {
+  text-align: left;
+  margin-top: 15px;
+}
+
+.login-page .input-group label {
+  font-size: 13px;
+  color: #555;
+}
+
+.login-page .input-group input {
+  width: 97%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #e9ecef;
+  margin-top: 5px;
+  outline: none;
+}
+
+.login-page .password-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.login-page .forgot {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.login-page .input-container {
+  display: flex;
+  align-items: center;
+}
+
+.login-page .icon {
+  margin-left: -30px;
+  cursor: pointer;
+  color: #888;
+}
+
+/* Boton */
+.login-page .login-btn {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+  border-radius: 25px;
+  border: none;
+  background: #18658d;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-page .login-btn:hover {
+  background: #094a56;
+}
+
+/* Link Resgister */
+.login-page .register-text {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #666;
+}
+
+.login-page .register-link {
+  color: #1d9bd1;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-page .register-link:hover {
+  text-decoration: underline;
+}
+
+/* Manchas de color */
+.login-page .blur-bg,
+.login-page .blur-bg2,
+.login-page .blur-bg3,
+.login-page .blur-bg4 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  filter: blur(60px);
+  opacity: 0.7;
+  z-index: -1;
+}
+
+.login-page .blur-bg {
+  background: radial-gradient(circle, #96c7ff 0%, transparent 50%);
+  top: 50px;
+  left: 250px;
+}
+
+.login-page .blur-bg2 {
+  background: radial-gradient(circle, #e6d28f 0%, transparent 70%);
+  top: 400px;
+  left: 150px;
+}
+
+.login-page .blur-bg3 {
+  background: radial-gradient(circle, #b7f387 0%, transparent 70%);
+  top: 400px;
+  left: 800px;
+}
+
+.login-page .blur-bg4 {
+  background: radial-gradient(circle, #cb87f3 0%, transparent 70%);
+  top: 50px;
+  left: 900px;
+}
+
+/* Responsibe */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .login-page .login-card {
+    width: 340px;
+    padding: 30px 25px;
+  }
+
+  .login-page .blur-bg,
+  .login-page .blur-bg2,
+  .login-page .blur-bg3,
+  .login-page .blur-bg4 {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* Celular */
+@media (max-width: 768px) {
+  .login-page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .login-page .login-container {
+    padding: 20px;
+    align-items: flex-start;
+  }
+
+  .login-page .login-card {
+    width: 100%;
+    max-width: 380px;
+    padding: 25px 20px;
+    border-radius: 20px;
+  }
+
+  .login-page h2 {
+    font-size: 20px;
+  }
+
+  .login-page .subtitle {
+    font-size: 11px;
+  }
+
+  .login-page .input-group input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .login-page .login-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .login-page .blur-bg3,
+  .login-page .blur-bg4 {
+    display: none;
+  }
+
+  .login-page .blur-bg {
+    left: -100px;
+    top: 0;
+  }
+
+  .login-page .blur-bg2 {
+    left: -50px;
+    top: 300px;
+  }
+}
+
+/* Celular Pequeño */
+@media (max-width: 480px) {
+  .login-page .login-card {
+    padding: 20px 15px;
+    border-radius: 15px;
+  }
+
+  .login-page .logo-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .login-page h2 {
+    font-size: 18px;
+  }
+
+  .login-page .register-text {
+    font-size: 12px;
+  }
+
+  .login-page .input-group label {
+    font-size: 12px;
+  }
+
+  .login-page .input-group input {
+    padding: 9px;
+  }
+
+  /* ocultar blur */
+  .login-page .blur-bg,
+  .login-page .blur-bg2 {
+    opacity: 0.3;
+  }
+}
