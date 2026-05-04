@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
 import Logo from "../assets/images/logo.png";
@@ -8,11 +8,18 @@ import Input from "../components/Input";
 import PasswordInput from "../components/PasswordInput";
 import Button from "../components/Button";
 
+import { login } from "../services/authService";
+
 export default function Login() {
+    const navigate = useNavigate();
+
     const [form, setForm] = useState({
         id: "",
         password: ""
     });
+
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setForm({
@@ -21,8 +28,33 @@ export default function Login() {
         });
     };
 
-    const handleLogin = () => {
-        console.log("Datos login:", form);
+    const handleLogin = async () => {
+        setError("");
+        setLoading(true);
+
+        try {
+
+            const res = await login({
+                id: form.id,
+                password: form.password
+            });
+
+            console.log("Respuesta backend:", res.data);
+
+            localStorage.setItem("token", res.data.token);
+
+            navigate("/dashboard");
+
+        } catch (err) {
+            console.error(err);
+
+            setError(
+                err.response?.data?.message ||
+                "Error al iniciar sesión"
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -59,21 +91,15 @@ export default function Login() {
                         onChange={handleChange}
                     />
 
+                    {error && <p style={{ color: "red" }}>{error}</p>}
+
                     <Button
-                        text="Ingresar →"
+                        text={loading ? "Ingresando..." : "Ingresar →"}
                         onClick={handleLogin}
                     />
-
-                    <p className="register-text">
-                        ¿Tu escuela no es parte aún?{" "}
-                        <Link to="/register" className="register-link">
-                            Registrar institución
-                        </Link>
-                    </p>
 
                 </div>
             </div>
         </div>
     );
 }
-
