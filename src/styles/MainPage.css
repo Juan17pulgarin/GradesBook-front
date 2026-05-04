@@ -1,0 +1,359 @@
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.main-page {
+  display: flex;
+  min-height: 100vh;
+  background: #eef4f8;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: white;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 50px;
+}
+
+.brand-circle {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #11a5f7;
+}
+
+.brand h2 {
+  font-size: 24px;
+  color: #1d2a3b;
+}
+
+.brand p {
+  font-size: 12px;
+  color: gray;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.menu-item {
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 16px 20px;
+  border-radius: 18px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #5f6f89;
+}
+
+.menu-item.active {
+  background: #12a7f7;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(18, 167, 247, 0.3);
+}
+
+/* BOTONES ABAJO */
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.new-btn {
+  border: none;
+  background: #12a8f8;
+  padding: 18px;
+  border-radius: 30px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bottom-link {
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 20px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 10px 5px;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 30px 40px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-title {
+  color: #0e8edb;
+  font-size: 42px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.search {
+  border: none;
+  outline: none;
+  padding: 14px 20px;
+  border-radius: 25px;
+  width: 320px;
+  background: white;
+}
+
+.icon {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 6px; /* controla separación entre título y texto */
+}
+
+.hero h2 {
+  font-size: 52px;
+  color: #1f2937;
+  width: 100%;
+  margin: 0;
+}
+
+.hero p {
+  margin: 0;
+  font-size: 60px;
+  color: #6b7280;
+  max-width: 850px;
+  line-height: 1.2;
+  text-align: left;
+  align-self: flex-start;
+}
+
+/* Cards */
+.cards {
+  display: flex;
+  gap: 30px;
+  margin-top: 40px;
+  padding: 20px -15px;
+
+}
+
+.card {
+  flex: 1;
+  max-width: 300px; /* 🔥 más ancho */
+  height: 90px;     /* 🔥 sigue bajita */
+  border-radius: 40px;
+  padding: 10px 30px;
+
+  display: flex;
+  flex-direction: column; /* 🔥 contenido en columna */
+  justify-content: center;
+}
+.white {
+  background: white;
+
+}
+
+.green {
+  background: #b8f560;
+}
+
+.card p {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #3d3d3d;
+}
+
+.card h3 {
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.blue {
+  background: #eaf6ff;
+  color: #0d9df5;
+}
+
+.green-badge {
+  background: #dff7b5;
+  color: #426d00;
+}
+
+/* Teachers */
+.teachers-section {
+  margin-top: 60px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header h2 {
+  font-size: 42px;
+}
+
+.section-header a {
+  color: #0d8bd8;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.teacher-list {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.teacher-card {
+  background: white;
+  padding: 22px 28px;
+  border-radius: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.teacher-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.teacher-info img {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+}
+
+.teacher-info h4 {
+  font-size: 24px;
+}
+
+.teacher-info p {
+  color: gray;
+}
+
+.progress-area {
+  width: 300px;
+}
+
+.progress-area span {
+  font-weight: 600;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  margin-top: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #10a8f8;
+  border-radius: 10px;
+}
+
+
+.progress-fill.blue {
+  background: #10a8f8; /* azul */
+}
+
+.progress-fill.red {
+  background: #ef4444; /* rojo */
+}
+
+.progress-fill.yellow {
+  background: #facc15; /* amarillo */
+}
+/* META */
+.goal-card {
+  margin-top: 35px;
+  margin: 15px auto;
+  background: linear-gradient(135deg, #005f8e, #0a6ea2);
+  border-radius: 50px;
+  padding: 32px 25px; /* 🔥 súper compacto */
+  color: white;
+  max-width: 800px; /* 🔥 evita que se estire demasiado */
+}
+
+.goal-small {
+  font-size: 12px;
+}
+
+.goal-card h2 {
+  margin-top: 4px;
+  font-size: 20px;
+}
+
+.goal-info {
+  margin-top: 8px;
+}
+
+.percent {
+  font-size: 24px;
+}
+
+.days {
+  font-size: 14px;
+}
+
+.goal-bar {
+  margin-top: 8px;
+  height: 6px; /* 🔥 más delgada */
+}
+
+.goal-fill {
+  width: 74%;
+  height: 100%;
+  background: #b8f560;
+  border-radius: 10px;
+}
