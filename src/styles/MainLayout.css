@@ -1,0 +1,246 @@
+/* ── Shell principal ── */
+.Main-layout {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.Main-layout *,
+.Main-layout *::before,
+.Main-layout *::after {
+  box-sizing: border-box;
+}
+
+/* ── Columna derecha (topbar + contenido) ── */
+.Main-layout .content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.Main-layout .main-content {
+  flex: 1;
+  overflow-y: auto;
+  margin: 20px;
+}
+
+.Main-layout .main-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.Main-layout .main-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* ── Sidebar ── */
+.Main-layout .sidebar {
+  width: 260px;
+  height: 100vh;
+  background: #ffffff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.Main-layout .sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Main-layout .logo-circle {
+  width: 40px;
+  height: 40px;
+  background: #1d9bd1;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.Main-layout .logo {
+  font-size: 22px;
+}
+
+.Main-layout .logo-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.Main-layout .logo-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  display: block;
+  margin-top: 2px;
+}
+
+/* ── Menú ── */
+.Main-layout .sidebar-menu {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.Main-layout .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #475569;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.Main-layout .menu-item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.Main-layout .menu-item.active {
+  background: #1d9bd1;
+  color: white;
+}
+
+.Main-layout .item {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ── Footer sidebar ── */
+.Main-layout .sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.Main-layout .new-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  background: #1d9bd1;
+  color: white;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.Main-layout .new-btn:hover {
+  background: #1688b8;
+}
+
+.Main-layout .extra-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.Main-layout .extra-links span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+
+.Main-layout .extra-links span:hover {
+  color: #0f172a;
+}
+
+/* ── Topbar ── */
+.Main-layout .topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.Main-layout .topbar-left h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1d9bd1;
+  margin: 0;
+}
+
+.Main-layout .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Buscador ── */
+.Main-layout .search-box {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 8px 14px;
+  border-radius: 20px;
+  gap: 8px;
+}
+
+.Main-layout .search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  width: 200px;
+  font-family: inherit;
+  color: #0f172a;
+}
+
+.Main-layout .search-box input::placeholder {
+  color: #94a3b8;
+}
+
+.Main-layout .search-icon {
+  color: #94a3b8;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Iconos topbar ── */
+.Main-layout .topbar-icons {
+  display: flex;
+  gap: 14px;
+  font-size: 18px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.Main-layout .topbar-icons svg:hover {
+  color: #1d9bd1;
+}
+
+/* ── Avatar ── */
+.Main-layout .avatar img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}

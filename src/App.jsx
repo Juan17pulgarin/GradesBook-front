@@ -1,15 +1,22 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React from "react";
 
 import Login from "./pages/Login";
-import Main from "./pages/Main";
+import MainPage from "./pages/MainPage";
+import TeachersPage from "./pages/Teachers";
+import MainLayout from "./components/layout/MainLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Login />} />
-        <Route path="/Main/*" element={<Main />} />
+
+        {/* 🔥 TODAS LAS PÁGINAS CON SIDEBAR */}
+        <Route element={<MainLayout />}>
+          <Route path="/MainPage" element={<MainPage />} />
+          <Route path="/Teachers" element={<TeachersPage />} />
+        </Route>
 
       </Routes>
     </BrowserRouter>

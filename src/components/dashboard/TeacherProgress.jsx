@@ -1,4 +1,4 @@
-import "../../styles/Dashboard.css";
+import "../../styles/MainPage.css";
 
 export default function TeacherProgress({ name, subject, progress }) {
     return (
