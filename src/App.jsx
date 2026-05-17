@@ -5,6 +5,8 @@ import MainPage from "./pages/MainPage";
 import TeachersPage from "./pages/Teachers";
 import MainLayout from "./components/layout/MainLayout";
 import Students from "./pages/Students";
+import Subjects from "./pages/Subjects";
+import Courses from "./pages/Courses";
 import StudentMain from "./pages/StudentMain";
 
 function App() {
@@ -24,6 +26,8 @@ function App() {
           <Route path="/MainPage" element={<MainPage />} />
           <Route path="/Teachers" element={<TeachersPage />} />
           <Route path="/Students" element={<Students />} />
+          <Route path="/Subjects" element={<Subjects />} />
+          <Route path="/Courses" element={<Courses />} />
         </Route>
 
       </Routes>
