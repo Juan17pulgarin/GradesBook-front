@@ -1,179 +1,114 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import api from "../api/api";
+
+import StatCard from "../components/dashboard/StatCard";
+import TeacherProgress from "../components/dashboard/TeacherProgress";
+import GoalCard from "../components/dashboard/GoalCard";
+
+import { FaArrowTrendUp } from "react-icons/fa6";
+import { BiCloudUpload } from "react-icons/bi";
+
 import "../styles/MainPage.css";
 
-export default function Main() {
+export default function MainPage() {
+    const [teachers, setTeachers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-  const teachers = [
-    {
-      name: "Profe. Mariana Silva",
-      subject: "Historia • 3er Año A, B",
-      progress: 100,
-      img: "https://www.ifoto.ai/_nuxt/img/demo_2_2.6df7940.webp",
-    },
-    {
-      name: "Profe. Ricardo Méndez",
-      subject: "Física • 4to Año C",
-      progress: 85,
-      img: "https://i.pravatar.cc/60?img=12",
-    },
-    {
-      name: "Profe. Clara Ortiz",
-      subject: "Matemáticas • 1er Año A, B, C",
-      progress: 42,
-      img: "https://conimagenes.com/wp-content/uploads/2023/04/Formal.jpg",
-    },
-    {
-      name: "Profe. Alberto Gómez",
-      subject: "Lenguaje • 5to Año A",
-      progress: 95,
-      img: "https://static.vecteezy.com/system/resources/previews/001/131/187/large_2x/serious-man-portrait-real-people-high-definition-grey-background-photo.jpg",
-    },
-  ];
+    useEffect(() => {
+        api.get("/users?tipo=DOCENTE")
+            .then((res) => {
+                setTeachers(res.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Error al traer docentes:", err);
+                setError(true);
+                setLoading(false);
+            });
+    }, []);
 
-  // 🔥 FUNCIÓN PARA COLORES AUTOMÁTICOS
-  const getColor = (value) => {
-    if (value >= 90) return "blue";     // 90 - 100
-    if (value >= 70) return "yellow";   // 70 - 89
-    return "red";                       // menos de 70
-  };
+    return (
+        <div className="Main-page">
 
-  return (
-    <div className="main-page">
+            <h1 className="Main-page-h1">Monitor Académico</h1>
 
-      {/* Sidebar */}
-      <aside className="sidebar">
+            <p className="Main-page-p">
+                Revisa el progreso de carga de notas del segundo bimestre y el rendimiento <br />
+                general de la institución.
+            </p>
 
-        <div className="brand">
-          <div className="brand-circle"></div>
-          <div>
-            <h2>Virtual Campus</h2>
-            <p>GESTIÓN ACADÉMICA</p>
-          </div>
-        </div>
+            <div className="cards">
+                <StatCard
+                    title="Promedio General"
+                    value="4.5"
+                    subtitle="+0.2 vs mes anterior"
+                    color="default"
+                    icon={FaArrowTrendUp}
+                    valueColor="#0284c7"
+                    titleColor="#0284c7"
+                    subColor="#0284c7"
+                    iconColor="#0284c7"
+                    iconStyle={{
+                        fontSize: "1.6rem",
+                        background: "#F0F9FF",
+                        padding: "12px",
+                        borderRadius: "40%",
+                        width: "52px",
+                        height: "42px",
+                    }}
+                />
 
-        <nav className="menu">
-          <button className="menu-item active"> Principal</button>
-          <button className="menu-item">Docentes</button>
-          <button className="menu-item">Estudiantes</button>
-          <button className="menu-item">Materias</button>
-          <button className="menu-item">Cursos</button>
-        </nav>
+                <StatCard
+                    title="% Notas Cargadas"
+                    value="85%"
+                    subtitle="En tiempo"
+                    color="green"
+                    icon={BiCloudUpload}
+                    valueColor="#406C00"
+                    titleColor="#406C00"
+                    subColor="#406C00"
+                    iconColor="#406C00"
+                    iconStyle={{
+                        fontSize: "1.6rem",
+                        background: "#DAFEB0",
+                        padding: "12px",
+                        borderRadius: "40%",
+                        width: "52px",
+                        height: "42px",
+                    }}
+                />
+            </div>
 
-        <div className="sidebar-bottom">
-          <button className="new-btn">
-            Nuevo Registro
-          </button>
+            <div className="section">
+                <h3>Progreso por Docente</h3>
 
-          <button className="bottom-link">
-            ❔ Ayuda
-          </button>
+                {loading && <p>Cargando docentes...</p>}
+                {error && <p>Error al cargar datos 😢</p>}
 
-          <button className="bottom-link">
-            ↪ Cerrar Sesión
-          </button>
-        </div>
+                {!loading && !error && teachers.length === 0 && (
+                    <p>No hay docentes registrados</p>
+                )}
 
-      </aside>
+                {!loading && !error && teachers.map((teacher, index) => (
+                    <TeacherProgress
+                        key={teacher.id || index}
+                        name={
+                            teacher.nombreCompleto ||
+                            `${teacher.nombres} ${teacher.apellidos}`
+                        }
+                        subject={"Sin asignar"}
+                        progress={Math.floor(Math.random() * 100)}
+                    />
+                ))}
+            </div>
 
-      {/* Content */}
-      <main className="content">
-
-        {/* Topbar */}
-        <header className="topbar">
-          <h1 className="logo-title">GradesBook</h1>
-
-          <div className="top-actions">
-            <input
-              type="text"
-              placeholder="Buscar alumnos, profesores..."
-              className="search"
+            <GoalCard
+                title="Carga académica completada"
+                percent={74}
+                subtitle="Progreso general del sistema"
             />
 
-            <span className="icon">🔔</span>
-            <span className="icon">⚙️</span>
-
-            <img
-              src="https://i.pravatar.cc/45?img=15"
-              alt="user"
-              className="avatar"
-            />
-          </div>
-        </header>
-
-        {/* Welcome */}
-        <section className="hero">
-          <h2>Monitor Académico</h2>
-          <p>
-            Revisa el progreso de carga de notas del segundo bimestre y el
-            rendimiento general de la institución.
-          </p>
-        </section>
-
-        {/* Cards */}
-        <section className="cards">
-          <div className="card white">
-            <span className="badge blue">+0.4 vs mes ant.</span>
-            <p>Promedio General</p>
-            <h3>8.7</h3>
-          </div>
-
-          <div className="card green">
-            <span className="badge green-badge">En tiempo</span>
-            <p>% de Notas Cargadas</p>
-            <h3>92%</h3>
-          </div>
-        </section>
-
-        {/* Teachers */}
-        <section className="teachers-section">
-          <div className="section-header">
-            <h2>Progreso por Docente</h2>
-            <a href="/">Ver todos</a>
-          </div>
-
-          <div className="teacher-list">
-            {teachers.map((teacher, index) => (
-              <div className="teacher-card" key={index}>
-                <div className="teacher-info">
-                  <img src={teacher.img} alt="teacher" />
-                  <div>
-                    <h4>{teacher.name}</h4>
-                    <p>{teacher.subject}</p>
-                  </div>
-                </div>
-
-                <div className="progress-area">
-                  <span>Completado {teacher.progress}%</span>
-
-                  <div className="progress-bar">
-                    <div
-                      className={`progress-fill ${getColor(teacher.progress)}`}
-                      style={{ width: `${teacher.progress}%` }}
-                    ></div>
-                  </div>
-
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* META */}
-        <section className="goal-card">
-          <p className="goal-small">Objetivo del Mes</p>
-          <h2>Cierre del 2do Bimestre</h2>
-
-          <div className="goal-info">
-            <span className="percent">74%</span>
-            <span className="days">Faltan 6 días</span>
-          </div>
-
-          <div className="goal-bar">
-            <div className="goal-fill"></div>
-          </div>
-        </section>
-
-      </main>
-    </div>
-  );
+        </div>
+    );
 }

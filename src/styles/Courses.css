@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.courses-page{
+    padding: 40px;
+    background: #f3f6f9;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ================= HEADER ================= */
+
+.courses-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 22px;
+}
+
+.courses-header h1{
+    font-size: 35px;
+    font-weight: 800;
+    color: #262F38;
+    line-height: 1;
+    margin-bottom: 20px;
+    margin-top: -30px;
+}
+
+.courses-header p{
+    font-size: 20px;
+    color: #626E7C;
+    max-width: 850px;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+/* ================= BOTON ================= */
+
+.create-course-btn{
+    border: none;
+    background: #006B9A;
+    color: white;
+    width: 270px;
+    height: 100px;
+    border-radius: 60px;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    box-shadow: 0px 15px 35px rgba(0, 108, 156, 0.25);
+    transition: 0.3s;
+}
+
+/* ICONO NUEVO */
+
+.create-icon{
+    font-size: 34px;
+    margin-left: 8px;
+    flex-shrink: 0;
+    margin-left: 20px;
+}
+
+/* TEXTO BOTON */
+
+.btn-text{
+    font-size: 22px;
+    font-weight: 700;
+    position: relative;
+    left: -10px;
+}
+
+.create-course-btn:hover{
+    transform: translateY(-4px);
+}
+
+/* ================= CARDS ================= */
+
+.cards{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 55px;
+}
+
+/* CARDS DEL COMPONENTE STATCARD */
+
+.courses-page .stat-card{
+    flex: 1;
+    min-width: 0;
+    max-width: 610px;
+    height: 180px;
+    padding-left: 25px;
+    padding-right: 10px;
+    border-radius: 35px;
+    position: relative;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+    display: flex;
+    align-items: center;
+}
+
+/*  MOVER LOS TEXTOS A LA DERECHA */
+
+.courses-page .stat-card h3,
+.courses-page .stat-card p,
+.courses-page .stat-card span,
+.courses-page .stat-card h2{
+    margin-left: 18px;
+}
+
+/* COLORES */
+
+.courses-page .stat-card.default{
+    background: #e0e9eb;
+}
+
+.courses-page .stat-card.green{
+    background: #b7f387;
+}
+
+.courses-page .stat-card.yellow{
+    background: #FDD34D;
+}
+
+/* ================= LISTADO ================= */
+
+.list-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.list-header h3{
+    font-size: 45px;
+    font-weight: 700;
+    color: #4A4F57;
+}
+
+/* ================= BOTONES VISTA ================= */
+
+.view-buttons{
+    display: flex;
+    gap: 15px;
+}
+
+.view-buttons button{
+    width: 58px;
+    height: 58px;
+    border: none;
+    border-radius: 18px;
+    background: #FFFFFF;
+    font-size: 24px;
+    color: #6C7683;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.05);
+}
+
+.view-buttons button:hover{
+    transform: translateY(-2px);
+}
+
+/* ================= GRID ================= */
+
+.courses-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px;
+}
+
+/* ================= CARD CURSO ================= */
+
+.course-card{
+    background: white;
+    border-radius: 40px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.04);
+}
+
+/* ================= LINEA IZQUIERDA ================= */
+
+.left-border{
+    width: 8px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.left-border.blue{
+    background: #00A8FF;
+}
+
+.left-border.yellow{
+    background: #FFD53D;
+}
+
+.left-border.gray{
+    background: #DCE2E9;
+}
+
+/* ================= IMAGEN ================= */
+
+.course-image{
+    width: 92px;
+    height: 92px;
+    background: #181818;
+    border-radius: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 38px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* ================= CONTENIDO ================= */
+
+.course-content{
+    flex: 1;
+}
+
+.course-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.course-top h4{
+    font-size: 24px;
+    color: #30343B;
+    font-weight: 700;
+}
+
+/* ================= STATUS ================= */
+
+.status{
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.active{
+    background: #C8F36D;
+    color: #507000;
+}
+
+.inactive{
+    background: #E5E9ED;
+    color: #7D8894;
+}
+
+/* ================= INFO ================= */
+
+.course-info{
+    display: flex;
+    gap: 22px;
+}
+
+.course-info p{
+    color: #748197;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* ================= DOTS ================= */
+
+.dots-btn{
+    border: none;
+    background: transparent;
+    font-size: 36px;
+    color: #97A3B2;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width: 1200px){
+
+    .courses-header{
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .cards{
+        flex-direction: column;
+    }
+
+    .courses-grid{
+        grid-template-columns: 1fr;
+    }
+
+}

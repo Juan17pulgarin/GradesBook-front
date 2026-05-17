@@ -1,0 +1,292 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.subject-page{
+    padding: 40px;
+    background: #f3f6f9;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ================= HEADER ================= */
+
+.subject-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 45px;
+}
+
+.section-label{
+    font-size: 15px;
+    font-weight: 800;
+    color: #55710f;
+    letter-spacing: 2px;
+}
+
+.subject-header h1{
+    font-size: 58px;
+    line-height: 0.95;
+    color: #2b3137;
+    margin-top: 10px;
+    font-weight: 800;
+}
+
+.subject-header h1 span{
+    color: #005b8f;
+}
+
+/* ================= BOTON ================= */
+
+.create-subject-btn{
+    border: none;
+    background: #f4c842;
+    color: #6a5200;
+    width: 320px;
+    height: 55px;
+    border-radius: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.create-subject-btn:hover{
+    transform: translateY(-3px);
+}
+
+.create-icon{
+    font-size: 34px;
+}
+
+.btn-text{
+    position: relative;
+    top: 1px;
+}
+
+/* ================= TABLA ================= */
+
+.subject-table-container{
+    background: #edf2f5;
+    border-radius: 45px;
+    padding: 40px;
+}
+
+.subject-table-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.subject-table-header h3{
+    font-size: 32px;
+    color: #455468;
+}
+
+.subject-table-header p{
+    color: #8a97aa;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* ================= TABLE ================= */
+
+.subject-table{
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+.subject-table thead{
+    background: #f7fafc;
+}
+
+.subject-table th{
+    text-align: left;
+    padding: 25px;
+    color: #718096;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+.subject-table td{
+    padding: 25px;
+    border-top: 1px solid #edf2f7;
+}
+
+/* ================= SUBJECT ================= */
+
+.subject-name{
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.subject-icon{
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background: #dbeafe;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #005b8f;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.subject-name span{
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d4831;
+}
+
+/* ================= STATUS ================= */
+
+.status{
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.active{
+    background: #d9f99d;
+    color: #4d7c0f;
+}
+
+.inactive{
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+/* ================= BOTON EDITAR ================= */
+
+.edit-btn{
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+/* ================= CARDS ================= */
+
+.subject-bottom-cards{
+    display: flex;
+    flex-direction: row;
+    gap: 22px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 55px;
+}
+
+.bottom-card{
+    flex: 1;
+    min-width: 0;
+    max-width: 610px;
+    height: 160px;
+
+    padding-left: 25px;
+    padding-right: 10px;
+
+    border-radius: 35px;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* ================= COLORES ================= */
+
+.blue-card{
+    background: #e0e9eb;
+}
+
+.green-card{
+    background: #B7F387;
+}
+
+.yellow-card{
+    background: #FDD34D;
+}
+
+/* ================= ICONOS ================= */
+
+.bottom-card-icon{
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+}
+
+.blue-card .bottom-card-icon{
+    color: #03293c;
+}
+
+.green-card .bottom-card-icon{
+    color: #3C6600;
+}
+
+.yellow-card .bottom-card-icon{
+    color: #7a6300;
+}
+
+/* ================= CONTENIDO ================= */
+
+.bottom-card-content{
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ================= NUMERO ================= */
+
+.bottom-card h2{
+    font-size: 22px;
+    font-weight: 800;
+    color: #2A3031;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ================= TEXTO ================= */
+
+.bottom-card p{
+    font-size: 16px;
+    font-weight: 700;
+    color: #575C5E;
+    margin-top: 8px;
+    line-height: 1.2;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width: 1200px){
+
+    .subject-bottom-cards{
+        flex-direction: column;
+    }
+
+    .subject-header{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 25px;
+    }
+
+}

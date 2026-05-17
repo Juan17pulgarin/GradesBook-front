@@ -1,359 +1,291 @@
-{
-  margin: 0;
-  padding: 0;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.Main-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #f1f5f9;
+  min-height: 100%;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
 }
 
-.main-page {
-  display: flex;
-  min-height: 100vh;
-  background: #eef4f8;
+.Main-page *, .Main-page *::before, .Main-page *::after {
+  box-sizing: border-box;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 280px;
-  background: white;
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
+/* ── Título y subtítulo ── */
+.Main-page-h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 50px;
-}
-
-.brand-circle {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: #11a5f7;
-}
-
-.brand h2 {
-  font-size: 24px;
-  color: #1d2a3b;
-}
-
-.brand p {
-  font-size: 12px;
-  color: gray;
-}
-
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.menu-item {
-  border: none;
-  background: none;
-  text-align: left;
-  padding: 16px 20px;
-  border-radius: 18px;
-  font-size: 20px;
-  cursor: pointer;
-  color: #5f6f89;
-}
-
-.menu-item.active {
-  background: #12a7f7;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 8px 20px rgba(18, 167, 247, 0.3);
-}
-
-/* BOTONES ABAJO */
-.sidebar-bottom {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.new-btn {
-  border: none;
-  background: #12a8f8;
-  padding: 18px;
-  border-radius: 30px;
-  font-size: 22px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.bottom-link {
-  border: none;
-  background: none;
-  text-align: left;
-  font-size: 20px;
-  color: #64748b;
-  cursor: pointer;
-  padding: 10px 5px;
-}
-
-/* Content */
-.content {
-  flex: 1;
-  padding: 30px 40px;
-}
-
-/* Topbar */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo-title {
-  color: #0e8edb;
-  font-size: 42px;
-}
-
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.search {
-  border: none;
-  outline: none;
-  padding: 14px 20px;
-  border-radius: 25px;
-  width: 320px;
-  background: white;
-}
-
-.icon {
-  font-size: 22px;
-  cursor: pointer;
-}
-
-.avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-}
-
-/* Hero */
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 6px; /* controla separación entre título y texto */
-}
-
-.hero h2 {
-  font-size: 52px;
-  color: #1f2937;
-  width: 100%;
-  margin: 0;
-}
-
-.hero p {
-  margin: 0;
-  font-size: 60px;
-  color: #6b7280;
-  max-width: 850px;
-  line-height: 1.2;
-  text-align: left;
-  align-self: flex-start;
-}
-
-/* Cards */
-.cards {
-  display: flex;
-  gap: 30px;
-  margin-top: 40px;
-  padding: 20px -15px;
-
-}
-
-.card {
-  flex: 1;
-  max-width: 300px; /* 🔥 más ancho */
-  height: 90px;     /* 🔥 sigue bajita */
-  border-radius: 40px;
-  padding: 10px 30px;
-
-  display: flex;
-  flex-direction: column; /* 🔥 contenido en columna */
-  justify-content: center;
-}
-.white {
-  background: white;
-
-}
-
-.green {
-  background: #b8f560;
-}
-
-.card p {
-  margin-top: 12px;
+.Main-page-p {
+  color: #475569;
   font-size: 14px;
-  color: #3d3d3d;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
 }
 
-.card h3 {
-  font-size: 28px;
-  margin-top: 4px;
-}
-
-.badge {
-  padding: 4px 10px;
-  border-radius: 15px;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.blue {
-  background: #eaf6ff;
-  color: #0d9df5;
-}
-
-.green-badge {
-  background: #dff7b5;
-  color: #426d00;
-}
-
-/* Teachers */
-.teachers-section {
-  margin-top: 60px;
-}
-
-.section-header {
+/* ── Cards ── */
+.Main-page .cards {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.section-header h2 {
-  font-size: 42px;
-}
-
-.section-header a {
-  color: #0d8bd8;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.teacher-list {
-  margin-top: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.teacher-card {
-  background: white;
-  padding: 22px 28px;
-  border-radius: 28px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.teacher-info {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.teacher-info img {
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-}
-
-.teacher-info h4 {
-  font-size: 24px;
-}
-
-.teacher-info p {
-  color: gray;
-}
-
-.progress-area {
-  width: 300px;
-}
-
-.progress-area span {
-  font-weight: 600;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  border-radius: 10px;
-  background: #e5e7eb;
+  gap: 20px;
+  flex-wrap: wrap;         
   margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;            
 }
 
-.progress-fill {
-  height: 100%;
-  background: #10a8f8;
-  border-radius: 10px;
+/* ── Stat Card base ── */
+.Main-page .stat-card {
+  flex: 1;
+  min-width: 200px;
+  max-width: 280px;
+  height: 150px;
+  padding: 20px;
+  border-radius: 20px;
+  position: relative;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
-
-.progress-fill.blue {
-  background: #10a8f8; /* azul */
+.Main-page .stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-.progress-fill.red {
-  background: #ef4444; /* rojo */
-}
-
-.progress-fill.yellow {
-  background: #facc15; /* amarillo */
-}
-/* META */
-.goal-card {
-  margin-top: 35px;
-  margin: 15px auto;
-  background: linear-gradient(135deg, #005f8e, #0a6ea2);
-  border-radius: 50px;
-  padding: 32px 25px; /* 🔥 súper compacto */
-  color: white;
-  max-width: 800px; /* 🔥 evita que se estire demasiado */
-}
-
-.goal-small {
-  font-size: 12px;
-}
-
-.goal-card h2 {
-  margin-top: 4px;
-  font-size: 20px;
-}
-
-.goal-info {
-  margin-top: 8px;
-}
-
-.percent {
-  font-size: 24px;
-}
-
-.days {
+.Main-page .stat-title {
   font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
 }
 
-.goal-bar {
-  margin-top: 8px;
-  height: 6px; /* 🔥 más delgada */
+.Main-page .stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 10px 0 4px;
+  color: #0284c7;
 }
 
-.goal-fill {
-  width: 74%;
-  height: 100%;
-  background: #b8f560;
+.Main-page .stat-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.Main-page .stat-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* ── Variantes de color ── */
+.Main-page .stat-card.default {
+  background: #ffffff;
+}
+
+.Main-page .stat-card.green {
+  background: #b7f387;
+  box-shadow: 0 10px 25px rgba(134, 239, 71, 0.25);
+}
+
+.Main-page .stat-card.green .stat-badge {
+  background: #d9f99d;
+  color: #166534;
+}
+
+.Main-page .stat-card.yellow {
+  background: #fef08a;
+  box-shadow: 0 10px 25px rgba(250, 204, 21, 0.25);
+}
+
+.Main-page .stat-card.yellow .stat-badge {
+  background: #fef9c3;
+  color: #92400e;
+}
+
+.Main-page .stat-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+
+/* ── Sección docentes ── */
+.Main-page .section {
+  margin-top: 30px;
+}
+
+.Main-page .section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ── Teacher card ── */
+.Main-page .teacher-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 15px 20px;
+  border-radius: 15px;
+  margin-top: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  gap: 1rem;
+}
+
+.Main-page .teacher-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 160px;
+}
+
+.Main-page .teacher-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1d9bd1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.Main-page .teacher-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.Main-page .teacher-subject {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* ── Progress bar ── */
+.Main-page .teacher-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.Main-page .progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
   border-radius: 10px;
+  overflow: hidden;
+}
+
+.Main-page .progress-fill {
+  height: 100%;
+  background: #1d9bd1;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.Main-page .progress-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Goal Card ── */
+.Main-page .goal-card {
+  margin-top: 30px;
+  padding: 25px 30px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1d9bd1, #3b82f6);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.Main-page .goal-info h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+}
+
+.Main-page .goal-info p {
+  font-size: 14px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.Main-page .goal-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.Main-page .circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 8px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Estados de carga ── */
+.Main-page .section p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* ── Responsivo ── */
+@media (max-width: 640px) {
+  .Main-page {
+    padding: 20px 16px;
+  }
+
+  .Main-page .cards {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .Main-page .stat-card {
+    max-width: 100%;
+    height: auto;
+    min-height: 130px;
+  }
+
+  .Main-page .teacher-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .Main-page .teacher-progress {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .Main-page .goal-card {
+    flex-direction: column;
+    text-align: center;
+  }
 }
