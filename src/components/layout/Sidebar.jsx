@@ -7,8 +7,11 @@ import { LuGraduationCap } from "react-icons/lu";
 import { LuPaperclip } from "react-icons/lu";
 import { TbNumbers } from "react-icons/tb";
 import { FaRegQuestionCircle } from "react-icons/fa";
+<<<<<<< HEAD
 import { ImExit } from "react-icons/im";
 
+=======
+>>>>>>> courses-subject
 
 import "../../styles/MainLayout.css";
 
@@ -33,7 +36,11 @@ export default function Sidebar() {
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 {/* MENÚ */}
+=======
+                {/* 🔷 MENÚ */}
+>>>>>>> courses-subject
                 <nav className="sidebar-menu">
 
                     <Link
@@ -82,7 +89,19 @@ export default function Sidebar() {
             {/* 🔻 FOOTER */}
             <div className="sidebar-footer">
 
+<<<<<<< HEAD
                 <div className="extra-links">
+=======
+                <button className="new-btn">
+                    Nuevo Registro
+                </button>
+
+                <div className="extra-links">
+                    <span>
+                        <FaRegQuestionCircle /> Ayuda
+                    </span>
+
+>>>>>>> courses-subject
                     <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -90,7 +109,11 @@ export default function Sidebar() {
                             window.location.href = "/";
                         }}
                     >
+<<<<<<< HEAD
                         Cerrar sesión <ImExit />
+=======
+                        Cerrar sesión
+>>>>>>> courses-subject
                     </span>
                 </div>
 

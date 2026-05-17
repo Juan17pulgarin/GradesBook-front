@@ -8,8 +8,11 @@ import Students from "./pages/Students";
 import StudentMain from "./pages/StudentMain";
 
 function App() {
+
   return (
+
     <BrowserRouter>
+
       <Routes>
 
         <Route path="/" element={<Login />} />
@@ -24,7 +27,9 @@ function App() {
         </Route>
 
       </Routes>
+
     </BrowserRouter>
+
   );
 }
 

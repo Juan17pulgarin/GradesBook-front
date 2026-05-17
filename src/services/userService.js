@@ -1,5 +1,6 @@
 import api from "../api/api";
 
+<<<<<<< HEAD
 // ── Usuarios ──
 export const createUser = (data) => api.post("/users", data);
 export const getUsers = (tipo) => api.get(`/users?tipo=${tipo}`);
@@ -38,3 +39,9 @@ export const deleteGrade = (id) => api.delete(`/grades/${id}`);
 
 // ── Notas (ESTUDIANTE) ──
 export const getMyGrades = () => api.get("/grades/my-grades");
+=======
+// Crear usuario (único endpoint que tienes)
+export const createUser = (data) => {
+  return api.post("/users", data);
+};
+>>>>>>> courses-subject
