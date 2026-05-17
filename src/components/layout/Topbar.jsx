@@ -22,15 +22,6 @@ export default function Topbar() {
                     />
                 </div>
 
-<<<<<<< HEAD
-=======
-                {/* ICONOS */}
-                <div className="topbar-icons">
-                    <FaBell />
-                    <FaCog />
-                </div>
-
->>>>>>> courses-subject
                 {/* AVATAR */}
                 <div className="avatar">
                     <img
