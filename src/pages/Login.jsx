@@ -14,7 +14,7 @@ export default function Login() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
-        documento: "",   // 🔥 ahora es documento
+        documento: "",
         password: ""
     });
 
@@ -35,15 +35,22 @@ export default function Login() {
 
         try {
             const res = await login({
-                documento: form.documento, // 🔥 CLAVE
+                documento: form.documento,
                 password: form.password
             });
 
             console.log("Respuesta backend:", res.data);
 
+            // Guardar token y datos del usuario
             localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
 
-            navigate("/dashboard");
+            // Redirigir según el tipo de usuario
+            if (res.data.user.tipo === "ESTUDIANTE") {
+                navigate("/StudentMain");
+            } else {
+                navigate("/MainPage");
+            }
 
         } catch (err) {
             console.error(err);

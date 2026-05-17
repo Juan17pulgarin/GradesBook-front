@@ -1,4 +1,3 @@
-/* ── Shell principal ── */
 .Main-layout {
   font-family: 'Plus Jakarta Sans', sans-serif;
   display: flex;
@@ -13,7 +12,7 @@
   box-sizing: border-box;
 }
 
-/* ── Columna derecha (topbar + contenido) ── */
+/* Columna derecha (topbar + contenido) */
 .Main-layout .content {
   display: flex;
   flex-direction: column;
@@ -36,7 +35,7 @@
   border-radius: 10px;
 }
 
-/* ── Sidebar ── */
+/* Sidebar */
 .Main-layout .sidebar {
   width: 260px;
   height: 100vh;
@@ -86,7 +85,7 @@
   margin-top: 2px;
 }
 
-/* ── Menú ── */
+/* Menú */
 .Main-layout .sidebar-menu {
   margin-top: 30px;
   display: flex;
@@ -123,7 +122,7 @@
   flex-shrink: 0;
 }
 
-/* ── Footer sidebar ── */
+/* Footer sidebar */
 .Main-layout .sidebar-footer {
   display: flex;
   flex-direction: column;
@@ -152,7 +151,7 @@
   flex-direction: column;
   gap: 8px;
   font-size: 13px;
-  color: #64748b;
+  color: #ff0000;
 }
 
 .Main-layout .extra-links span {
@@ -168,7 +167,7 @@
   color: #0f172a;
 }
 
-/* ── Topbar ── */
+/* Topbar */
 .Main-layout .topbar {
   display: flex;
   justify-content: space-between;
@@ -193,7 +192,7 @@
   gap: 16px;
 }
 
-/* ── Buscador ── */
+/* Buscador */
 .Main-layout .search-box {
   display: flex;
   align-items: center;
@@ -223,7 +222,7 @@
   flex-shrink: 0;
 }
 
-/* ── Iconos topbar ── */
+/* Iconos topbar */
 .Main-layout .topbar-icons {
   display: flex;
   gap: 14px;
@@ -236,7 +235,7 @@
   color: #1d9bd1;
 }
 
-/* ── Avatar ── */
+/* Avatar */
 .Main-layout .avatar img {
   width: 36px;
   height: 36px;

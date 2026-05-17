@@ -1,46 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-.Teachers-page {
+.students {
     font-family: 'Plus Jakarta Sans', sans-serif;
     padding: 2rem 2.5rem;
     background: #f1f5f9;
     min-height: 100%;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.Teachers-page *, .Teachers-page *::before, .Teachers-page *::after {
+.students *, .students *::before, .students *::after {
     box-sizing: border-box;
 }
 
 /* Header */
-.Teachers-page .header-row {
+.students .students-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 2rem;
     gap: 1rem;
 }
 
-.Teachers-page .header-row h1 {
+.students .students-header h1 {
     font-size: 2rem;
     font-weight: 800;
     color: #0f172a;
     margin: 0 0 0.35rem 0;
 }
 
-.Teachers-page .header-row span {
+.students .students-header h1 span {
     color: #2563eb;
 }
 
-.Teachers-page .header-row p {
-    color: #475569;
+.students .students-header p {
     font-size: 0.92rem;
+    color: #475569;
     margin: 0;
     line-height: 1.5;
 }
 
-/* Botón añadir */
-.Teachers-page .login-btn {
+/* Botón */
+.students .login-btn {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -57,27 +59,27 @@
     flex-shrink: 0;
 }
 
-.Teachers-page .login-btn:hover {
+.students .login-btn:hover {
     background: #1d4ed8;
 }
 
 /* Cards */
-.Teachers-page .cards {
+.students .cards {
     display: flex;
     flex-direction: row;
     gap: 1rem;
     flex-wrap: wrap;
     width: 100%;
-    margin-bottom: 1.8rem;
 }
 
-/* Stat Card base */
-.Teachers-page .stat-card {
+/* Stat Card */
+.students .stat-card {
     flex: 1;
     min-width: 180px;
-    height: 120px;
+    max-width: 280px;
+    height: 90px;
     padding: 16px 20px;
-    border-radius: 50px;       
+    border-radius: 50px;
     position: relative;
     background: #ffffff;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
@@ -85,50 +87,61 @@
     align-items: center;
 }
 
-/* Stat card inner layout */
-.Teachers-page .stat-content1 {
+/* ícono a la izquierda, texto a la derecha */
+.students .stat-content1 {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 14px;
 }
 
-.Teachers-page .stat-text {
+.students .stat-icon {
+    flex-shrink: 0;
+}
+
+/* título arriba, valor abajo */
+.students .stat-text {
     display: flex;
     flex-direction: column;
 }
 
-.Teachers-page .stat-title {
+.students .stat-title {
     font-size: 0.8rem;
     font-weight: 500;
     margin: 0;
+    color: #64748b;
 }
 
-.Teachers-page .stat-value {
+.students .stat-value {
     font-size: 1.8rem;
     font-weight: 800;
     margin: 0;
     line-height: 1.1;
 }
 
+.students .stat-sub {
+    font-size: 0.72rem;
+    margin: 2px 0 0 0;
+}
+
 /* Variantes de color */
-.Teachers-page .stat-card.default {
-    background: #EEF3F5;
+.students .stat-card.default {
+    background: #e8f4fb;
     box-shadow: none;
 }
 
-.Teachers-page .stat-card.green {
+.students .stat-card.green {
     background: #b7f387;
     box-shadow: 0 4px 15px rgba(134, 239, 71, 0.2);
 }
 
-.Teachers-page .stat-card.yellow {
+.students .stat-card.yellow {
     background: #FDD34D;
     box-shadow: 0 4px 15px rgba(250, 204, 21, 0.2);
 }
 
 /* Tabla */
-.Teachers-page .table-container {
+.students .students-table {
     background: #ffffff;
     border-radius: 16px;
     overflow: hidden;
@@ -136,16 +149,11 @@
     border: 1px solid #e2e8f0;
 }
 
-.Teachers-page .table-header,
-.Teachers-page .table-row {
+.students .table-header {
     display: grid;
-    grid-template-columns: 2fr 1.2fr 2fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 2fr 1fr 0.5fr;
     padding: 14px 20px;
-    align-items: center;
     gap: 1rem;
-}
-
-.Teachers-page .table-header {
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -155,28 +163,33 @@
     border-bottom: 1px solid #f1f5f9;
 }
 
-.Teachers-page .table-row {
-    background: #fff;
+.students .table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 1fr 0.5fr;
+    align-items: center;
+    padding: 14px 20px;
+    gap: 1rem;
     border-bottom: 1px solid #f1f5f9;
+    background: #fff;
     transition: background 0.15s;
 }
 
-.Teachers-page .table-row:last-child {
+.students .table-row:last-child {
     border-bottom: none;
 }
 
-.Teachers-page .table-row:hover {
+.students .table-row:hover {
     background: #f8fafc;
 }
 
-/* Name cell */
-.Teachers-page .name {
+/* Celda estudiante */
+.students .student-info {
     display: flex;
-    gap: 10px;
     align-items: center;
+    gap: 10px;
 }
 
-.Teachers-page .name img {
+.students .student-info img {
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -184,78 +197,59 @@
     flex-shrink: 0;
 }
 
-.Teachers-page .name p {
-    margin: 0;
+.students .student-info strong {
     font-size: 0.875rem;
     font-weight: 600;
     color: #0f172a;
-    line-height: 1.3;
+    display: block;
 }
 
-.Teachers-page .name span {
+.students .student-info p {
     font-size: 0.72rem;
     color: #94a3b8;
-    display: block;
-    margin-top: 2px;
+    margin: 2px 0 0 0;
 }
 
-/* Correo */
-.Teachers-page .table-row > span {
+/* Texto celdas */
+.students .table-row > span {
     font-size: 0.875rem;
     color: #475569;
 }
 
-/* Badge materia */
-.Teachers-page .badge {
+/* Badge */
+.students .badge {
     display: inline-block;
+    background: #e5e7eb;
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: 15px;
     font-size: 0.78rem;
     font-weight: 600;
+    color: #374151;
     width: fit-content;
 }
 
-.Teachers-page .badge.blue {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.Teachers-page .badge.green {
-    background: #dcfce7;
-    color: #15803d;
-}
-
-.Teachers-page .badge.yellow {
-    background: #fef9c3;
-    color: #92400e;
-}
-
-/* Status */
-.Teachers-page .active {
-    color: #16a34a;
+/* Estado */
+.students .status {
+    font-size: 0.875rem;
     font-weight: 600;
-    font-size: 0.875rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
 }
 
-.Teachers-page .inactive {
-    color: #94a3b8;
-    font-size: 0.875rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+.students .status.active {
+    color: #16a34a;
 }
 
-/* Actions */
-.Teachers-page .actions {
+.students .status.inactive {
+    color: #9ca3af;
+}
+
+/* Acciones */
+.students .actions {
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
-.Teachers-page .actions button {
+.students .actions button {
     background: none;
     border: none;
     cursor: pointer;
@@ -268,20 +262,24 @@
     font-size: 1rem;
 }
 
-.Teachers-page .actions button:hover {
+.students .actions button:hover {
     background: #f1f5f9;
 }
 
-.Teachers-page .btn-edit {
-    color: #64748b;
-}
-
-.Teachers-page .btn-delete {
+.students .btn-delete {
     color: #ef4444;
 }
 
+/* Mensaje vacío */
+.students .table-msg {
+    padding: 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
 /* Paginación */
-.Teachers-page .pagination {
+.students .pagination {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -291,13 +289,13 @@
     color: #64748b;
 }
 
-.Teachers-page .pagination-controls {
+.students .pagination-controls {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.Teachers-page .pagination-controls button {
+.students .pagination-controls button {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -313,16 +311,16 @@
     transition: background 0.15s;
 }
 
-.Teachers-page .pagination-controls button:hover {
+.students .pagination-controls button:hover {
     background: #f1f5f9;
 }
 
-.Teachers-page .pagination-controls button.active-page {
+.students .pagination-controls button.active-page {
     background: #2563eb;
     color: white;
 }
 
-.Teachers-page .pagination-controls .btn-arrow {
+.students .pagination-controls .btn-arrow {
     color: #94a3b8;
     font-size: 1rem;
 }
