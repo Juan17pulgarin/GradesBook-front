@@ -34,7 +34,6 @@ export default function TeacherTable({ teachers, onRefresh }) {
                 <span>Foto/Nombre</span>
                 <span>Materia Asignada</span>
                 <span>Correo</span>
-                <span>Estado</span>
                 <span>Acciones</span>
             </div>
 

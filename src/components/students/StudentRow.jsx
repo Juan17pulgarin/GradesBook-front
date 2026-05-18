@@ -1,25 +1,29 @@
-import { FaUserLargeSlash } from "react-icons/fa6";
+import { FiTrash2 } from "react-icons/fi";
 
-export default function StudentRow({ student }) {
+export default function StudentRow({ student, onDelete, getCurso }) {
     return (
-        <div className="student-row">
+        <div className="table-row">
             <div className="student-info">
-                <div className="avatar"></div>
-                <span>{student.name}</span>
+                <img src="https://i.pravatar.cc/40" alt="avatar" />
+                <div>
+                    <strong>{student.nombres} {student.apellidos}</strong>
+                    <p>ID: {student.id}</p>
+                </div>
             </div>
 
-            <span>{student.grade}</span>
-            <span>{student.tutor}</span>
+            <span className="badge">{student.documento}</span>
 
-            <span className={`status ${student.status}`}>
-                {student.status}
-            </span>
+            <span>{student.email}</span>
+
+            <span className="badge">{getCurso(student.id)}</span>
+
 
             <div className="actions">
-                <button className="btn-edit" title="Editar">
-                    <FiEdit2 />
-                </button>
-                <button className="btn-delete" title="Eliminar">
+                <button
+                    className="btn-delete"
+                    title="Eliminar"
+                    onClick={() => onDelete(student)}
+                >
                     <FiTrash2 />
                 </button>
             </div>

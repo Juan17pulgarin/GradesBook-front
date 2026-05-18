@@ -32,9 +32,21 @@ export default function MainPage() {
                 setSubjects(subjectsRes.data);
                 setLoads(loadsRes.data);
                 setPeriods(periodsRes.data);
-                // Seleccionar el último periodo por defecto
+
                 if (periodsRes.data.length > 0) {
-                    setSelectedPeriod(periodsRes.data[periodsRes.data.length - 1]);
+                    const hoy = new Date();
+
+                    // Busca el periodo activo (hoy está entre inicio y fin)
+                    const periodoActivo = periodsRes.data.find((p) => {
+                        const inicio = new Date(p.fecha_inicio);
+                        const fin = new Date(p.fecha_fin);
+                        return hoy >= inicio && hoy <= fin;
+                    });
+
+                    // Si no hay uno activo, toma el primero
+                    setSelectedPeriod(
+                        periodoActivo || periodsRes.data[0]
+                    );
                 }
                 setLoading(false);
             })
@@ -117,9 +129,10 @@ export default function MainPage() {
             <div className="cards">
                 <StatCard
                     title="Promedio General"
-                    value={subjects.length}
-                    badge="+0.4 vs mes ant."
+                    value="—"
+                    badge="Próximamente"
                     color="default"
+                    maintenance={true}   
                     icon={FaArrowTrendUp}
                     valueColor="#0284c7"
                     titleColor="#64748b"
@@ -134,7 +147,7 @@ export default function MainPage() {
                     }}
                 />
                 <StatCard
-                    title="% de Notas Cargadas"
+                    title="% Cargas Asignadas"
                     value={`${porcentajeCarga}%`}
                     badge="En tiempo"
                     color="green"
@@ -157,8 +170,10 @@ export default function MainPage() {
             <div className="section">
                 <h3>Progreso por Docente</h3>
                 {loading && <p>Cargando docentes...</p>}
-                {error && <p>Error al cargar datos 😢</p>}
-                {!loading && !error && teachers.length === 0 && <p>No hay docentes registrados</p>}
+                {error && <p>Error al cargar datos </p>}
+                {!loading && !error && teachers.length === 0 && (
+                    <p>No hay docentes registrados</p>
+                )}
 
                 {!loading && !error && teachers.map((teacher, index) => {
                     const load = loads.find((l) => l.docente_id === teacher.id);

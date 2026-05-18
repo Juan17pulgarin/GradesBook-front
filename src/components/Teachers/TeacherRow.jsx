@@ -13,10 +13,7 @@ export default function TeacherRow({ teacher, onDelete }) {
             <span className={`badge ${teacher.badgeColor || "blue"}`}>
                 {teacher.materia || "Sin asignar"}
             </span>
-            <span>{teacher.correo}</span>
-            <span className={teacher.activo ? "active" : "inactive"}>
-                ● {teacher.activo ? "Activo" : "Inactivo"}
-            </span>
+            <span>{teacher.email}</span>
             <div className="actions">
                 <button className="btn-delete" title="Eliminar" onClick={() => onDelete(teacher)}>
                     <FiTrash2 />

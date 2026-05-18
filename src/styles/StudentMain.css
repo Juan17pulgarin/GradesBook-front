@@ -56,7 +56,6 @@
 }
 
 .sm-search-icon { color: #94a3b8; font-size: 0.9rem; }
-.sm-icon { font-size: 1.1rem; cursor: pointer; }
 
 .sm-avatar {
     width: 36px;
@@ -69,6 +68,26 @@
     justify-content: center;
     font-weight: 700;
     font-size: 0.9rem;
+}
+
+/* Cerrar sesión en topbar */
+.sm-logout-top {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.sm-logout-top:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #ef4444;
 }
 
 /* ── Contenido ── */
@@ -274,11 +293,29 @@
     white-space: nowrap;
 }
 
-/* ── Cards materias ── */
+/* ── Scroll horizontal para cards de materias ── */
+.sm-materias-scroll {
+    overflow-x: auto;
+    padding-bottom: 8px;
+    /* scrollbar bonito */
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.sm-materias-scroll::-webkit-scrollbar {
+    height: 5px;
+}
+
+.sm-materias-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* Las cards no se comprimen — scroll en vez de wrap */
 .sm-materias {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     gap: 1rem;
+    width: max-content;
 }
 
 .sm-materia-card {
@@ -290,6 +327,8 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    width: 220px;
+    flex-shrink: 0;
 }
 
 .sm-materia-top {
@@ -389,7 +428,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
 }
 
 .sm-boletin-header h2 {
@@ -426,6 +465,23 @@
 
 .sm-boletin-actions button:hover { background: #e2e8f0; }
 
+/* Scroll vertical en el boletín */
+.sm-boletin-scroll {
+    max-height: 260px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.sm-boletin-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sm-boletin-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
 .sm-boletin-thead {
     display: grid;
     grid-template-columns: 2fr 1fr 2fr;
@@ -435,6 +491,9 @@
     letter-spacing: 0.08em;
     color: #94a3b8;
     border-bottom: 1px solid #f1f5f9;
+    position: sticky;
+    top: 0;
+    background: #ffffff;
 }
 
 .sm-boletin-row {
@@ -501,37 +560,14 @@
     padding: 1rem 0;
 }
 
-/* ── Cerrar sesión ── */
-.sm-logout {
-    background: none;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 10px 20px;
-    color: #64748b;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-    margin-top: auto;
-}
-
-.sm-logout:hover {
-    background: #fee2e2;
-    border-color: #ef4444;
-    color: #ef4444;
-}
-
 /* ── Responsivo ── */
 @media (max-width: 900px) {
-    .sm-materias { grid-template-columns: 1fr 1fr; }
     .sm-bottom { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
     .sm-content { padding: 1rem; }
     .sm-hero { flex-direction: column; }
-    .sm-materias { grid-template-columns: 1fr; }
     .sm-topbar { padding: 14px 1rem; }
     .sm-search input { width: 120px; }
     .sm-period-selector { flex-direction: column; align-items: flex-start; }

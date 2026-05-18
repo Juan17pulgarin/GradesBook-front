@@ -1,20 +1,60 @@
-export default function StudentStats() {
+import StatCard from "../dashboard/StatCard";
+import { FaUsers, FaRegCircleCheck } from "react-icons/fa6";
+import { HiOutlineEllipsisHorizontalCircle } from "react-icons/hi2";
+
+export default function StudentStats({ total, activos, inactivos }) {
     return (
-        <div className="students-stats">
-            <div className="stat-box">
-                <p>Total Alumnos</p>
-                <h2>47</h2>
-            </div>
+        <div className="cards">
+            <StatCard
+                title="Total Alumnos"
+                value={total}
+                color="default"
+                icon={FaUsers}
+                valueColor="#2A3031"
+                titleColor="#575C5E"
+                iconColor="#00618F"
+                iconStyle={{
+                    background: "#CCEFFF",
+                    padding: "12px",
+                    borderRadius: "50%",
+                    width: "52px",
+                    height: "52px"
+                }}
+            />
 
-            <div className="stat-box green">
-                <p>Activos</p>
-                <h2>43</h2>
-            </div>
+            <StatCard
+                title="Activos"
+                value={activos}
+                color="green"
+                icon={FaRegCircleCheck}
+                valueColor="#2A3031"
+                titleColor="#575C5E"
+                iconColor="#396100"
+                iconStyle={{
+                    background: "#C1FD7C",
+                    padding: "12px",
+                    borderRadius: "50%",
+                    width: "52px",
+                    height: "52px"
+                }}
+            />
 
-            <div className="stat-box yellow">
-                <p>En Trámite</p>
-                <h2>4</h2>
-            </div>
+            <StatCard
+                title="Inactivos"
+                value={inactivos}
+                color="yellow"
+                icon={HiOutlineEllipsisHorizontalCircle}
+                valueColor="#2A3031"
+                titleColor="#575C5E"
+                iconColor="#5C4900"
+                iconStyle={{
+                    background: "#FDD34D",
+                    padding: "12px",
+                    borderRadius: "50%",
+                    width: "52px",
+                    height: "52px"
+                }}
+            />
         </div>
     );
 }

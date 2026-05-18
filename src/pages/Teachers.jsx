@@ -7,6 +7,7 @@ import UserModal from "../components/UserModal";
 
 import { FaUsers, FaRegCircleCheck } from "react-icons/fa6";
 import { MdMenuBook } from "react-icons/md";
+import { RiUserAddLine } from "react-icons/ri";
 
 import "../styles/Teachers.css";
 
@@ -28,7 +29,11 @@ export default function TeachersPage() {
         const enriched = teachersRes.data.map((t) => {
           const load = loads.find((l) => l.docente_id === t.id);
           const subject = load ? subjects.find((s) => s.id === load.materia_id) : null;
-          return { ...t, materia: subject?.nombre || "Sin asignar" };
+          return {
+            ...t,
+            materia: subject?.nombre || "Sin asignar",
+            load_id: load?.id || null,
+          };
         });
 
         setTeachers(enriched);
@@ -47,14 +52,19 @@ export default function TeachersPage() {
       <div className="header-row">
         <div>
           <h1>Gestión de <span>Docentes</span></h1>
-          <p>Bienvenido al panel central de profesores. Aquí puedes administrar el equipo <br />
-          académico de <span>Escuela Viva</span>.</p>
+          <p>
+            Bienvenido al panel central de profesores. Aquí puedes administrar el equipo <br />
+            académico de <span>Escuela Viva</span>.
+          </p>
         </div>
-        <button className="login-btn" onClick={() => setOpenModal(true)}>Añadir Nuevo Docente</button>
+        <button className="login-btn" onClick={() => setOpenModal(true)}>
+          <RiUserAddLine />Añadir Nuevo Docente
+        </button>
       </div>
 
       <div className="cards">
-        <StatCard title="Total Docentes"
+        <StatCard
+          title="Total Docentes"
           value={total}
           color="default"
           icon={FaUsers}
@@ -68,9 +78,11 @@ export default function TeachersPage() {
             borderRadius: "50%",
             width: "52px",
             height: "52px"
-          }} />
+          }}
+        />
 
-        <StatCard title="Docentes Activos"
+        <StatCard
+          title="Docentes Activos"
           value={activos}
           color="green"
           icon={FaRegCircleCheck}
@@ -84,9 +96,11 @@ export default function TeachersPage() {
             borderRadius: "50%",
             width: "52px",
             height: "52px"
-          }} />
+          }}
+        />
 
-        <StatCard title="Materias Cubiertas"
+        <StatCard
+          title="Materias Cubiertas"
           value={totalMaterias}
           color="yellow"
           icon={MdMenuBook}
@@ -100,13 +114,18 @@ export default function TeachersPage() {
             borderRadius: "50%",
             width: "52px",
             height: "52px"
-          }} />
+          }}
+        />
       </div>
 
       <TeacherTable teachers={teachers} onRefresh={fetchData} />
 
       {openModal && (
-        <UserModal tipo="DOCENTE" onClose={() => setOpenModal(false)} onSuccess={fetchData} />
+        <UserModal
+          tipo="DOCENTE"
+          onClose={() => setOpenModal(false)}
+          onSuccess={fetchData}
+        />
       )}
     </div>
   );

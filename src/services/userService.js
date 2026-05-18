@@ -1,6 +1,5 @@
 import api from "../api/api";
 
-<<<<<<< HEAD
 // ── Usuarios ──
 export const createUser = (data) => api.post("/users", data);
 export const getUsers = (tipo) => api.get(`/users?tipo=${tipo}`);
@@ -9,7 +8,7 @@ export const deactivateUser = (id) => api.patch(`/users/${id}`);
 // ── Cargas académicas ──
 export const getAcademicLoads = () => api.get("/academic-loads");
 export const createAcademicLoad = (data) => api.post("/academic-loads", data);
-export const updateAcademicLoad = (id, data) => api.put(`/academic-loads/${id}`, data);
+export const updateAcademicLoad = (id, data) => api.patch(`/academic-loads/${id}`, data); // ← PATCH no PUT
 
 // ── Matrículas ──
 export const getEnrollments = () => api.get("/enrollments");
@@ -21,6 +20,7 @@ export const createPeriod = (data) => api.post("/periods", data);
 
 // ── Materias ──
 export const getSubjects = () => api.get("/subjects");
+export const getMySubjects = () => api.get("/subjects/my-subjects"); // ← nuevo para ESTUDIANTE
 
 // ── Cursos ──
 export const getCourses = () => api.get("/courses");
@@ -39,9 +39,3 @@ export const deleteGrade = (id) => api.delete(`/grades/${id}`);
 
 // ── Notas (ESTUDIANTE) ──
 export const getMyGrades = () => api.get("/grades/my-grades");
-=======
-// Crear usuario (único endpoint que tienes)
-export const createUser = (data) => {
-  return api.post("/users", data);
-};
->>>>>>> courses-subject

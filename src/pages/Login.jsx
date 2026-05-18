@@ -85,7 +85,7 @@ export default function Login() {
 
                         <Input
                             label="Número de documento"
-                            placeholder="123456789"
+                            placeholder="Documento"
                             name="documento"
                             value={form.documento}
                             onChange={handleChange}

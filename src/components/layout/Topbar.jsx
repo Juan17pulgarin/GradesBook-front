@@ -1,4 +1,4 @@
-import { FaSearch, FaBell, FaCog } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import "../../styles/MainLayout.css";
 
 export default function Topbar() {

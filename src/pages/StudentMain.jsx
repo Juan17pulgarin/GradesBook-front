@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import { FaSearch } from "react-icons/fa";
 import "../styles/StudentMain.css";
 
 export default function StudentMain() {
@@ -12,6 +13,7 @@ export default function StudentMain() {
     const [selectedPeriodId, setSelectedPeriodId] = useState(null);
     const [grades, setGrades] = useState([]);
     const [activities, setActivities] = useState([]);
+    const [mySubjects, setMySubjects] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -19,13 +21,27 @@ export default function StudentMain() {
             api.get("/periods"),
             api.get("/grades/my-grades"),
             api.get("/activities/my-activities"),
+            api.get("/subjects/my-subjects"),
         ])
-            .then(([periodsRes, gradesRes, activitiesRes]) => {
+            .then(([periodsRes, gradesRes, activitiesRes, subjectsRes]) => {
                 setPeriods(periodsRes.data);
                 setGrades(gradesRes.data);
                 setActivities(activitiesRes.data);
+                setMySubjects(subjectsRes.data);
                 if (periodsRes.data.length > 0) {
-                    setSelectedPeriodId(periodsRes.data[periodsRes.data.length - 1].id);
+                    const hoy = new Date();
+
+                    // Busca el periodo activo (hoy está entre inicio y fin)
+                    const periodoActivo = periodsRes.data.find((p) => {
+                        const inicio = new Date(p.fecha_inicio);
+                        const fin = new Date(p.fecha_fin);
+                        return hoy >= inicio && hoy <= fin;
+                    });
+
+                    // Si no hay uno activo, toma el primero
+                    setSelectedPeriodId(
+                        periodoActivo?.id || periodsRes.data[0].id
+                    );
                 }
                 setLoading(false);
             })
@@ -44,17 +60,14 @@ export default function StudentMain() {
     const periodoActual = periods.find((p) => p.id === selectedPeriodId);
     const periodoIndex = periods.findIndex((p) => p.id === selectedPeriodId);
 
-    // Filtrar notas por periodo seleccionado
     const gradesFiltradas = selectedPeriodId
         ? grades.filter((g) => g.actividades?.periodo_id === selectedPeriodId)
         : grades;
 
-    // Promedio general de todas las notas
     const promedioGeneral = grades.length > 0
         ? (grades.reduce((acc, g) => acc + parseFloat(g.nota), 0) / grades.length).toFixed(1)
         : "—";
 
-    // Agrupar notas por materia
     const materiaMap = {};
     gradesFiltradas.forEach((g) => {
         const nombreMateria = g.actividades?.carga_academica?.materias?.nombre || "Sin materia";
@@ -83,7 +96,6 @@ export default function StudentMain() {
         return { nombre, promedio, ultimoTema: data.ultimoTema, badge, ...color, progreso };
     });
 
-    // Boletín: una fila por materia con promedio
     const boletin = materiasCards.map((m) => ({
         asignatura: m.nombre,
         nota: m.promedio,
@@ -100,12 +112,13 @@ export default function StudentMain() {
                 <div className="sm-logo">GradesBook</div>
                 <div className="sm-topbar-right">
                     <div className="sm-search">
-                        <span className="sm-search-icon">🔍</span>
+                        <span className="sm-search-icon"><FaSearch /></span>
                         <input placeholder="Buscar mi progreso..." />
                     </div>
-                    <span className="sm-icon">🔔</span>
-                    <span className="sm-icon">⚙️</span>
                     <div className="sm-avatar">{primerNombre[0]}</div>
+                    <button className="sm-logout-top" onClick={handleLogout}>
+                        Cerrar sesión
+                    </button>
                 </div>
             </div>
 
@@ -170,7 +183,7 @@ export default function StudentMain() {
                     </div>
                 )}
 
-                {/* CALIFICACIONES */}
+                {/* CALIFICACIONES — scroll horizontal */}
                 <div className="sm-section">
                     <div className="sm-section-header">
                         <div>
@@ -185,32 +198,34 @@ export default function StudentMain() {
                         <p className="sm-msg">No tienes calificaciones registradas aún.</p>
                     )}
 
-                    <div className="sm-materias">
-                        {materiasCards.map((m, i) => (
-                            <div className="sm-materia-card" key={i}>
-                                <div className="sm-materia-top">
-                                    <div className="sm-materia-icon">📘</div>
-                                    <div className="sm-materia-nota-box">
-                                        <span className="sm-materia-nota">{m.promedio}</span>
-                                        <span className={`sm-badge sm-badge-${m.badgeColor}`}>{m.badge}</span>
+                    {/* Scroll horizontal para las cards */}
+                    <div className="sm-materias-scroll">
+                        <div className="sm-materias">
+                            {materiasCards.map((m, i) => (
+                                <div className="sm-materia-card" key={i}>
+                                    <div className="sm-materia-top">
+                                        <div className="sm-materia-icon">📘</div>
+                                        <div className="sm-materia-nota-box">
+                                            <span className="sm-materia-nota">{m.promedio}</span>
+                                            <span className={`sm-badge sm-badge-${m.badgeColor}`}>{m.badge}</span>
+                                        </div>
                                     </div>
+                                    <h3 className="sm-materia-nombre">{m.nombre}</h3>
+                                    <p className="sm-materia-tema">Último tema: {m.ultimoTema}</p>
+                                    <div className="sm-progress-label">PROGRESO DE METAS</div>
+                                    <div className="sm-progress-bar">
+                                        <div className="sm-progress-fill"
+                                            style={{ width: `${m.progreso}%`, background: m.barColor }} />
+                                    </div>
+                                    <span className="sm-progress-pct">{m.progreso}%</span>
                                 </div>
-                                <h3 className="sm-materia-nombre">{m.nombre}</h3>
-                                <p className="sm-materia-tema">Último tema: {m.ultimoTema}</p>
-                                <div className="sm-progress-label">PROGRESO DE METAS</div>
-                                <div className="sm-progress-bar">
-                                    <div className="sm-progress-fill"
-                                        style={{ width: `${m.progreso}%`, background: m.barColor }} />
-                                </div>
-                                <span className="sm-progress-pct">{m.progreso}%</span>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                {/* BOLETÍN + CONSEJO */}
+                {/* BOLETÍN — scroll vertical */}
                 <div className="sm-bottom">
-
                     <div className="sm-boletin">
                         <div className="sm-boletin-header">
                             <div>
@@ -222,23 +237,27 @@ export default function StudentMain() {
                                 <button title="Imprimir">🖨</button>
                             </div>
                         </div>
-                        <div className="sm-boletin-table">
-                            <div className="sm-boletin-thead">
-                                <span>ASIGNATURA</span>
-                                <span>NOTA FINAL</span>
-                                <span>COMENTARIO</span>
+
+                        {/* Tabla con scroll vertical */}
+                        <div className="sm-boletin-scroll">
+                            <div className="sm-boletin-table">
+                                <div className="sm-boletin-thead">
+                                    <span>ASIGNATURA</span>
+                                    <span>NOTA FINAL</span>
+                                    <span>COMENTARIO</span>
+                                </div>
+                                {boletin.length > 0 ? boletin.map((b, i) => (
+                                    <div className="sm-boletin-row" key={i}>
+                                        <span>{b.asignatura}</span>
+                                        <span className="sm-boletin-nota">{b.nota}</span>
+                                        <span className="sm-boletin-comentario">{b.comentario}</span>
+                                    </div>
+                                )) : (
+                                    <div className="sm-boletin-empty">
+                                        Sin notas registradas aún.
+                                    </div>
+                                )}
                             </div>
-                            {boletin.length > 0 ? boletin.map((b, i) => (
-                                <div className="sm-boletin-row" key={i}>
-                                    <span>{b.asignatura}</span>
-                                    <span className="sm-boletin-nota">{b.nota}</span>
-                                    <span className="sm-boletin-comentario">{b.comentario}</span>
-                                </div>
-                            )) : (
-                                <div className="sm-boletin-empty">
-                                    Sin notas registradas aún.
-                                </div>
-                            )}
                         </div>
                     </div>
 
@@ -251,11 +270,7 @@ export default function StudentMain() {
                                 ? " ¡Sigue así, vas muy bien!"
                                 : " Sigue esforzándote, puedes mejorar."}"
                         </p>
-                        <button className="sm-logout" onClick={handleLogout}>
-                            Cerrar sesión
-                        </button>
                     </div>
-
                 </div>
 
             </div>

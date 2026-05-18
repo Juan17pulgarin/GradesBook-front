@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
 import api from "../api/api";
+
+import { MdOutlineMailOutline } from "react-icons/md";
+import { FaIdCard } from "react-icons/fa";
+import { HiOutlineLockClosed } from "react-icons/hi";
+import { MdOutlineCall } from "react-icons/md";
+import { FaEye } from "react-icons/fa";
+import { IoMdEyeOff } from "react-icons/io";
+
+
 import "../styles/UserModal.css";
 
 export default function UserModal({ tipo, onClose, onSuccess }) {
@@ -157,7 +166,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                             <div className="form-group">
                                 <label>Email Institucional *</label>
                                 <div className="input-icon">
-                                    <span>✉</span>
+                                    <span><MdOutlineMailOutline /></span>
                                     <input name="email" type="email" placeholder="juan@gradesbook.com"
                                         value={form.email} onChange={handleChange} />
                                 </div>
@@ -172,13 +181,13 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                             <div className="form-group">
                                 <label>Password *</label>
                                 <div className="input-icon">
-                                    <span>🔒</span>
+                                    <span><HiOutlineLockClosed /></span>
                                     <input name="password" type={showPassword ? "text" : "password"}
                                         placeholder="Mínimo 8 caracteres"
                                         value={form.password} onChange={handleChange} />
                                     <button type="button" className="toggle-password"
                                         onClick={() => setShowPassword(!showPassword)}>
-                                        {showPassword ? "🙈" : "👁"}
+                                        {showPassword ? <IoMdEyeOff /> : <FaEye />}
                                     </button>
                                 </div>
                             </div>
@@ -186,7 +195,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                             <div className="form-group">
                                 <label>Documento *</label>
                                 <div className="input-icon">
-                                    <span>🪪</span>
+                                    <span><FaIdCard /></span>
                                     <input name="documento" type="text" placeholder="Ej: 1102715657"
                                         value={form.documento} onChange={handleChange} />
                                 </div>
@@ -195,7 +204,8 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                             <div className="form-group">
                                 <label>Teléfono</label>
                                 <div className="input-icon">
-                                    <span>📞</span>
+                                    <span><MdOutlineCall />
+</span>
                                     <input name="telefono" type="text" placeholder="Ej: 3132794970"
                                         value={form.telefono} onChange={handleChange} />
                                 </div>

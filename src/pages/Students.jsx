@@ -7,6 +7,8 @@ import UserModal from "../components/UserModal";
 import { FaUsers, FaRegCircleCheck } from "react-icons/fa6";
 import { HiOutlineEllipsisHorizontalCircle } from "react-icons/hi2";
 import { FiTrash2, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { RiUserAddLine } from "react-icons/ri";
+
 
 import "../styles/Students.css";
 
@@ -14,6 +16,7 @@ const PAGE_SIZE = 5;
 
 export default function Students() {
     const [students, setStudents] = useState([]);
+    const [enrollments, setEnrollments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -24,9 +27,20 @@ export default function Students() {
 
     const fetchStudents = () => {
         setLoading(true);
-        api.get("/users?tipo=ESTUDIANTE")
-            .then((res) => { setStudents(res.data); setLoading(false); })
-            .catch((err) => { console.error(err); setError(true); setLoading(false); });
+        Promise.all([
+            api.get("/users?tipo=ESTUDIANTE"),
+            api.get("/enrollments"),
+        ])
+            .then(([studentsRes, enrollmentsRes]) => {
+                setStudents(studentsRes.data);
+                setEnrollments(enrollmentsRes.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError(true);
+                setLoading(false);
+            });
     };
 
     useEffect(() => { fetchStudents(); }, []);
@@ -52,6 +66,11 @@ export default function Students() {
         }
     };
 
+    const getCurso = (studentId) => {
+        const enrollment = enrollments.find((e) => e.estudiante_id === studentId);
+        return enrollment?.cursos?.nombre || "Sin curso";
+    };
+
     return (
         <div className="students">
             <div className="students-header">
@@ -60,48 +79,60 @@ export default function Students() {
                     <p>Administra el padrón de alumnos del colegio. Matricula nuevos integrantes y <br />
                      mantén actualizada la información de contacto y académica.</p>
                 </div>
-                <button className="login-btn" onClick={() => setOpenModal(true)}>Añadir Nuevo Estudiante</button>
+                <button className="login-btn" onClick={() => setOpenModal(true)}><RiUserAddLine />Añadir Nuevo Estudiante</button>
             </div>
 
             <div className="cards">
-                <StatCard title="Total Alumnos" 
-                value={total} 
-                color="default" 
-                icon={FaUsers}
-                    valueColor="#2A3031" 
-                    titleColor="#575C5E" 
+                <StatCard
+                    title="Total Alumnos"
+                    value={total}
+                    color="default"
+                    icon={FaUsers}
+                    valueColor="#2A3031"
+                    titleColor="#575C5E"
                     iconColor="#00618F"
-                    iconStyle={{ background: "#CCEFFF", 
-                    padding: "12px", 
-                    borderRadius: "50%", 
-                    width: "52px", 
-                    height: "52px" }} />
+                    iconStyle={{
+                        background: "#CCEFFF",
+                        padding: "12px",
+                        borderRadius: "50%",
+                        width: "52px",
+                        height: "52px"
+                    }}
+                />
 
-                <StatCard title="Activos" 
-                value={activos} 
-                color="green" 
-                icon={FaRegCircleCheck}
-                    valueColor="#2A3031" 
-                    titleColor="#575C5E" 
+                <StatCard
+                    title="Activos"
+                    value={activos}
+                    color="green"
+                    icon={FaRegCircleCheck}
+                    valueColor="#2A3031"
+                    titleColor="#575C5E"
                     iconColor="#396100"
-                    iconStyle={{ background: "#C1FD7C", 
-                    padding: "12px", 
-                    borderRadius: "50%", 
-                    width: "52px", 
-                    height: "52px" }} />
+                    iconStyle={{
+                        background: "#C1FD7C",
+                        padding: "12px",
+                        borderRadius: "50%",
+                        width: "52px",
+                        height: "52px"
+                    }}
+                />
 
-                <StatCard title="Inactivos" 
-                value={inactivos} 
-                color="yellow" 
-                icon={HiOutlineEllipsisHorizontalCircle}
-                    valueColor="#2A3031" 
-                    titleColor="#575C5E" 
+                <StatCard
+                    title="Inactivos"
+                    value={inactivos}
+                    color="yellow"
+                    icon={HiOutlineEllipsisHorizontalCircle}
+                    valueColor="#2A3031"
+                    titleColor="#575C5E"
                     iconColor="#5C4900"
-                    iconStyle={{ background: "#FDD34D", 
-                    padding: "12px", 
-                    borderRadius: "50%", 
-                    width: "52px", 
-                    height: "52px" }} />
+                    iconStyle={{
+                        background: "#FDD34D",
+                        padding: "12px",
+                        borderRadius: "50%",
+                        width: "52px",
+                        height: "52px"
+                    }}
+                />
             </div>
 
             <div className="students-table">
@@ -109,13 +140,15 @@ export default function Students() {
                     <span>ESTUDIANTE</span>
                     <span>DOCUMENTO</span>
                     <span>CORREO</span>
-                    <span>ESTADO</span>
+                    <span>CURSO</span>
                     <span>ACCIONES</span>
                 </div>
 
                 {loading && <p className="table-msg">Cargando estudiantes...</p>}
-                {error && <p className="table-msg">Error al cargar datos 😢</p>}
-                {!loading && !error && students.length === 0 && <p className="table-msg">No hay estudiantes registrados</p>}
+                {error && <p className="table-msg">Error al cargar datos</p>}
+                {!loading && !error && students.length === 0 && (
+                    <p className="table-msg">No hay estudiantes registrados</p>
+                )}
 
                 {!loading && !error && paginated.map((s) => (
                     <div className="table-row" key={s.id}>
@@ -127,15 +160,15 @@ export default function Students() {
                             </div>
                         </div>
                         <span className="badge">{s.documento}</span>
-                        <span>{s.correo}</span>
-                        <span className={`status ${s.activo ? "active" : "inactive"}`}>
-                            ● {s.activo ? "ACTIVO" : "INACTIVO"}
-                        </span>
-                        <div className="actions">
+                        <span>{s.email}</span>
+                        <span className="badge">{getCurso(s.id)}</span>
 
-                            <button className="btn-delete" 
-                            title="Eliminar" 
-                            onClick={() => setDeleteStudent(s)}>
+                        <div className="actions">
+                            <button
+                                className="btn-delete"
+                                title="Eliminar"
+                                onClick={() => setDeleteStudent(s)}
+                            >
                                 <FiTrash2 />
                             </button>
                         </div>
@@ -145,18 +178,29 @@ export default function Students() {
                 <div className="pagination">
                     <span>Mostrando {paginated.length} de {students.length} estudiantes</span>
                     <div className="pagination-controls">
-
-                        <button className="btn-arrow" 
-                        onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+                        <button
+                            className="btn-arrow"
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                        >
                             <FiChevronLeft />
                         </button>
 
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                            <button key={n} className={n === page ? "active-page" : ""} onClick={() => setPage(n)}>{n}</button>
+                            <button
+                                key={n}
+                                className={n === page ? "active-page" : ""}
+                                onClick={() => setPage(n)}
+                            >
+                                {n}
+                            </button>
                         ))}
 
-                        <button className="btn-arrow" 
-                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages || totalPages === 0}>
+                        <button
+                            className="btn-arrow"
+                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages || totalPages === 0}
+                        >
                             <FiChevronRight />
                         </button>
                     </div>
@@ -164,7 +208,11 @@ export default function Students() {
             </div>
 
             {openModal && (
-                <UserModal tipo="ESTUDIANTE" onClose={() => setOpenModal(false)} onSuccess={fetchStudents} />
+                <UserModal
+                    tipo="ESTUDIANTE"
+                    onClose={() => setOpenModal(false)}
+                    onSuccess={fetchStudents}
+                />
             )}
 
             {deleteStudent && (
@@ -175,11 +223,17 @@ export default function Students() {
                         {deleteError && <p className="modal-error">{deleteError}</p>}
 
                         <div className="confirm-actions">
-                            <button className="cancel-btn" 
-                            onClick={() => setDeleteStudent(null)}>Cancelar</button>
-
-                            <button className="btn-confirm-delete" 
-                            onClick={handleDelete} disabled={deleting}>
+                            <button
+                                className="cancel-btn"
+                                onClick={() => setDeleteStudent(null)}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className="btn-confirm-delete"
+                                onClick={handleDelete}
+                                disabled={deleting}
+                            >
                                 {deleting ? "Eliminando..." : "Sí, eliminar"}
                             </button>
                         </div>
