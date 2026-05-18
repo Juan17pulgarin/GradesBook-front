@@ -50,7 +50,7 @@ export default function Login() {
             if (res.data.user.tipo === "ESTUDIANTE") {
                 navigate("/StudentMain");
             } else if (res.data.user.tipo === "DOCENTE") {
-                navigate("/TeacherMain");
+                navigate("/TeachersMain");
             } else {
                 navigate("/MainPage");
         }

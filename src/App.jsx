@@ -20,7 +20,7 @@ function App() {
 
 
         <Route path="/StudentMain" element={<StudentMain />} />
-        <Route path="/TeacherMain" element={<TeachersMain />} />
+        <Route path="/TeachersMain" element={<TeachersMain />} />
 
 
         <Route element={<MainLayout />}>
