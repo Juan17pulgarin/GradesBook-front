@@ -8,32 +8,33 @@ import Students from "./pages/Students";
 import Subjects from "./pages/Subjects";
 import Courses from "./pages/Courses";
 import StudentMain from "./pages/StudentMain";
+import TeachersMain from "./pages/TeachersMain";
 
 function App() {
-
   return (
-
     <BrowserRouter>
-
       <Routes>
 
+        {/* LOGIN */}
         <Route path="/" element={<Login />} />
 
-        <Route path="/StudentMain" element={<StudentMain />} />
 
-        {/* 🔥 TODAS LAS PÁGINAS CON SIDEBAR */}
+        <Route path="/StudentMain" element={<StudentMain />} />
+        <Route path="/TeacherMain" element={<TeachersMain />} />
+
+
         <Route element={<MainLayout />}>
+
           <Route path="/MainPage" element={<MainPage />} />
           <Route path="/Teachers" element={<TeachersPage />} />
           <Route path="/Students" element={<Students />} />
           <Route path="/Subjects" element={<Subjects />} />
           <Route path="/Courses" element={<Courses />} />
+
         </Route>
 
       </Routes>
-
     </BrowserRouter>
-
   );
 }
 

@@ -24,7 +24,7 @@
 }
 
 .subject-header h1{
-    font-size: 58px;
+    font-size: 50px;
     line-height: 0.95;
     color: #2b3137;
     margin-top: 10px;
@@ -38,23 +38,21 @@
 /* ================= BOTON ================= */
 
 .create-subject-btn{
-    border: none;
-    background: #f4c842;
-    color: #6a5200;
-    width: 320px;
-    height: 55px;
-    border-radius: 50px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-
-    font-size: 22px;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    background: #f4c842;
+    color: #6a5200;
     font-weight: 700;
-
+    font-size: 0.875rem;
     cursor: pointer;
     transition: 0.3s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .create-subject-btn:hover{
@@ -62,7 +60,7 @@
 }
 
 .create-icon{
-    font-size: 34px;
+    font-size: 20px;
 }
 
 .btn-text{
@@ -70,12 +68,16 @@
     top: 1px;
 }
 
-/* ================= TABLA ================= */
+/* ================= CONTENEDOR TABLA ================= */
 
 .subject-table-container{
     background: #edf2f5;
     border-radius: 45px;
     padding: 40px;
+
+    max-height: 500px; 
+    overflow-y: auto;    
+    overflow-x: auto;    
 }
 
 .subject-table-header{

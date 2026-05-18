@@ -39,18 +39,21 @@ export default function Login() {
                 password: form.password
             });
 
-            console.log("Respuesta backend:", res.data);
+            console.log("TIPO:", res.data.user.tipo);
 
             // Guardar token y datos del usuario
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
-
+            
             // Redirigir según el tipo de usuario
+            
             if (res.data.user.tipo === "ESTUDIANTE") {
                 navigate("/StudentMain");
+            } else if (res.data.user.tipo === "DOCENTE") {
+                navigate("/TeacherMain");
             } else {
                 navigate("/MainPage");
-            }
+        }
 
         } catch (err) {
             console.error(err);
