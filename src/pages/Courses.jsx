@@ -4,13 +4,12 @@ import api from "../api/api";
 import "../styles/Courses.css";
 
 import StatCard from "../components/dashboard/StatCard";
+import UserModal from "../components/UserModal";
 
 import { CgMenuBoxed } from "react-icons/cg";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoMdTime } from "react-icons/io";
 import { RiUserAddLine } from "react-icons/ri";
-
-/* ================= NUEVOS ICONOS ================= */
 
 import { HiOutlineViewGrid } from "react-icons/hi";
 import { HiOutlineBars3 } from "react-icons/hi2";
@@ -19,7 +18,13 @@ export default function Courses() {
 
     const [courses, setCourses] = useState([]);
 
-    useEffect(() => {
+    /* ================= MODAL ================= */
+
+    const [openModal, setOpenModal] = useState(false);
+
+    /* ================= FETCH ================= */
+
+    const fetchData = () => {
 
         api.get("/courses")
             .then((res) => {
@@ -30,53 +35,53 @@ export default function Courses() {
                 console.error("Error cursos:", err);
             });
 
+    };
+
+    useEffect(() => {
+
+        fetchData();
+
     }, []);
 
-    // STATS
+    // ================= STATS =================
 
     const totalCursos = courses.length;
-
     const cursosActivos = courses.filter(
         (course) => course.estado === "ACTIVO"
     ).length;
-
     const porIniciar = courses.filter(
         (course) => course.estado !== "ACTIVO"
     ).length;
 
     return (
-
         <div className="courses-page">
 
-            {/* HEADER */}
+            {/* ================= HEADER ================= */}
 
             <div className="courses-header">
-
                 <div>
-
                     <h1>
                         Gestión de Cursos
                     </h1>
-
                     <p>
                         Bienvenido de nuevo. Aquí puedes organizar los grupos y asignaciones del ciclo escolar 2024.
                     </p>
-
                 </div>
 
-                <button className="create-course-btn">
+                {/* ================= BOTON ================= */}
 
+                <button
+                    className="create-course-btn"
+                    onClick={() => setOpenModal(true)}
+                >
                     <RiUserAddLine className="create-icon" />
-
                     <span className="btn-text">
                         Crear Nuevo Curso
                     </span>
-
                 </button>
-
             </div>
 
-            {/* STATS */}
+            {/* ================= STATS ================= */}
 
             <div className="cards">
 
@@ -136,37 +141,28 @@ export default function Courses() {
                         height: "52px",
                     }}
                 />
-
             </div>
 
-            {/* LISTADO */}
+            {/* ================= LISTADO ================= */}
 
             <div className="list-header">
-
                 <h3>
                     Listado de Cursos
                 </h3>
-
                 <div className="view-buttons">
-
                     <button>
                         <HiOutlineViewGrid />
                     </button>
-
                     <button>
                         <HiOutlineBars3 />
                     </button>
-
                 </div>
-
             </div>
 
-            {/* GRID */}
+            {/* ================= GRID ================= */}
 
             <div className="courses-grid">
-
                 {courses.map((course) => (
-
                     <div
                         className="course-card"
                         key={course.id}
@@ -179,21 +175,14 @@ export default function Courses() {
                                     : "gray"
                             }`}
                         ></div>
-
                         <div className="course-image">
-
                             {course.nombre.charAt(0)}
-
                         </div>
-
                         <div className="course-content">
-
                             <div className="course-top">
-
                                 <h4>
                                     {course.nombre}
                                 </h4>
-
                                 <span
                                     className={
                                         course.estado === "ACTIVO"
@@ -203,33 +192,32 @@ export default function Courses() {
                                 >
                                     {course.estado}
                                 </span>
-
                             </div>
-
                             <div className="course-info">
-
                                 <p>
                                     📅 Año: {course.anio}
                                 </p>
-
                                 <p>
                                     👥 {course.capacidad_maxima} Alumnos
                                 </p>
-
                             </div>
-
                         </div>
-
                         <button className="dots-btn">
                             ⋮
                         </button>
-
                     </div>
-
                 ))}
-
             </div>
 
+            {/* ================= MODAL ================= */}
+
+            {openModal && (
+                <UserModal
+                    tipo="CURSO"
+                    onClose={() => setOpenModal(false)}
+                    onSuccess={fetchData}
+                />
+            )}
         </div>
 
     );

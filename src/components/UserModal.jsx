@@ -12,10 +12,31 @@ import { IoMdEyeOff } from "react-icons/io";
 import "../styles/UserModal.css";
 
 export default function UserModal({ tipo, onClose, onSuccess }) {
-    const [step, setStep] = useState(1); // paso 1: datos usuario, paso 2: asignación
+
+    const [step, setStep] = useState(1);
     const [createdUser, setCreatedUser] = useState(null);
 
-    // Datos usuario
+    /* ================= TIPOS ================= */
+
+    const isCourse = tipo === "CURSO";
+    const isSubject = tipo === "MATERIA";
+
+    /* ================= CURSO ================= */
+
+    const [courseForm, setCourseForm] = useState({
+        nombre: "",
+        anio: "",
+        capacidad_maxima: "",
+    });
+
+    /* ================= MATERIA ================= */
+
+    const [subjectForm, setSubjectForm] = useState({
+        nombre: "",
+    });
+
+    /* ================= USUARIO ================= */
+
     const [form, setForm] = useState({
         nombres: "",
         apellidos: "",
@@ -26,141 +47,393 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
         tipo: tipo,
     });
 
-    // Datos asignación docente
+    /* ================= DOCENTE ================= */
+
     const [loadForm, setLoadForm] = useState({
         materia_id: "",
         curso_id: "",
     });
 
-    // Datos asignación estudiante
+    /* ================= ESTUDIANTE ================= */
+
     const [enrollForm, setEnrollForm] = useState({
         curso_id: "",
     });
 
-    // Listas del back
+    /* ================= LISTAS ================= */
+
     const [subjects, setSubjects] = useState([]);
     const [courses, setCourses] = useState([]);
+
+    /* ================= GENERALES ================= */
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
+    /* ================= CARGAR DATOS ================= */
+
     useEffect(() => {
-        // Cargar materias y cursos para los selects
+
         Promise.all([
             api.get("/subjects"),
             api.get("/courses"),
-        ]).then(([subjectsRes, coursesRes]) => {
-            setSubjects(subjectsRes.data);
-            setCourses(coursesRes.data);
-        }).catch(err => console.error("Error cargando datos:", err));
+        ])
+            .then(([subjectsRes, coursesRes]) => {
+
+                setSubjects(subjectsRes.data);
+                setCourses(coursesRes.data);
+
+            })
+            .catch(err =>
+                console.error("Error cargando datos:", err)
+            );
+
     }, []);
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-    const handleLoadChange = (e) => setLoadForm({ ...loadForm, [e.target.name]: e.target.value });
-    const handleEnrollChange = (e) => setEnrollForm({ ...enrollForm, [e.target.name]: e.target.value });
+    /* ================= HANDLES ================= */
 
-    // Paso 1: crear usuario
+    const handleChange = (e) =>
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        });
+
+    const handleLoadChange = (e) =>
+        setLoadForm({
+            ...loadForm,
+            [e.target.name]: e.target.value
+        });
+
+    const handleEnrollChange = (e) =>
+        setEnrollForm({
+            ...enrollForm,
+            [e.target.name]: e.target.value
+        });
+
+    const handleCourseChange = (e) =>
+        setCourseForm({
+            ...courseForm,
+            [e.target.name]: e.target.value,
+        });
+
+    const handleSubjectChange = (e) =>
+        setSubjectForm({
+            ...subjectForm,
+            [e.target.name]: e.target.value,
+        });
+
+    /* ================= CREAR USUARIO ================= */
+
     const handleCreateUser = async () => {
+
         setError("");
-        if (!form.nombres || !form.apellidos || !form.email || !form.password || !form.documento) {
+
+        if (
+            !form.nombres ||
+            !form.apellidos ||
+            !form.email ||
+            !form.password ||
+            !form.documento
+        ) {
+
             setError("Por favor completa todos los campos obligatorios.");
             return;
+
         }
+
         setLoading(true);
+
         try {
+
             const res = await api.post("/users", form);
+
             setCreatedUser(res.data.user);
+
             setStep(2);
+
         } catch (err) {
-            setError(err.response?.data?.message || "Error al crear el usuario.");
+
+            setError(
+                err.response?.data?.message ||
+                "Error al crear el usuario."
+            );
+
         } finally {
+
             setLoading(false);
+
         }
+
     };
 
-    // Paso 2: asignar materia/curso (docente) o curso (estudiante)
-    const handleAssign = async () => {
+    /* ================= CREAR CURSO ================= */
+
+    const handleCreateCourse = async () => {
+
         setError("");
+
+        if (
+            !courseForm.nombre ||
+            !courseForm.anio ||
+            !courseForm.capacidad_maxima
+        ) {
+
+            setError("Completa todos los campos.");
+            return;
+
+        }
+
         setLoading(true);
+
         try {
+
+            await api.post("/courses", {
+                nombre: courseForm.nombre,
+                anio: parseInt(courseForm.anio),
+                capacidad_maxima: parseInt(courseForm.capacidad_maxima),
+            });
+
+            onSuccess();
+            onClose();
+
+        } catch (err) {
+
+            setError(
+                err.response?.data?.message ||
+                "Error al crear curso."
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    /* ================= CREAR MATERIA ================= */
+
+    const handleCreateSubject = async () => {
+
+        setError("");
+
+        if (!subjectForm.nombre) {
+
+            setError("Ingresa el nombre de la materia.");
+            return;
+
+        }
+
+        setLoading(true);
+
+        try {
+
+            await api.post("/subjects", {
+                nombre: subjectForm.nombre,
+            });
+
+            onSuccess();
+            onClose();
+
+        } catch (err) {
+
+            setError(
+                err.response?.data?.message ||
+                "Error al crear materia."
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    /* ================= ASIGNAR ================= */
+
+    const handleAssign = async () => {
+
+        setError("");
+
+        setLoading(true);
+
+        try {
+
             if (tipo === "DOCENTE") {
+
                 if (!loadForm.materia_id || !loadForm.curso_id) {
+
                     setError("Selecciona una materia y un curso.");
                     setLoading(false);
                     return;
+
                 }
+
                 await api.post("/academic-loads", {
                     docente_id: createdUser.id,
                     materia_id: parseInt(loadForm.materia_id),
                     curso_id: parseInt(loadForm.curso_id),
                 });
+
             } else {
+
                 if (!enrollForm.curso_id) {
+
                     setError("Selecciona un curso.");
                     setLoading(false);
                     return;
+
                 }
+
                 await api.post("/enrollments", {
                     estudiante_id: createdUser.id,
                     curso_id: parseInt(enrollForm.curso_id),
                 });
+
             }
+
             onSuccess();
             onClose();
+
         } catch (err) {
-            setError(err.response?.data?.message || "Error al realizar la asignación.");
+
+            setError(
+                err.response?.data?.message ||
+                "Error al realizar la asignación."
+            );
+
         } finally {
+
             setLoading(false);
+
         }
+
     };
 
     const handleSkip = () => {
+
         onSuccess();
         onClose();
+
     };
 
-    const label = tipo === "DOCENTE" ? "Docente" : "Estudiante";
+    const label =
+        tipo === "DOCENTE"
+            ? "Docente"
+            : tipo === "ESTUDIANTE"
+                ? "Estudiante"
+                : tipo === "MATERIA"
+                    ? "Materia"
+                    : "Curso";
 
     return (
+
         <div className="modal" onClick={onClose}>
-            <div className="modal-container" onClick={(e) => e.stopPropagation()}>
 
-                {/* Header */}
+            <div
+                className="modal-container"
+                onClick={(e) => e.stopPropagation()}
+            >
+
+                {/* ================= HEADER ================= */}
+
                 <div className="modal-header">
+
                     <div>
+
                         <h2>
-                            {step === 1
-                                ? `Añadir Nuevo ${label}`
-                                : tipo === "DOCENTE"
-                                    ? "Asignar Materia y Curso"
-                                    : "Asignar Curso"}
+
+                            {isCourse
+                                ? "Crear Nuevo Curso"
+                                : isSubject
+                                    ? "Crear Nueva Materia"
+                                    : step === 1
+                                        ? `Añadir Nuevo ${label}`
+                                        : tipo === "DOCENTE"
+                                            ? "Asignar Materia y Curso"
+                                            : "Asignar Curso"}
+
                         </h2>
+
                         <p>
-                            {step === 1
-                                ? "GESTIÓN DE PERSONAL ACADÉMICO"
-                                : `PASO 2 DE 2 — ${createdUser?.nombres} ${createdUser?.apellidos}`}
+
+                            {isCourse || isSubject
+                                ? "GESTIÓN ACADÉMICA"
+                                : step === 1
+                                    ? "GESTIÓN DE PERSONAL ACADÉMICO"
+                                    : `PASO 2 DE 2 — ${createdUser?.nombres} ${createdUser?.apellidos}`}
+
                         </p>
+
                     </div>
-                    <button className="close-btn" onClick={onClose}>✕</button>
+
+                    <button
+                        className="close-btn"
+                        onClick={onClose}
+                    >
+                        ✕
+                    </button>
+
                 </div>
 
-                {/* Indicador de pasos */}
-                <div className="modal-steps">
-                    <div className={`step ${step >= 1 ? "active" : ""}`}>1. Datos</div>
-                    <div className="step-divider" />
-                    <div className={`step ${step >= 2 ? "active" : ""}`}>2. Asignación</div>
-                </div>
+                {/* ================= STEPS ================= */}
+
+                {!isCourse && !isSubject && (
+
+                    <div className="modal-steps">
+
+                        <div className={`step ${step >= 1 ? "active" : ""}`}>
+                            1. Datos
+                        </div>
+
+                        <div className="step-divider" />
+
+                        <div className={`step ${step >= 2 ? "active" : ""}`}>
+                            2. Asignación
+                        </div>
+
+                    </div>
+
+                )}
+
+                {/* ================= BODY ================= */}
 
                 <div className="modal-body">
 
-                    {/* ── PASO 1: Datos del usuario ── */}
-                    {step === 1 && (
+                    {/* ================= CURSO ================= */}
+
+                    {isCourse && (
+
                         <div className="form-grid">
+
                             <div className="form-group">
-                                <label>Nombres *</label>
-                                <input name="nombres" type="text" placeholder="Ej: Juan"
-                                    value={form.nombres} onChange={handleChange} />
+
+                                <label>Nombre del Curso *</label>
+
+                                <input
+                                    type="text"
+                                    name="nombre"
+                                    placeholder="Ej: Sexto B"
+                                    value={courseForm.nombre}
+                                    onChange={handleCourseChange}
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
+                                <label>Año *</label>
+
+                                <input
+                                    type="number"
+                                    name="anio"
+                                    placeholder="2025"
+                                    value={courseForm.anio}
+                                    onChange={handleCourseChange}
+                                />
+
                             </div>
 
                             <div className="form-group">
@@ -170,16 +443,99 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                                     <input name="email" type="email" placeholder="juan@gradesbook.com"
                                         value={form.email} onChange={handleChange} />
                                 </div>
+
+                                <label>Capacidad Máxima *</label>
+
+                                <input
+                                    type="number"
+                                    name="capacidad_maxima"
+                                    placeholder="35"
+                                    value={courseForm.capacidad_maxima}
+                                    onChange={handleCourseChange}
+                                />
+
+                            </div>
+
+                        </div>
+
+                    )}
+
+                    {/* ================= MATERIA ================= */}
+
+                    {isSubject && (
+
+                        <div className="form-grid">
+
+                            <div className="form-group">
+
+                                <label>Nombre de la Materia *</label>
+
+                                <input
+                                    type="text"
+                                    name="nombre"
+                                    placeholder="Ej: Matemáticas"
+                                    value={subjectForm.nombre}
+                                    onChange={handleSubjectChange}
+                                />
+
+                            </div>
+
+                        </div>
+
+                    )}
+
+                    {/* ================= PASO 1 ================= */}
+
+                    {step === 1 && !isCourse && !isSubject && (
+
+                        <div className="form-grid">
+
+                            <div className="form-group">
+
+                                <label>Nombres *</label>
+
+                                <input
+                                    name="nombres"
+                                    type="text"
+                                    placeholder="Ej: Juan"
+                                    value={form.nombres}
+                                    onChange={handleChange}
+                                />
+
                             </div>
 
                             <div className="form-group">
+
                                 <label>Apellidos *</label>
-                                <input name="apellidos" type="text" placeholder="Ej: Pérez"
-                                    value={form.apellidos} onChange={handleChange} />
+
+                                <input
+                                    name="apellidos"
+                                    type="text"
+                                    placeholder="Ej: Pérez"
+                                    value={form.apellidos}
+                                    onChange={handleChange}
+                                />
+
                             </div>
 
                             <div className="form-group">
+
+                                <label>Email *</label>
+
+                                <input
+                                    name="email"
+                                    type="email"
+                                    placeholder="correo@gradesbook.com"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
                                 <label>Password *</label>
+
                                 <div className="input-icon">
                                     <span><HiOutlineLockClosed /></span>
                                     <input name="password" type={showPassword ? "text" : "password"}
@@ -189,10 +545,13 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                                         onClick={() => setShowPassword(!showPassword)}>
                                         {showPassword ? <IoMdEyeOff /> : <FaEye />}
                                     </button>
+
                                 </div>
+
                             </div>
 
                             <div className="form-group">
+
                                 <label>Documento *</label>
                                 <div className="input-icon">
                                     <span><FaIdCard /></span>
@@ -202,6 +561,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                             </div>
 
                             <div className="form-group">
+
                                 <label>Teléfono</label>
                                 <div className="input-icon">
                                     <span><MdOutlineCall />
@@ -210,87 +570,225 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                                         value={form.telefono} onChange={handleChange} />
                                 </div>
                             </div>
+
                         </div>
+
                     )}
 
-                    {/* ── PASO 2: Asignación docente ── */}
+                    {/* ================= PASO 2 ================= */}
+
                     {step === 2 && tipo === "DOCENTE" && (
+
                         <div className="form-grid">
+
                             <div className="form-group">
+
                                 <label>Materia *</label>
-                                <select name="materia_id" value={loadForm.materia_id} onChange={handleLoadChange}>
-                                    <option value="">Selecciona una materia</option>
-                                    {subjects.map((s) => (
-                                        <option key={s.id} value={s.id}>{s.nombre}</option>
+
+                                <select
+                                    name="materia_id"
+                                    value={loadForm.materia_id}
+                                    onChange={handleLoadChange}
+                                >
+                                    <option value="">
+                                        Selecciona una materia
+                                    </option>
+
+                                    {subjects.map((subject) => (
+                                        <option
+                                            key={subject.id}
+                                            value={subject.id}
+                                        >
+                                            {subject.nombre}
+                                        </option>
                                     ))}
+
                                 </select>
+
                             </div>
 
                             <div className="form-group">
+
                                 <label>Curso *</label>
-                                <select name="curso_id" value={loadForm.curso_id} onChange={handleLoadChange}>
-                                    <option value="">Selecciona un curso</option>
-                                    {courses.map((c) => (
-                                        <option key={c.id} value={c.id}>{c.nombre}</option>
+
+                                <select
+                                    name="curso_id"
+                                    value={loadForm.curso_id}
+                                    onChange={handleLoadChange}
+                                >
+                                    <option value="">
+                                        Selecciona un curso
+                                    </option>
+
+                                    {courses.map((course) => (
+                                        <option
+                                            key={course.id}
+                                            value={course.id}
+                                        >
+                                            {course.nombre}
+                                        </option>
                                     ))}
+
                                 </select>
+
                             </div>
+
                         </div>
+
                     )}
 
-                    {/* ── PASO 2: Asignación estudiante ── */}
                     {step === 2 && tipo === "ESTUDIANTE" && (
-                        <div className="form-grid single">
+
+                        <div className="form-grid">
+
                             <div className="form-group">
+
                                 <label>Curso *</label>
-                                <select name="curso_id" value={enrollForm.curso_id} onChange={handleEnrollChange}>
-                                    <option value="">Selecciona un curso</option>
-                                    {courses.map((c) => (
-                                        <option key={c.id} value={c.id}>{c.nombre}</option>
+
+                                <select
+                                    name="curso_id"
+                                    value={enrollForm.curso_id}
+                                    onChange={handleEnrollChange}
+                                >
+                                    <option value="">
+                                        Selecciona un curso
+                                    </option>
+
+                                    {courses.map((course) => (
+                                        <option
+                                            key={course.id}
+                                            value={course.id}
+                                        >
+                                            {course.nombre}
+                                        </option>
                                     ))}
+
                                 </select>
+
                             </div>
+
                         </div>
+
                     )}
 
-                    {/* Info box solo en paso 1 */}
-                    {step === 1 && (
-                        <div className="info-box">
-                            <strong>✔ Verificación de Seguridad</strong>
-                            <p>
-                                Al registrar al {label.toLowerCase()}, se generarán automáticamente sus
-                                credenciales de acceso y se le notificará vía correo electrónico institucional.
-                            </p>
-                        </div>
+                    {error && (
+                        <p className="modal-error">
+                            {error}
+                        </p>
                     )}
 
-                    {error && <p className="modal-error">{error}</p>}
                 </div>
 
-                {/* Footer */}
+                {/* ================= FOOTER ================= */}
+
                 <div className="modal-footer">
-                    {step === 1 && (
+
+                    {isCourse && (
+
                         <>
-                            <button className="cancel-btn" onClick={onClose}>Cancelar</button>
-                            <button className="submit-btn" onClick={handleCreateUser} disabled={loading}>
-                                {loading ? "Creando..." : `Crear ${label} →`}
+
+                            <button
+                                className="cancel-btn"
+                                onClick={onClose}
+                            >
+                                Cancelar
                             </button>
+
+                            <button
+                                className="submit-btn"
+                                onClick={handleCreateCourse}
+                                disabled={loading}
+                            >
+                                {loading
+                                    ? "Creando..."
+                                    : "Crear Curso →"}
+                            </button>
+
                         </>
+
                     )}
 
-                    {step === 2 && (
+                    {isSubject && (
+
                         <>
-                            <button className="cancel-btn" onClick={handleSkip}>
+
+                            <button
+                                className="cancel-btn"
+                                onClick={onClose}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                className="submit-btn"
+                                onClick={handleCreateSubject}
+                                disabled={loading}
+                            >
+                                {loading
+                                    ? "Creando..."
+                                    : "Crear Materia →"}
+                            </button>
+
+                        </>
+
+                    )}
+
+                    {step === 1 && !isCourse && !isSubject && (
+
+                        <>
+
+                            <button
+                                className="cancel-btn"
+                                onClick={onClose}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                className="submit-btn"
+                                onClick={handleCreateUser}
+                                disabled={loading}
+                            >
+                                {loading
+                                    ? "Creando..."
+                                    : `Crear ${label} →`}
+                            </button>
+
+                        </>
+
+                    )}
+
+                    {step === 2 && !isCourse && !isSubject && (
+
+                        <>
+
+                            <button
+                                className="cancel-btn"
+                                onClick={handleSkip}
+                            >
                                 Omitir asignación
                             </button>
-                            <button className="submit-btn" onClick={handleAssign} disabled={loading}>
-                                {loading ? "Asignando..." : "Guardar Asignación →"}
+
+                            <button
+                                className="submit-btn"
+                                onClick={handleAssign}
+                                disabled={loading}
+                            >
+                                {loading
+                                    ? "Asignando..."
+                                    : "Guardar Asignación →"}
                             </button>
+
                         </>
+
                     )}
+
                 </div>
 
             </div>
+
         </div>
+
     );
+
 }

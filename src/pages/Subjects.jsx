@@ -8,22 +8,39 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiUserAddLine } from "react-icons/ri";
 import { MdEdit, MdPendingActions } from "react-icons/md";
 
+import UserModal from "../components/UserModal";
+
 export default function Subject() {
 
     const [subjects, setSubjects] = useState([]);
 
-    useEffect(() => {
+    /* ================= MODAL ================= */
 
-        // ================= OBTENER MATERIAS =================
+    const [openModal, setOpenModal] = useState(false);
+
+    /* ================= FETCH ================= */
+
+    const fetchData = () => {
 
         api.get("/subjects")
             .then((res) => {
+
                 console.log("Materias:", res.data);
+
                 setSubjects(res.data);
+
             })
             .catch((err) => {
+
                 console.error("Error materias:", err);
+
             });
+
+    };
+
+    useEffect(() => {
+
+        fetchData();
 
     }, []);
 
@@ -61,7 +78,12 @@ export default function Subject() {
 
                 </div>
 
-                <button className="create-subject-btn">
+                {/* ================= BOTON ================= */}
+
+                <button
+                    className="create-subject-btn"
+                    onClick={() => setOpenModal(true)}
+                >
 
                     <RiUserAddLine className="create-icon" />
 
@@ -157,7 +179,7 @@ export default function Subject() {
 
             </div>
 
-            {/* ================= CARDS INFERIORES ================= */}
+            {/* ================= CARDS ================= */}
 
             <div className="subject-bottom-cards">
 
@@ -229,7 +251,18 @@ export default function Subject() {
 
             </div>
 
+            {openModal && (
+
+                <UserModal
+                    tipo="MATERIA"
+                    onClose={() => setOpenModal(false)}
+                    onSuccess={fetchData}
+                />
+
+            )}
+
         </div>
 
     );
+
 }
