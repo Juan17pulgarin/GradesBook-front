@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Login from "./pages/Login";
-import MainPage from "./pages/MainPage";
-import TeachersPage from "./pages/Teachers";
+import Login from "./pages/Login/Login";
+import MainPage from "./pages/MainPage/MainPage";
+import TeachersPage from "./pages/Teachers/Teachers";
 import MainLayout from "./components/layout/MainLayout";
-import Students from "./pages/Students";
-import Subjects from "./pages/Subjects";
-import Courses from "./pages/Courses";
-import StudentMain from "./pages/StudentMain";
-import TeachersMain from "./pages/TeachersMain";
+import Students from "./pages/Students/Students";
+import Subjects from "./pages/Subjects/Subjects";
+import Courses from "./pages/Courses/Courses";
+import StudentMain from "./pages/StudentMain/StudentMain";
+import TeachersMain from "./pages/TeachersMain/TeachersMain";
 
 function App() {
   return (

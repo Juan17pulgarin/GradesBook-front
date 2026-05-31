@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { FaEye } from "react-icons/fa";
 
 export default function PasswordInput({
@@ -18,6 +19,7 @@ export default function PasswordInput({
             </div>
 
             <div className="input-container">
+
                 <input
                     type={show ? "text" : "password"}
                     placeholder="*******"

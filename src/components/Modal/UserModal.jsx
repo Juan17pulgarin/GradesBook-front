@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../api/api";
+import api from "../../api/api";
 
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaIdCard } from "react-icons/fa";
@@ -9,7 +9,7 @@ import { FaEye } from "react-icons/fa";
 import { IoMdEyeOff } from "react-icons/io";
 
 
-import "../styles/UserModal.css";
+import "./UserModal.css";
 
 export default function UserModal({ tipo, onClose, onSuccess }) {
 

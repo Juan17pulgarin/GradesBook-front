@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import api from "../api/api";
+import api from "../../api/api";
 
-import StatCard from "../components/dashboard/StatCard";
-import TeacherProgress from "../components/dashboard/TeacherProgress";
-import GoalCard from "../components/dashboard/GoalCard";
+import StatCard from "../../components/Cards/StatCard";
+import TeacherProgress from "../../components/Cards/TeacherProgress";
+import GoalCard from "../../components/Cards/GoalCard";
 
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { BiCloudUpload } from "react-icons/bi";
 import { FiChevronLeft, FiChevronRight, FiCalendar } from "react-icons/fi";
+import { IoCaretBack } from "react-icons/io5";
+import { IoCaretForward } from "react-icons/io5";
 
-import "../styles/MainPage.css";
+import "./MainPage.css";
 
 export default function MainPage() {
     const [teachers, setTeachers] = useState([]);

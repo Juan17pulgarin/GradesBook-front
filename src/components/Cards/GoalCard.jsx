@@ -1,4 +1,4 @@
-import "../../styles/MainPage.css";
+import "../../pages/MainPage/MainPage.css";
 
 export default function GoalCard({ title, percent, subtitle }) {
     return (

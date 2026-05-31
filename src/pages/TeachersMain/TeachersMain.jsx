@@ -10,8 +10,8 @@ import {
   FaArrowRight,
   FaEllipsisV,
 } from "react-icons/fa";
-import api from "../api/api";
-import "../styles/TeachersMain.css";
+import api from "../../api/api";
+import "./TeachersMain.css";
 
 /* ================= MODAL ================= */
 function StudentModal({

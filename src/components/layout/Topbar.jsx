@@ -1,5 +1,5 @@
 import { FaSearch } from "react-icons/fa";
-import "../../styles/MainLayout.css";
+import "./MainLayout.css";
 
 export default function Topbar() {
     return (

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import api from "../api/api";
-import "../styles/UserModal.css";
+import api from "../../api/api";
+import "./UserModal.css";
 
 export default function EditUserModal({ user, onClose, onSuccess }) {
     const [form, setForm] = useState({

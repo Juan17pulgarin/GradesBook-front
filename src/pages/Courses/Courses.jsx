@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import api from "../api/api";
+import api from "../../api/api";
 
-import "../styles/Courses.css";
+import "./Courses.css";
 
-import StatCard from "../components/dashboard/StatCard";
-import UserModal from "../components/UserModal";
+import StatCard from "../../components/Cards/StatCard";
+import UserModal from "../../components/Modal/UserModal";
 
 import { CgMenuBoxed } from "react-icons/cg";
 import { FaRegCircleCheck } from "react-icons/fa6";

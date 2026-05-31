@@ -10,7 +10,7 @@ import { FaRegQuestionCircle } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
 
 
-import "../../styles/MainLayout.css";
+import "./MainLayout.css";
 
 export default function Sidebar() {
 

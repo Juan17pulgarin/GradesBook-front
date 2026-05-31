@@ -157,6 +157,7 @@
 .Main-layout .extra-links span {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   cursor: pointer;
   padding: 4px 0;

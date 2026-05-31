@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/api";
+import api from "../../api/api";
+
+import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
+import BoletinPDF from "./BoletinPDF";
+
 import { FaSearch } from "react-icons/fa";
-import "../styles/StudentMain.css";
+import { HiArrowDownTray } from "react-icons/hi2";
+import { AiOutlinePrinter } from "react-icons/ai";
+import { IoCaretBack, IoCaretForward } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
+
+import "./StudentMain.css";
 
 export default function StudentMain() {
     const navigate = useNavigate();
@@ -15,6 +24,7 @@ export default function StudentMain() {
     const [activities, setActivities] = useState([]);
     const [mySubjects, setMySubjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showBoletin, setShowBoletin] = useState(false);
 
     useEffect(() => {
         Promise.all([
@@ -30,18 +40,12 @@ export default function StudentMain() {
                 setMySubjects(subjectsRes.data);
                 if (periodsRes.data.length > 0) {
                     const hoy = new Date();
-
-                    // Busca el periodo activo (hoy está entre inicio y fin)
                     const periodoActivo = periodsRes.data.find((p) => {
                         const inicio = new Date(p.fecha_inicio);
                         const fin = new Date(p.fecha_fin);
                         return hoy >= inicio && hoy <= fin;
                     });
-
-                    // Si no hay uno activo, toma el primero
-                    setSelectedPeriodId(
-                        periodoActivo?.id || periodsRes.data[0].id
-                    );
+                    setSelectedPeriodId(periodoActivo?.id || periodsRes.data[0].id);
                 }
                 setLoading(false);
             })
@@ -87,11 +91,11 @@ export default function StudentMain() {
 
     const materiasCards = Object.entries(materiaMap).map(([nombre, data], i) => {
         const promedio = (data.notas.reduce((a, b) => a + b, 0) / data.notas.length).toFixed(1);
-        const progreso = Math.min(Math.round((parseFloat(promedio) / 10) * 100), 100);
+        const progreso = Math.min(Math.round((parseFloat(promedio) / 5) * 100), 100);
         const color = colores[i % colores.length];
-        const badge = parseFloat(promedio) >= 9.5 ? "PERFECTO"
-            : parseFloat(promedio) >= 8 ? "MUY BIEN"
-                : parseFloat(promedio) >= 6 ? "EXCELENTE"
+        const badge = parseFloat(promedio) >= 4.7 ? "PERFECTO"
+            : parseFloat(promedio) >= 4.0 ? "MUY BIEN"
+                : parseFloat(promedio) >= 3.0 ? "EXCELENTE"
                     : "EN PROCESO";
         return { nombre, promedio, ultimoTema: data.ultimoTema, badge, ...color, progreso };
     });
@@ -129,7 +133,9 @@ export default function StudentMain() {
                     <div className="sm-hero-left">
                         <h1>¡Hola, {primerNombre}! 🚀</h1>
                         <p>Estás teniendo un trimestre increíble. ¡Sigue brillando como una estrella!</p>
-                        <button className="sm-hero-btn">Ver Boletín Completo</button>
+                        <button className="sm-hero-btn" onClick={() => setShowBoletin(true)}>
+                            Ver Boletín Completo
+                        </button>
                     </div>
                     <div className="sm-hero-right">
                         <div className="sm-promedio-circle">
@@ -137,7 +143,7 @@ export default function StudentMain() {
                                 <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
                                 <circle cx="50" cy="50" r="42" fill="none" stroke="#84cc16" strokeWidth="8"
                                     strokeDasharray="263.9"
-                                    strokeDashoffset={grades.length > 0 ? 263.9 - (parseFloat(promedioGeneral) / 10) * 263.9 : 200}
+                                    strokeDashoffset={grades.length > 0 ? 263.9 - (parseFloat(promedioGeneral) / 5) * 263.9 : 200}
                                     strokeLinecap="round" transform="rotate(-90 50 50)" />
                             </svg>
                             <div className="sm-circle-text">
@@ -172,18 +178,18 @@ export default function StudentMain() {
                                 <button
                                     onClick={() => setSelectedPeriodId(periods[periodoIndex - 1].id)}
                                     disabled={periodoIndex <= 0}
-                                >◀</button>
+                                ><IoCaretBack /></button>
                                 <span>{periodoIndex + 1} / {periods.length}</span>
                                 <button
                                     onClick={() => setSelectedPeriodId(periods[periodoIndex + 1].id)}
                                     disabled={periodoIndex >= periods.length - 1}
-                                >▶</button>
+                                ><IoCaretForward /></button>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* CALIFICACIONES — scroll horizontal */}
+                {/* CALIFICACIONES */}
                 <div className="sm-section">
                     <div className="sm-section-header">
                         <div>
@@ -198,7 +204,6 @@ export default function StudentMain() {
                         <p className="sm-msg">No tienes calificaciones registradas aún.</p>
                     )}
 
-                    {/* Scroll horizontal para las cards */}
                     <div className="sm-materias-scroll">
                         <div className="sm-materias">
                             {materiasCards.map((m, i) => (
@@ -224,7 +229,7 @@ export default function StudentMain() {
                     </div>
                 </div>
 
-                {/* BOLETÍN — scroll vertical */}
+                {/* BOLETÍN */}
                 <div className="sm-bottom">
                     <div className="sm-boletin">
                         <div className="sm-boletin-header">
@@ -233,12 +238,29 @@ export default function StudentMain() {
                                 <p>{periodoActual?.nombre || "Periodo actual"}</p>
                             </div>
                             <div className="sm-boletin-actions">
-                                <button title="Descargar">⬇</button>
-                                <button title="Imprimir">🖨</button>
+                                <PDFDownloadLink
+                                    document={
+                                        <BoletinPDF
+                                            estudiante={user}
+                                            periodo={periodoActual}
+                                            boletin={boletin}
+                                            promedioGeneral={promedioGeneral}
+                                        />
+                                    }
+                                    fileName={`boletin-${user.nombreCompleto?.replace(/\s+/g, "-") || "estudiante"}.pdf`}
+                                >
+                                    {({ loading: pdfLoading }) => (
+                                        <button title="Descargar" disabled={pdfLoading}>
+                                            <HiArrowDownTray />
+                                        </button>
+                                    )}
+                                </PDFDownloadLink>
+                                <button title="Imprimir" onClick={() => window.print()}>
+                                    <AiOutlinePrinter />
+                                </button>
                             </div>
                         </div>
 
-                        {/* Tabla con scroll vertical */}
                         <div className="sm-boletin-scroll">
                             <div className="sm-boletin-table">
                                 <div className="sm-boletin-thead">
@@ -253,9 +275,7 @@ export default function StudentMain() {
                                         <span className="sm-boletin-comentario">{b.comentario}</span>
                                     </div>
                                 )) : (
-                                    <div className="sm-boletin-empty">
-                                        Sin notas registradas aún.
-                                    </div>
+                                    <div className="sm-boletin-empty">Sin notas registradas aún.</div>
                                 )}
                             </div>
                         </div>
@@ -266,14 +286,35 @@ export default function StudentMain() {
                         <p className="sm-consejo-text">
                             "{primerNombre}, llevas {grades.length} nota{grades.length !== 1 ? "s" : ""} registrada{grades.length !== 1 ? "s" : ""}
                             {" "}en {materiasCards.length} materia{materiasCards.length !== 1 ? "s" : ""}.
-                            {parseFloat(promedioGeneral) >= 8
+                            {parseFloat(promedioGeneral) >= 4.0
                                 ? " ¡Sigue así, vas muy bien!"
                                 : " Sigue esforzándote, puedes mejorar."}"
                         </p>
                     </div>
                 </div>
-
             </div>
+
+            {/* MODAL VISOR PDF */}
+            {showBoletin && (
+                <div className="sm-pdf-overlay" onClick={() => setShowBoletin(false)}>
+                    <div className="sm-pdf-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="sm-pdf-modal-header">
+                            <span>Boletín de Calificaciones</span>
+                            <button className="sm-pdf-close" onClick={() => setShowBoletin(false)}>
+                                <IoClose />
+                            </button>
+                        </div>
+                        <PDFViewer width="100%" height="100%" showToolbar={false}>
+                            <BoletinPDF
+                                estudiante={user}
+                                periodo={periodoActual}
+                                boletin={boletin}
+                                promedioGeneral={promedioGeneral}
+                            />
+                        </PDFViewer>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

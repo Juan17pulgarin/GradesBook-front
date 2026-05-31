@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import api from "../api/api";
+import api from "../../api/api";
 
-import "../styles/Subject.css";
+import "./Subject.css";
 
 import { PiBookOpenTextBold } from "react-icons/pi";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiUserAddLine } from "react-icons/ri";
 import { MdEdit, MdPendingActions } from "react-icons/md";
 
-import UserModal from "../components/UserModal";
+import UserModal from "../../components/Modal/UserModal";
 
 export default function Subject() {
 

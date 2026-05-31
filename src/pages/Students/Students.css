@@ -183,13 +183,15 @@
 }
 
 /* Celda estudiante */
-.students .student-info {
+.students .student-info,
+.students .name {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.students .student-info img {
+.students .student-info img,
+.students .name img {
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -197,17 +199,21 @@
     flex-shrink: 0;
 }
 
-.students .student-info strong {
+.students .student-info strong,
+.students .name p {
     font-size: 0.875rem;
     font-weight: 600;
     color: #0f172a;
     display: block;
+    margin: 0;
 }
 
-.students .student-info p {
+.students .student-info p,
+.students .name span {
     font-size: 0.72rem;
     color: #94a3b8;
     margin: 2px 0 0 0;
+    display: block;
 }
 
 /* Texto celdas */

@@ -572,3 +572,63 @@
     .sm-search input { width: 120px; }
     .sm-period-selector { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── Modal visor PDF ─────────────────────────────────── */
+.sm-pdf-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+}
+
+.sm-pdf-modal {
+    background: #1e293b;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 860px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+}
+
+.sm-pdf-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: #0f172a;
+    color: #f1f5f9;
+    font-size: 0.9rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.sm-pdf-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.sm-pdf-close:hover {
+    background: #334155;
+    color: #f1f5f9;
+}
+
+.sm-pdf-modal iframe,
+.sm-pdf-modal > div:last-child {
+    flex: 1;
+    border: none;
+}
