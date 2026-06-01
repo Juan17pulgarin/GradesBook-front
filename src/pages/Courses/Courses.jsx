@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../api/api";
+import { getCourses } from "../../services/courseService";
 
 import "./Courses.css";
 
@@ -26,7 +26,7 @@ export default function Courses() {
 
     const fetchData = () => {
 
-        api.get("/courses")
+        getCourses()
             .then((res) => {
                 console.log("Cursos:", res.data);
                 setCourses(res.data);

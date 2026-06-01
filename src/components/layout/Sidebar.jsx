@@ -21,7 +21,7 @@ export default function Sidebar() {
 
             <div>
 
-                {/* 🔷 HEADER */}
+                {/* HEADER */}
                 <div className="sidebar-header">
                     <div className="logo-circle">
                         <RiGraduationCapLine className="logo" />

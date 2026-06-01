@@ -1,16 +1,5 @@
 import { FiTrash2, FiEdit2 } from "react-icons/fi";
 
-/**
- * Fila genérica para tablas de usuarios (docentes y estudiantes).
- *
- * Props:
- *  - user: objeto con { id, nombres, apellidos, email }
- *  - badge: texto del badge central (materia, documento, curso, etc.)
- *  - extraCol: columna adicional opcional (ej: curso para estudiantes)
- *  - onDelete: función que recibe el user al hacer clic en eliminar
- *  - onEdit: función opcional que recibe el user al hacer clic en editar
- *  - idPrefix: prefijo para el ID mostrado (ej: "T-" para docentes)
- */
 export default function UserRow({ user, badge, extraCol, onDelete, onEdit, idPrefix = "" }) {
     return (
         <div className="table-row">

@@ -10,7 +10,11 @@ import {
   FaArrowRight,
   FaEllipsisV,
 } from "react-icons/fa";
-import api from "../../api/api";
+
+import { getSubjects } from "../../services/subjectService";
+import { getUsers } from "../../services/userService";
+import { createGrade, getGradesBySubject } from "../../services/gradeService";
+
 import "./TeachersMain.css";
 
 /* ================= MODAL ================= */
@@ -125,7 +129,7 @@ function TeachersMain() {
   const loadSubjects = async () => {
     try {
       setLoading(true);
-      const subjectsRes = await api.get("/subjects");
+      const subjectsRes = await getSubjects();
       const user = JSON.parse(localStorage.getItem("user"));
 
       let teacherSubjects = [];
@@ -166,8 +170,8 @@ function TeachersMain() {
       // Option B: filter from /users + /grades
       // Using Option B for compatibility with your existing API shape:
       const [usersRes, gradesRes] = await Promise.all([
-        api.get("/users"),
-        api.get(`/grades?subject_id=${subjectId}`).catch(() => ({ data: [] })),
+        getUsers(),
+        getGradesBySubject(subjectId).catch(() => ({ data: [] })),
       ]);
 
       const onlyStudents = usersRes.data.filter(
@@ -216,7 +220,7 @@ function TeachersMain() {
   const handleSaveGrade = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/grades", {
+      await createGrade( {
         actividad_id: parseInt(activityId),
         estudiante_id: selectedStudent.id,
         nota: parseFloat(nota),

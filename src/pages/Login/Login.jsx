@@ -4,9 +4,9 @@ import "./Login.css";
 
 import Logo from "../../assets/images/logo.png";
 
-import Input from "../../components/Input";
-import PasswordInput from "../../components/PasswordInput";
-import Button from "../../components/Button";
+import Input from "../../components/Input/Input";
+import PasswordInput from "../../components/Input/PasswordInput";
+import Button from "../../components/Button/Button";
 
 import { login } from "../../services/authService";
 
@@ -45,16 +45,17 @@ export default function Login() {
             // Guardar token y datos del usuario
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
-            
+            localStorage.setItem("institucion_id", res.data.institucion_id);
+
             // Redirigir según el tipo de usuario
-            
+
             if (res.data.user.tipo === "ESTUDIANTE") {
                 navigate("/StudentMain");
             } else if (res.data.user.tipo === "DOCENTE") {
                 navigate("/TeachersMain");
             } else {
                 navigate("/MainPage");
-        }
+            }
 
         } catch (err) {
             console.error(err);

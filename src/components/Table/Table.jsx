@@ -1,25 +1,9 @@
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import ConfirmModal from "../Modal/ConfirmModal";
-import api from "../../api/api";
 
 const PAGE_SIZE = 5;
 
-/**
- * Tabla genérica reutilizable con paginación y confirmación de eliminación.
- *
- * Props:
- *  - items: array de objetos a mostrar
- *  - columns: array de strings con los encabezados (ej: ["Nombre", "Email", "Acciones"])
- *  - renderRow: función (item) => JSX — renderiza cada fila
- *  - entityLabel: nombre de la entidad en singular (ej: "docente", "estudiante")
- *  - onDelete: función async (item) => void — llamada al confirmar eliminación
- *  - deleteTarget / setDeleteTarget: estado externo opcional del item a eliminar
- *    (si no se pasan, la tabla maneja su propio estado interno)
- *  - emptyMessage: mensaje cuando no hay items (opcional)
- *  - loading: boolean (opcional)
- *  - error: boolean (opcional)
- */
 export default function Table({
     items = [],
     columns = [],

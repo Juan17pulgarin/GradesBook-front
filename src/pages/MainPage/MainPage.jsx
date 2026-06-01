@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import api from "../../api/api";
+import { getUsers } from "../../services/userService";
+import { getSubjects } from "../../services/subjectService";
+import { getAcademicLoads } from "../../services/academicLoadService";
+import { getPeriods } from "../../services/periodService";
 
 import StatCard from "../../components/Cards/StatCard";
 import TeacherProgress from "../../components/Cards/TeacherProgress";
@@ -24,10 +27,10 @@ export default function MainPage() {
 
     useEffect(() => {
         Promise.all([
-            api.get("/users?tipo=DOCENTE"),
-            api.get("/subjects"),
-            api.get("/academic-loads"),
-            api.get("/periods"),
+            getUsers("DOCENTE"),
+            getSubjects(),
+            getAcademicLoads(),
+            getPeriods(),
         ])
             .then(([teachersRes, subjectsRes, loadsRes, periodsRes]) => {
                 setTeachers(teachersRes.data);
@@ -132,16 +135,17 @@ export default function MainPage() {
                 <StatCard
                     title="Promedio General"
                     value="—"
-                    badge="Próximamente"
+                    subtitle="Disponible próximamente"
                     color="default"
-                    maintenance={true}   
+                    badge="⏳ Pendiente"
                     icon={FaArrowTrendUp}
-                    valueColor="#0284c7"
-                    titleColor="#64748b"
-                    iconColor="#0284c7"
+                    valueColor="#cbd5e1"
+                    titleColor="#94a3b8"
+                    subColor="#94a3b8"
+                    iconColor="#cbd5e1"
                     iconStyle={{
                         fontSize: "1.3rem",
-                        background: "#e0f2fe",
+                        background: "#f1f5f9",
                         padding: "10px",
                         borderRadius: "50%",
                         width: "44px",

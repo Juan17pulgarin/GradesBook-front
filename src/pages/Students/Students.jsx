@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import api from "../../api/api";
+
+import { getUsers, deactivateUser } from "../../services/userService";
+import { getEnrollments } from "../../services/enrollmentService";
 
 import StatCard from "../../components/Cards/StatCard";
 import Table from "../../components/Table/Table";
 import UserRow from "../../components/Table/UserRow";
 import UserModal from "../../components/Modal/UserModal";
+import EditUserModal from "../../components/Modal/EditUserModal";
 
 import { FaUsers, FaRegCircleCheck } from "react-icons/fa6";
 import { HiOutlineEllipsisHorizontalCircle } from "react-icons/hi2";
@@ -20,12 +23,13 @@ export default function Students() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [openModal, setOpenModal] = useState(false);
+    const [editStudent, setEditStudent] = useState(null);
 
     const fetchStudents = () => {
         setLoading(true);
         Promise.all([
-            api.get("/users?tipo=ESTUDIANTE"),
-            api.get("/enrollments"),
+            getUsers("ESTUDIANTE"),
+            getEnrollments(),
         ])
             .then(([studentsRes, enrollmentsRes]) => {
                 setStudents(studentsRes.data);
@@ -47,13 +51,13 @@ export default function Students() {
     };
 
     const handleDelete = async (student) => {
-        await api.patch(`/users/${student.id}`);
+        await deactivateUser(student.id);
         fetchStudents();
     };
 
     const total = students.length;
-    const activos = students.filter((s) => s.activo).length;
-    const inactivos = students.filter((s) => !s.activo).length;
+    const activos = students.filter((s) => s.activo !== false).length;
+    const inactivos = students.filter((s) => s.activo === false).length;
 
     return (
         <div className="students">
@@ -99,12 +103,21 @@ export default function Students() {
                         badge={student.documento}
                         extraCol={getCurso(student.id)}
                         onDelete={setDeleteTarget}
+                        onEdit={setEditStudent}  // ← agregar
                     />
                 )}
             />
 
             {openModal && (
                 <UserModal tipo="ESTUDIANTE" onClose={() => setOpenModal(false)} onSuccess={fetchStudents} />
+            )}
+
+            {editStudent && (                                     // ← agregar
+                <EditUserModal
+                    user={editStudent}
+                    onClose={() => setEditStudent(null)}
+                    onSuccess={() => { setEditStudent(null); fetchStudents(); }}
+                />
             )}
         </div>
     );

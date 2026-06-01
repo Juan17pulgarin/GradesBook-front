@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/api";
+import { getPeriods } from "../../services/periodService";
+import { getMyGrades, getMyAverage, getMyAverageByPeriod } from "../../services/gradeService";
+import { getMyActivities } from "../../services/activityService";
+import { getMySubjects } from "../../services/subjectService";
 
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import BoletinPDF from "./BoletinPDF";
@@ -25,13 +28,15 @@ export default function StudentMain() {
     const [mySubjects, setMySubjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showBoletin, setShowBoletin] = useState(false);
+    const [promedioGeneral, setPromedioGeneral] = useState("—");
+    const [promedioPeriodo, setPromedioPeriodo] = useState("—");
 
     useEffect(() => {
         Promise.all([
-            api.get("/periods"),
-            api.get("/grades/my-grades"),
-            api.get("/activities/my-activities"),
-            api.get("/subjects/my-subjects"),
+            getPeriods(),
+            getMyGrades(),
+            getMyActivities(),
+            getMySubjects(),
         ])
             .then(([periodsRes, gradesRes, activitiesRes, subjectsRes]) => {
                 setPeriods(periodsRes.data);
@@ -53,7 +58,29 @@ export default function StudentMain() {
                 console.error(err);
                 setLoading(false);
             });
+
+        getMyAverage()
+            .then((res) => {
+                setPromedioGeneral(
+                    res.data?.promedio_general != null
+                        ? parseFloat(res.data.promedio_general).toFixed(1)
+                        : "—"
+                );
+            })
+            .catch(() => setPromedioGeneral("—"));
     }, []);
+    useEffect(() => {
+        if (!selectedPeriodId) return;
+        getMyAverageByPeriod(selectedPeriodId)
+            .then((res) => {
+                setPromedioPeriodo(
+                    res.data?.promedio_general != null
+                        ? parseFloat(res.data.promedio_general).toFixed(1)
+                        : "—"
+                );
+            })
+            .catch(() => setPromedioPeriodo("—"));
+    }, [selectedPeriodId]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -67,10 +94,6 @@ export default function StudentMain() {
     const gradesFiltradas = selectedPeriodId
         ? grades.filter((g) => g.actividades?.periodo_id === selectedPeriodId)
         : grades;
-
-    const promedioGeneral = grades.length > 0
-        ? (grades.reduce((acc, g) => acc + parseFloat(g.nota), 0) / grades.length).toFixed(1)
-        : "—";
 
     const materiaMap = {};
     gradesFiltradas.forEach((g) => {
@@ -278,6 +301,12 @@ export default function StudentMain() {
                                     <div className="sm-boletin-empty">Sin notas registradas aún.</div>
                                 )}
                             </div>
+                        </div>
+                        <div className="sm-promedio-periodo">
+                            <span className="sm-promedio-periodo-label">
+                                Promedio del {periodoActual?.nombre || "periodo"}
+                            </span>
+                            <span className="sm-promedio-periodo-valor">{promedioPeriodo}</span>
                         </div>
                     </div>
 

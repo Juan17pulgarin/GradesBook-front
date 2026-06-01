@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import api from "../../api/api";
+import { getUsers, deactivateUser } from "../../services/userService";
+import { getAcademicLoads } from "../../services/academicLoadService";
+import { getSubjects } from "../../services/subjectService";
+
 
 import StatCard from "../../components/Cards/StatCard";
 import Table from "../../components/Table/Table";
@@ -23,9 +26,9 @@ export default function TeachersPage() {
 
     const fetchData = () => {
         Promise.all([
-            api.get("/users?tipo=DOCENTE"),
-            api.get("/academic-loads"),
-            api.get("/subjects"),
+            getUsers("DOCENTE"),
+            getAcademicLoads(),
+            getSubjects(),
         ])
             .then(([teachersRes, loadsRes, subjectsRes]) => {
                 const loads = loadsRes.data;
@@ -50,12 +53,12 @@ export default function TeachersPage() {
     useEffect(() => { fetchData(); }, []);
 
     const handleDelete = async (teacher) => {
-        await api.patch(`/users/${teacher.id}`);
+        await deactivateUser(teacher.id);
         fetchData();
     };
 
     const total = teachers.length;
-    const activos = teachers.filter((t) => t.activo).length;
+    const activos = teachers.filter((t) => t.activo !== false).length;
 
     return (
         <div className="Teachers-page">

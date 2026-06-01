@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import api from "../../api/api";
+
+import { createUser } from "../../services/userService";
+import { getSubjects, createSubject } from "../../services/subjectService";
+import { getCourses, createCourse } from "../../services/courseService";
+import { createAcademicLoad } from "../../services/academicLoadService";
+import { createEnrollment } from "../../services/enrollmentService";
 
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaIdCard } from "react-icons/fa";
@@ -16,12 +21,12 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
     const [step, setStep] = useState(1);
     const [createdUser, setCreatedUser] = useState(null);
 
-    /* ================= TIPOS ================= */
+    /* TIPOS */
 
     const isCourse = tipo === "CURSO";
     const isSubject = tipo === "MATERIA";
 
-    /* ================= CURSO ================= */
+    /* CURSO */
 
     const [courseForm, setCourseForm] = useState({
         nombre: "",
@@ -29,13 +34,13 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
         capacidad_maxima: "",
     });
 
-    /* ================= MATERIA ================= */
+    /* MATERIA */
 
     const [subjectForm, setSubjectForm] = useState({
         nombre: "",
     });
 
-    /* ================= USUARIO ================= */
+    /* USUARIO */
 
     const [form, setForm] = useState({
         nombres: "",
@@ -47,37 +52,37 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
         tipo: tipo,
     });
 
-    /* ================= DOCENTE ================= */
+    /* DOCENTE */
 
     const [loadForm, setLoadForm] = useState({
         materia_id: "",
         curso_id: "",
     });
 
-    /* ================= ESTUDIANTE ================= */
+    /* ESTUDIANTE */
 
     const [enrollForm, setEnrollForm] = useState({
         curso_id: "",
     });
 
-    /* ================= LISTAS ================= */
+    /* LISTAS */
 
     const [subjects, setSubjects] = useState([]);
     const [courses, setCourses] = useState([]);
 
-    /* ================= GENERALES ================= */
+    /* GENERALES */
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    /* ================= CARGAR DATOS ================= */
+    /* CARGAR DATOS */
 
     useEffect(() => {
 
         Promise.all([
-            api.get("/subjects"),
-            api.get("/courses"),
+            getSubjects(),
+            getCourses(),
         ])
             .then(([subjectsRes, coursesRes]) => {
 
@@ -91,7 +96,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
     }, []);
 
-    /* ================= HANDLES ================= */
+    /* HANDLES */
 
     const handleChange = (e) =>
         setForm({
@@ -123,7 +128,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
             [e.target.name]: e.target.value,
         });
 
-    /* ================= CREAR USUARIO ================= */
+    /* CREAR USUARIO */
 
     const handleCreateUser = async () => {
 
@@ -146,7 +151,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
         try {
 
-            const res = await api.post("/users", form);
+            const res = await createUser(form)
 
             setCreatedUser(res.data.user);
 
@@ -167,7 +172,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
     };
 
-    /* ================= CREAR CURSO ================= */
+    /* CREAR CURSO */
 
     const handleCreateCourse = async () => {
 
@@ -188,7 +193,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
         try {
 
-            await api.post("/courses", {
+            await createCourse({
                 nombre: courseForm.nombre,
                 anio: parseInt(courseForm.anio),
                 capacidad_maxima: parseInt(courseForm.capacidad_maxima),
@@ -212,7 +217,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
     };
 
-    /* ================= CREAR MATERIA ================= */
+    /* CREAR MATERIA */
 
     const handleCreateSubject = async () => {
 
@@ -229,7 +234,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
         try {
 
-            await api.post("/subjects", {
+            await createSubject({
                 nombre: subjectForm.nombre,
             });
 
@@ -251,7 +256,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
     };
 
-    /* ================= ASIGNAR ================= */
+    /* ASIGNAR */
 
     const handleAssign = async () => {
 
@@ -271,7 +276,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                 }
 
-                await api.post("/academic-loads", {
+                await createAcademicLoad({
                     docente_id: createdUser.id,
                     materia_id: parseInt(loadForm.materia_id),
                     curso_id: parseInt(loadForm.curso_id),
@@ -287,7 +292,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                 }
 
-                await api.post("/enrollments", {
+                await createEnrollment( {
                     estudiante_id: createdUser.id,
                     curso_id: parseInt(enrollForm.curso_id),
                 });
@@ -337,7 +342,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                 onClick={(e) => e.stopPropagation()}
             >
 
-                {/* ================= HEADER ================= */}
+                {/* HEADER */}
 
                 <div className="modal-header">
 
@@ -378,7 +383,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                 </div>
 
-                {/* ================= STEPS ================= */}
+                {/* STEPS */}
 
                 {!isCourse && !isSubject && (
 
@@ -398,11 +403,11 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                 )}
 
-                {/* ================= BODY ================= */}
+                {/* BODY */}
 
                 <div className="modal-body">
 
-                    {/* ================= CURSO ================= */}
+                    {/* CURSO */}
 
                     {isCourse && (
 
@@ -460,7 +465,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                     )}
 
-                    {/* ================= MATERIA ================= */}
+                    {/* MATERIA */}
 
                     {isSubject && (
 
@@ -484,7 +489,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                     )}
 
-                    {/* ================= PASO 1 ================= */}
+                    {/* PASO 1 */}
 
                     {step === 1 && !isCourse && !isSubject && (
 
@@ -575,7 +580,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                     )}
 
-                    {/* ================= PASO 2 ================= */}
+                    {/* PASO 2 */}
 
                     {step === 2 && tipo === "DOCENTE" && (
 
@@ -679,7 +684,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                 </div>
 
-                {/* ================= FOOTER ================= */}
+                {/* FOOTER */}
 
                 <div className="modal-footer">
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../api/api";
+import { getSubjects } from "../../services/subjectService";
 
 import "./Subject.css";
 
@@ -22,7 +22,7 @@ export default function Subject() {
 
     const fetchData = () => {
 
-        api.get("/subjects")
+        getSubjects()
             .then((res) => {
 
                 console.log("Materias:", res.data);
