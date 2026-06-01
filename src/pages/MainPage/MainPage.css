@@ -1,0 +1,440 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.Main-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 2rem 2.5rem;
+  background: #f1f5f9;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.Main-page *,
+.Main-page *::before,
+.Main-page *::after {
+  box-sizing: border-box;
+}
+
+/* ── Título y subtítulo ── */
+.Main-page-h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+}
+
+.Main-page-p {
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+/* ── Cards ── */
+.Main-page .cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+/* ── Stat Card ── */
+.Main-page .stat-card {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+  height: 160px;
+  padding: 20px;
+  border-radius: 20px;
+  position: relative;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Ribbon diagonal */
+.Main-page .stat-maintenance-ribbon {
+  position: absolute;
+  top: 18px;
+  right: -28px;
+  background: #f59e0b;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 4px 36px;
+  transform: rotate(35deg);
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
+  z-index: 1;
+}
+
+/* ícono arriba izq, badge arriba der */
+.Main-page .stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.Main-page .stat-icon {
+  flex-shrink: 0;
+}
+
+/* badge arriba derecha */
+.Main-page .stat-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* título y valor abajo */
+.Main-page .stat-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.Main-page .stat-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0;
+}
+
+.Main-page .stat-value {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+}
+
+.Main-page .stat-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── Variantes de color ── */
+.Main-page .stat-card.default {
+  background: #ffffff;
+}
+
+.Main-page .stat-card.green {
+  background: #b7f387;
+  box-shadow: 0 10px 25px rgba(134, 239, 71, 0.25);
+}
+
+.Main-page .stat-card.green .stat-badge {
+  background: #d9f99d;
+  color: #166534;
+}
+
+.Main-page .stat-card.yellow {
+  background: #fef08a;
+  box-shadow: 0 10px 25px rgba(250, 204, 21, 0.25);
+}
+
+.Main-page .stat-card.yellow .stat-badge {
+  background: #fef9c3;
+  color: #92400e;
+}
+
+/* ── Sección docentes ── */
+.Main-page .section {
+  margin-top: 30px;
+}
+
+.Main-page .section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.Main-page .section p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* ── Teacher card ── */
+.Main-page .teacher-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 15px 20px;
+  border-radius: 15px;
+  margin-top: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  gap: 1rem;
+}
+
+.Main-page .teacher-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 160px;
+}
+
+.Main-page .teacher-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1d9bd1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.Main-page .teacher-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.Main-page .teacher-subject {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* ── Progress bar ── */
+.Main-page .teacher-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.Main-page .progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.Main-page .progress-fill {
+  height: 100%;
+  background: #1d9bd1;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.Main-page .progress-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Goal Card ── */
+.Main-page .goal-card {
+  margin-top: 30px;
+  padding: 25px 30px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1d9bd1, #3b82f6);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.Main-page .goal-info h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+}
+
+.Main-page .goal-info p {
+  font-size: 14px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.Main-page .goal-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.Main-page .circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 8px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Responsivo ── */
+@media (max-width: 640px) {
+  .Main-page {
+    padding: 20px 16px;
+  }
+
+  .Main-page .cards {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .Main-page .stat-card {
+    max-width: 100%;
+    height: auto;
+    min-height: 140px;
+  }
+
+  .Main-page .teacher-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .Main-page .teacher-progress {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .Main-page .goal-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ── Selector de periodo ── */
+.Main-page .period-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.Main-page .period-selector-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.Main-page .period-icon {
+  font-size: 1.2rem;
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.Main-page .period-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.Main-page .period-name {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+.Main-page .period-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.Main-page .period-dates {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.Main-page .period-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Main-page .period-nav span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  min-width: 36px;
+  text-align: center;
+}
+
+.Main-page .period-nav button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #475569;
+  transition: all 0.15s;
+}
+
+.Main-page .period-nav button:hover:not(:disabled) {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.Main-page .period-nav button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Ribbon de mantenimiento ── */
+.Main-page .stat-maintenance-ribbon {
+    position: absolute;
+    top: 22px;
+    right: -30px;
+    background: repeating-linear-gradient(
+        45deg,
+        #f59e0b,
+        #f59e0b 10px,
+        #fbbf24 10px,
+        #fbbf24 20px
+    );
+    color: #ffffff;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 40px;
+    transform: rotate(35deg);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+    z-index: 2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}

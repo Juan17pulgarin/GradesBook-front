@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.students {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 2rem 2.5rem;
+    background: #f1f5f9;
+    min-height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.students *, .students *::before, .students *::after {
+    box-sizing: border-box;
+}
+
+/* Header */
+.students .students-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.students .students-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.35rem 0;
+}
+
+.students .students-header h1 span {
+    color: #2563eb;
+}
+
+.students .students-header p {
+    font-size: 0.92rem;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Botón */
+.students .login-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.students .login-btn:hover {
+    background: #1d4ed8;
+}
+
+/* Cards */
+.students .cards {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* Stat Card */
+.students .stat-card {
+    flex: 1;
+    min-width: 180px;
+    max-width: 280px;
+    height: 90px;
+    padding: 16px 20px;
+    border-radius: 50px;
+    position: relative;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    display: flex;
+    align-items: center;
+}
+
+/* ícono a la izquierda, texto a la derecha */
+.students .stat-content1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+}
+
+.students .stat-icon {
+    flex-shrink: 0;
+}
+
+/* título arriba, valor abajo */
+.students .stat-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.students .stat-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin: 0;
+    color: #64748b;
+}
+
+.students .stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.students .stat-sub {
+    font-size: 0.72rem;
+    margin: 2px 0 0 0;
+}
+
+/* Variantes de color */
+.students .stat-card.default {
+    background: #e8f4fb;
+    box-shadow: none;
+}
+
+.students .stat-card.green {
+    background: #b7f387;
+    box-shadow: 0 4px 15px rgba(134, 239, 71, 0.2);
+}
+
+.students .stat-card.yellow {
+    background: #FDD34D;
+    box-shadow: 0 4px 15px rgba(250, 204, 21, 0.2);
+}
+
+/* Tabla */
+.students .students-table {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+}
+
+.students .table-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 1fr 1fr 0.5fr;
+    padding: 14px 20px;
+    gap: 1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.students .table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 1fr 1fr 0.5fr;
+    align-items: center;
+    padding: 14px 20px;
+    gap: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fff;
+    transition: background 0.15s;
+}
+
+.students .table-row:last-child {
+    border-bottom: none;
+}
+
+.students .table-row:hover {
+    background: #f8fafc;
+}
+
+/* Celda estudiante */
+.students .student-info,
+.students .name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.students .student-info img,
+.students .name img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.students .student-info strong,
+.students .name p {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0f172a;
+    display: block;
+    margin: 0;
+}
+
+.students .student-info p,
+.students .name span {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin: 2px 0 0 0;
+    display: block;
+}
+
+/* Texto celdas */
+.students .table-row > span {
+    font-size: 0.875rem;
+    color: #475569;
+}
+
+/* Badge */
+.students .badge {
+    display: inline-block;
+    background: #e5e7eb;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #374151;
+    width: fit-content;
+}
+
+/* Estado */
+.students .status {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.students .status.active {
+    color: #16a34a;
+}
+
+.students .status.inactive {
+    color: #9ca3af;
+}
+
+/* Acciones */
+.students .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.students .actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    font-size: 1rem;
+}
+
+.students .actions button:hover {
+    background: #f1f5f9;
+}
+
+.students .btn-delete {
+    color: #ef4444;
+}
+
+/* Mensaje vacío */
+.students .table-msg {
+    padding: 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* Paginación */
+.students .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.students .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.students .pagination-controls button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.students .pagination-controls button:hover {
+    background: #f1f5f9;
+}
+
+.students .pagination-controls button.active-page {
+    background: #2563eb;
+    color: white;
+}
+
+.students .pagination-controls .btn-arrow {
+    color: #94a3b8;
+    font-size: 1rem;
+}

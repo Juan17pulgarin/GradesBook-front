@@ -1,0 +1,346 @@
+/* ── Overlay ── */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(10px); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+/* ── Card ── */
+.modal-container {
+    background: #ffffff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    animation: modal-in 0.2s ease;
+    overflow: hidden;
+}
+
+@keyframes modal-in {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ── */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.8rem 2rem 1.2rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.modal-header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+}
+
+.modal-header p {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.15s;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #0f172a;
+}
+
+/* ── Body ── */
+.modal-body {
+    padding: 1.5rem 2rem;
+}
+
+/* ── Grid 2 columnas ── */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+    margin-bottom: 1.2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* ── Inputs ── */
+.form-group input {
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #0f172a;
+    outline: none;
+    background: #f8fafc;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+/* ── Input con ícono ── */
+.input-icon {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0 12px;
+    gap: 8px;
+    transition: border-color 0.15s;
+}
+
+.input-icon:focus-within {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+.input-icon span {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.input-icon input {
+    border: none;
+    background: transparent;
+    padding: 10px 0;
+    flex: 1;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #0f172a;
+    outline: none;
+}
+
+.toggle-password {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+/* ── Info box ── */
+.info-box {
+    background: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-box strong {
+    font-size: 0.85rem;
+    color: #1e40af;
+}
+
+.info-box p {
+    font-size: 0.8rem;
+    color: #3b82f6;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ── Error ── */
+.modal-error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin: 10px 0 0 0;
+}
+
+/* ── Footer ── */
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 2rem;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+}
+
+.cancel-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 0;
+    transition: color 0.15s;
+}
+
+.cancel-btn:hover {
+    color: #0f172a;
+}
+
+.submit-btn {
+    padding: 12px 28px;
+    border-radius: 12px;
+    border: none;
+    background: #1e3a5f;
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover {
+    background: #162d4a;
+}
+
+.submit-btn:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Confirm eliminar ── */
+.confirm-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    animation: modal-in 0.2s ease;
+}
+
+.confirm-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+}
+
+.confirm-card p {
+    font-size: 0.9rem;
+    color: #475569;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.5;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-confirm-delete {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background: #ef4444;
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-confirm-delete:hover {
+    background: #dc2626;
+}
+
+.btn-confirm-delete:disabled {
+    background: #fca5a5;
+    cursor: not-allowed;
+}
+
+/* ── Indicador de pasos ── */
+.modal-steps {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    gap: 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.step {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    padding: 4px 12px;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.step.active {
+    background: #2563eb;
+    color: white;
+}
+
+.step-divider {
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+/* ── Select ── */
+.form-group select {
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #0f172a;
+    outline: none;
+    background: #f8fafc;
+    transition: border-color 0.15s;
+    width: 100%;
+    cursor: pointer;
+}
+
+.form-group select:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+/* ── Grid single column para estudiante ── */
+.form-grid.single {
+    grid-template-columns: 1fr;
+    max-width: 300px;
+}
