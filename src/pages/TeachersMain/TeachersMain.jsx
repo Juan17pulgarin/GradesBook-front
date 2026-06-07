@@ -11,10 +11,8 @@ import {
   FaEllipsisV,
 } from "react-icons/fa";
 
-import { getSubjects } from "../../services/subjectService";
-import { getUsers } from "../../services/userService";
-import { createGrade, getGradesBySubject } from "../../services/gradeService";
-
+import { FiLogOut } from "react-icons/fi";
+import api from "../../api/api";
 import "./TeachersMain.css";
 
 /* ================= MODAL ================= */
@@ -106,30 +104,44 @@ function SubjectIcon({ index }) {
 /* ================= MAIN ================= */
 function TeachersMain() {
   const [subjects, setSubjects] = useState([]);
-  const [activeSubjectIndex, setActiveSubjectIndex] = useState(0);
-  // Map: subjectId -> estudiantes[]
-  const [studentsBySubject, setStudentsBySubject] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [loadingStudents, setLoadingStudents] = useState(false);
+const [courses, setCourses] = useState([]);
+const [activities, setActivities] = useState([]);
+const [allSubjects, setAllSubjects] = useState([]);
 
-  // Modal state
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [activityId, setActivityId] = useState("");
-  const [nota, setNota] = useState("");
-  const [observacion, setObservacion] = useState("");
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
+const [activeSubjectIndex, setActiveSubjectIndex] = useState(0);
+
+const [studentsBySubject, setStudentsBySubject] = useState({});
+const [loading, setLoading] = useState(true);
+const [loadingStudents, setLoadingStudents] = useState(false);
+
+// Modal estudiante (registro individual)
+const [selectedStudent, setSelectedStudent] = useState(null);
+const [activityId, setActivityId] = useState("");
+const [nota, setNota] = useState("");
+const [observacion, setObservacion] = useState("");
+
+// Modal cargar notas (panel nuevo)
+const [openGradePanel, setOpenGradePanel] = useState(false);
+
+// filtros modal
+const [selectedCourse, setSelectedCourse] = useState("");
+const [selectedSubject, setSelectedSubject] = useState("");
+const [selectedActivity, setSelectedActivity] = useState("");
+
+// paginación
+const [currentPage, setCurrentPage] = useState(1);
 
   // ── Load subjects once ──
   useEffect(() => {
     loadSubjects();
+    loadFilters();
   }, []);
 
   const loadSubjects = async () => {
     try {
       setLoading(true);
-      const subjectsRes = await getSubjects();
+      const subjectsRes = await api.get("/subjects");
       const user = JSON.parse(localStorage.getItem("user"));
 
       let teacherSubjects = [];
@@ -157,6 +169,21 @@ function TeachersMain() {
       setLoading(false);
     }
   };
+  const loadFilters = async () => {
+  try {
+    const [coursesRes, subjectsRes, activitiesRes] = await Promise.all([
+    api.get("/courses"),
+    api.get("/subjects"),
+    api.get("/activities"),
+  ]);
+
+  setCourses(coursesRes.data);
+  setAllSubjects(subjectsRes.data); 
+  setActivities(activitiesRes.data);
+  } catch (error) {
+    console.error("Error cargando filtros:", error);
+  }
+};
 
   // ── Load students for a subject (with lazy cache) ──
   const loadStudentsForSubject = async (subjectId) => {
@@ -170,8 +197,8 @@ function TeachersMain() {
       // Option B: filter from /users + /grades
       // Using Option B for compatibility with your existing API shape:
       const [usersRes, gradesRes] = await Promise.all([
-        getUsers(),
-        getGradesBySubject(subjectId).catch(() => ({ data: [] })),
+        api.get("/users"),
+        api.get(`/grades?subject_id=${subjectId}`).catch(() => ({ data: [] })),
       ]);
 
       const onlyStudents = usersRes.data.filter(
@@ -220,7 +247,7 @@ function TeachersMain() {
   const handleSaveGrade = async (e) => {
     e.preventDefault();
     try {
-      await createGrade( {
+      await api.post("/grades", {
         actividad_id: parseInt(activityId),
         estudiante_id: selectedStudent.id,
         nota: parseFloat(nota),
@@ -246,9 +273,17 @@ function TeachersMain() {
       setNota("");
       setObservacion("");
     } catch (error) {
-      console.error(error);
-      alert("Error guardando nota");
-    }
+  console.error("ERROR:", error);
+
+  console.log("STATUS:", error.response?.status);
+  console.log("DATA:", error.response?.data);
+
+  alert(
+    error.response?.data?.message ||
+    error.message ||
+    "Error guardando nota"
+  );
+}
   };
 
   // ── Derived data ──
@@ -266,8 +301,14 @@ function TeachersMain() {
   );
 
   const handleExportExcel = () => {
-    alert("Exportando planilla Excel...");
-  };
+  alert("Exportando planilla Excel...");
+};
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href = "/";
+};
 
   return (
     <div className="dashboard-layout">
@@ -282,15 +323,31 @@ function TeachersMain() {
             </div>
           </div>
 
-          <button className="sidebar-btn active-btn">
-            <FaFileUpload />
-            <span>Cargar Notas</span>
-          </button>
+          <button
+  className="sidebar-btn active-btn"
+  onClick={() => {
+    console.log("CLICK CARGAR NOTAS");
+    setOpenGradePanel(true);
+  }}
+>
+  <FaFileUpload />
+  <span>Cargar Notas</span>
+</button>
         </div>
 
         <div className="sidebar-links">
-          <p>↪ Cerrar Sesión</p>
-        </div>
+  <p
+    style={{
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      gap: "4px"
+    }}
+    onClick={handleLogout}
+  >
+    Cerrar Sesión <FiLogOut />
+  </p>
+</div>
       </aside>
 
       {/* ── MAIN ── */}
@@ -508,7 +565,92 @@ function TeachersMain() {
         onClose={() => setSelectedStudent(null)}
         onSave={handleSaveGrade}
       />
+      {/* ── MODAL CARGAR NOTAS ── */}
+{openGradePanel && (
+  <div className="modal-overlay">
+    <div className="modal-box">
+
+      <div className="modal-header">
+        <h2>Cargar Notas</h2>
+        <button
+          className="close-btn"
+          onClick={() => setOpenGradePanel(false)}
+        >
+          ×
+        </button>
+      </div>
+
+      {/* CURSO */}
+      <div className="form-group">
+        <label>Curso</label>
+        <select
+          value={selectedCourse}
+          onChange={(e) => setSelectedCourse(e.target.value)}
+        >
+          <option value="">Seleccione curso</option>
+          {courses.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* MATERIA */}
+      <div className="form-group">
+  <label>Materia</label>
+  <select
+    value={selectedSubject}
+    onChange={(e) => setSelectedSubject(e.target.value)}
+  >
+    <option value="">Seleccione materia</option>
+
+    {allSubjects.map((s) => (
+      <option key={s.id} value={s.id}>
+        {s.nombre}
+      </option>
+    ))}
+  </select>
+</div>
+
+      {/* ACTIVIDAD */}
+      <div className="form-group">
+        <label>Actividad</label>
+        <select
+          value={selectedActivity}
+          onChange={(e) => setSelectedActivity(e.target.value)}
+        >
+          <option value="">Seleccione actividad</option>
+          {activities
+            .filter(a => Number(a.subject_id) === Number(selectedSubject))
+            .map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.nombre}
+              </option>
+            ))}
+        </select>
+      </div>
+
+      <button
+        className="submit-btn"
+        onClick={() => {
+          console.log({
+            curso: selectedCourse,
+            materia: selectedSubject,
+            actividad: selectedActivity,
+          });
+
+          setOpenGradePanel(false);
+        }}
+      >
+        Continuar
+      </button>
+
     </div>
+  </div>
+)}
+    </div>
+    
   );
 }
 

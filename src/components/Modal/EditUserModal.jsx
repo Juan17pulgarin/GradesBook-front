@@ -30,7 +30,6 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
 
     const handleSubmit = async () => {
         setError("");
-
         if (!form.nombres || !form.apellidos || !form.email || !form.documento) {
             setError("Por favor completa todos los campos obligatorios.");
             return;

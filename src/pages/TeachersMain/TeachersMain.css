@@ -365,16 +365,21 @@
   color:white;
 }
 
-/* MODAL */
 
-.TeachersMain-page .modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(15,23,42,0.55);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
+
+.TeachersMain-page .modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  z-index: 999999;
 }
 
 .TeachersMain-page .modal-box{
@@ -532,12 +537,19 @@
   color:white;
 }
 
-.sidebar-links{
+.sidebar-links p{
+  color:#ff1f1f;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:500;
   display:flex;
-  flex-direction:column;
-  gap:18px;
-  color:#cc2b2b;
-  font-weight:600;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+
+.logout-icon{
+  font-size:18px;
 }
 
 /* MAIN */
@@ -620,20 +632,6 @@
 
 /* ================= FIX MODAL CENTRADO REAL ================= */
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(15, 23, 42, 0.6);
-  z-index: 99999;
-}
 
 .modal-box {
   width: 460px;
@@ -665,7 +663,7 @@
 /* ================= SCROLL UNIFORME (ACORDEÓN VERTICAL) ================= */
 
 .scroll-box {
-    max-height: 520px;  
+    max-height: 820px;  
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -692,4 +690,89 @@
 }
 html, body {
   overflow-x: hidden;
+}
+
+/* ================= STATS BAR ================= */
+
+.stats-bar{
+  display:flex;
+  gap:18px;
+  margin-top:30px;
+  align-items:center;
+}
+
+.stat-item{
+  background:#f6f7f8;
+  border-radius:20px;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  font-size:14px;
+  font-weight:600;
+  color:#334155;
+}
+
+.stat-icon{
+  width:38px;
+  height:50px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:14px;
+  font-weight:700;
+}
+
+.stat-blue{
+  color:#1098e8;
+}
+
+.stat-green{
+  color:#7fbf00;
+}
+
+.stat-amber{
+  color:#d9a400;
+}
+
+.stat-icon.stat-blue{
+  background:#e6f4ff;
+}
+
+.stat-icon.stat-green{
+  background:#eef8d8;
+}
+
+.stat-icon.stat-amber{
+  background:#fff4cc;
+}
+
+.stat-pill{
+  font-weight:700;
+}
+.table-footer{
+  width:100%;
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:center;
+
+  margin-top:20px;
+  padding-top:20px;
+
+  border-top:1px solid #edf2f7;
+}
+
+.autosave-text{
+  white-space:nowrap;
+}
+
+.pagination{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  white-space:nowrap;
 }
