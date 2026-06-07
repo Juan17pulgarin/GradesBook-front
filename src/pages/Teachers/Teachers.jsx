@@ -16,7 +16,7 @@ import { RiUserAddLine } from "react-icons/ri";
 
 import "./Teachers.css";
 
-const COLUMNS = ["Foto/Nombre", "Materia Asignada", "Correo", "Acciones"];
+const COLUMNS = ["Foto/Nombre", "Materia Asignada", "Correo", "Estado", "Acciones"];
 
 export default function TeachersPage() {
     const [teachers, setTeachers] = useState([]);
@@ -52,9 +52,17 @@ export default function TeachersPage() {
 
     useEffect(() => { fetchData(); }, []);
 
-    const handleDelete = async (teacher) => {
+    const handleToggleActive = async (teacher) => {
         await deactivateUser(teacher.id);
-        fetchData();
+        if (teacher.activo === false) {
+            // Reactivado: refrescar desde el back
+            fetchData();
+        } else {
+            // Desactivado: marcar localmente para que siga visible
+            setTeachers((prev) =>
+                prev.map((t) => t.id === teacher.id ? { ...t, activo: false } : t)
+            );
+        }
     };
 
     const total = teachers.length;
@@ -94,7 +102,7 @@ export default function TeachersPage() {
                 items={teachers}
                 columns={COLUMNS}
                 entityLabel="docente"
-                onDelete={handleDelete}
+                onDelete={handleToggleActive}
                 renderRow={(teacher, setDeleteTarget) => (
                     <UserRow
                         key={teacher.id}

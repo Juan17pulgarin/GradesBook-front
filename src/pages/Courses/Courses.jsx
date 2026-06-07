@@ -10,6 +10,7 @@ import { CgMenuBoxed } from "react-icons/cg";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoMdTime } from "react-icons/io";
 import { RiUserAddLine } from "react-icons/ri";
+import { IoCalendarNumber } from "react-icons/io5";
 
 import { HiOutlineViewGrid } from "react-icons/hi";
 import { HiOutlineBars3 } from "react-icons/hi2";
@@ -195,7 +196,7 @@ export default function Courses() {
                             </div>
                             <div className="course-info">
                                 <p>
-                                    📅 Año: {course.anio}
+                                    <IoCalendarNumber /> Año: {course.anio}
                                 </p>
                                 <p>
                                     👥 {course.capacidad_maxima} Alumnos

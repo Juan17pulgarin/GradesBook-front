@@ -15,7 +15,7 @@ import { RiUserAddLine } from "react-icons/ri";
 
 import "./Students.css";
 
-const COLUMNS = ["Estudiante", "Documento", "Correo", "Curso", "Acciones"];
+const COLUMNS = ["Estudiante", "Documento", "Correo", "Curso", "Estado", "Acciones"];
 
 export default function Students() {
     const [students, setStudents] = useState([]);
@@ -50,9 +50,17 @@ export default function Students() {
         return enrollment?.cursos?.nombre || "Sin curso";
     };
 
-    const handleDelete = async (student) => {
+    const handleToggleActive = async (student) => {
         await deactivateUser(student.id);
-        fetchStudents();
+        if (student.activo === false) {
+            // Reactivado: refrescar desde el back
+            fetchStudents();
+        } else {
+            // Desactivado: marcar localmente para que siga visible
+            setStudents((prev) =>
+                prev.map((s) => s.id === student.id ? { ...s, activo: false } : s)
+            );
+        }
     };
 
     const total = students.length;
@@ -93,7 +101,7 @@ export default function Students() {
                 items={students}
                 columns={COLUMNS}
                 entityLabel="estudiante"
-                onDelete={handleDelete}
+                onDelete={handleToggleActive}
                 loading={loading}
                 error={error}
                 renderRow={(student, setDeleteTarget) => (

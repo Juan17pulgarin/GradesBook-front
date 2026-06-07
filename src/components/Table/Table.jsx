@@ -95,16 +95,23 @@ export default function Table({
             {/* Modal de confirmación de eliminación */}
             {deleteTarget && (
                 <ConfirmModal
-                    title={`¿Eliminar ${entityLabel}?`}
+                    title={deleteTarget.activo === false ? `¿Reactivar ${entityLabel}?` : `¿Desactivar ${entityLabel}?`}
                     message={
-                        <>
-                            Esto desactivará a{" "}
-                            <strong>
-                                {deleteTarget.nombres} {deleteTarget.apellidos}
-                            </strong>
-                            .
-                        </>
+                        deleteTarget.activo === false ? (
+                            <>
+                                Esto reactivará a{" "}
+                                <strong>{deleteTarget.nombres} {deleteTarget.apellidos}</strong>
+                                {" "}y podrá acceder nuevamente al sistema.
+                            </>
+                        ) : (
+                            <>
+                                Esto desactivará a{" "}
+                                <strong>{deleteTarget.nombres} {deleteTarget.apellidos}</strong>
+                                . Podrás reactivarlo después.
+                            </>
+                        )
                     }
+                    confirmLabel={deleteTarget.activo === false ? "Sí, reactivar" : "Sí, desactivar"}
                     onConfirm={handleDelete}
                     onCancel={() => setDeleteTarget(null)}
                     loading={deleting}

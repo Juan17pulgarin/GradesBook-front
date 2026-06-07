@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPeriods } from "../../services/periodService";
-import { getMyGrades, getMyAverage, getMyAverageByPeriod } from "../../services/gradeService";
+import { getMyGrades, getMyAverage } from "../../services/gradeService";
 import { getMyActivities } from "../../services/activityService";
 import { getMySubjects } from "../../services/subjectService";
 
-import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFViewer, PDFDownloadLink, BlobProvider } from "@react-pdf/renderer";
 import BoletinPDF from "./BoletinPDF";
 
 import { FaSearch } from "react-icons/fa";
@@ -13,8 +13,26 @@ import { HiArrowDownTray } from "react-icons/hi2";
 import { AiOutlinePrinter } from "react-icons/ai";
 import { IoCaretBack, IoCaretForward } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
+import { IoCalendarNumber } from "react-icons/io5";
+import { BiSolidBookBookmark } from "react-icons/bi";
 
 import "./StudentMain.css";
+
+function getBadge(nota) {
+    const n = parseFloat(nota);
+    if (n >= 4.6) return "EXCELENTE";
+    if (n >= 4.0) return "MUY BIEN";
+    if (n >= 3.0) return "APROBADO";
+    return "EN PROCESO";
+}
+
+function getComentario(nota) {
+    const n = parseFloat(nota);
+    if (n >= 4.6) return "¡Desempeño sobresaliente, sigue así!";
+    if (n >= 4.0) return "Buen rendimiento académico.";
+    if (n >= 3.0) return "Desempeño básico, puedes mejorar.";
+    return "Requiere mayor esfuerzo y dedicación.";
+}
 
 export default function StudentMain() {
     const navigate = useNavigate();
@@ -69,19 +87,26 @@ export default function StudentMain() {
             })
             .catch(() => setPromedioGeneral("—"));
     }, []);
-    useEffect(() => {
-        if (!selectedPeriodId) return;
-        getMyAverageByPeriod(selectedPeriodId)
-            .then((res) => {
-                setPromedioPeriodo(
-                    res.data?.promedio_general != null
-                        ? parseFloat(res.data.promedio_general).toFixed(1)
-                        : "—"
-                );
-            })
-            .catch(() => setPromedioPeriodo("—"));
-    }, [selectedPeriodId]);
 
+    // Calcular promedio del periodo en el frontend con las notas ya cargadas
+    useEffect(() => {
+        if (!selectedPeriodId || grades.length === 0) {
+            setPromedioPeriodo("—");
+            return;
+        }
+
+        const notasPeriodo = grades
+            .filter((g) => g.actividades?.periodo_id === selectedPeriodId)
+            .map((g) => parseFloat(g.nota));
+
+        if (notasPeriodo.length === 0) {
+            setPromedioPeriodo("—");
+            return;
+        }
+
+        const promedio = notasPeriodo.reduce((sum, n) => sum + n, 0) / notasPeriodo.length;
+        setPromedioPeriodo(promedio.toFixed(1));
+    }, [selectedPeriodId, grades]);
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -116,19 +141,14 @@ export default function StudentMain() {
         const promedio = (data.notas.reduce((a, b) => a + b, 0) / data.notas.length).toFixed(1);
         const progreso = Math.min(Math.round((parseFloat(promedio) / 5) * 100), 100);
         const color = colores[i % colores.length];
-        const badge = parseFloat(promedio) >= 4.7 ? "PERFECTO"
-            : parseFloat(promedio) >= 4.0 ? "MUY BIEN"
-                : parseFloat(promedio) >= 3.0 ? "EXCELENTE"
-                    : "EN PROCESO";
+        const badge = getBadge(promedio);
         return { nombre, promedio, ultimoTema: data.ultimoTema, badge, ...color, progreso };
     });
 
     const boletin = materiasCards.map((m) => ({
         asignatura: m.nombre,
         nota: m.promedio,
-        comentario: m.badge === "PERFECTO" ? "¡Desempeño sobresaliente!"
-            : m.badge === "MUY BIEN" ? "Buen rendimiento académico."
-                : "Sigue esforzándote.",
+        comentario: getComentario(m.promedio),
     }));
 
     return (
@@ -181,7 +201,7 @@ export default function StudentMain() {
                 {periods.length > 0 && (
                     <div className="sm-period-selector">
                         <div className="sm-period-left">
-                            <span>📅</span>
+                            <span><IoCalendarNumber /></span>
                             <div>
                                 <span className="sm-period-label">Periodo Académico</span>
                                 <span className="sm-period-name">{periodoActual?.nombre}</span>
@@ -232,7 +252,7 @@ export default function StudentMain() {
                             {materiasCards.map((m, i) => (
                                 <div className="sm-materia-card" key={i}>
                                     <div className="sm-materia-top">
-                                        <div className="sm-materia-icon">📘</div>
+                                        <div className="sm-materia-icon"><BiSolidBookBookmark /></div>
                                         <div className="sm-materia-nota-box">
                                             <span className="sm-materia-nota">{m.promedio}</span>
                                             <span className={`sm-badge sm-badge-${m.badgeColor}`}>{m.badge}</span>
@@ -278,9 +298,33 @@ export default function StudentMain() {
                                         </button>
                                     )}
                                 </PDFDownloadLink>
-                                <button title="Imprimir" onClick={() => window.print()}>
-                                    <AiOutlinePrinter />
-                                </button>
+                                <BlobProvider document={
+                                        <BoletinPDF
+                                            estudiante={user}
+                                            periodo={periodoActual}
+                                            boletin={boletin}
+                                            promedioGeneral={promedioGeneral}
+                                        />
+                                    }>
+                                        {({ url, loading: pdfLoading }) => (
+                                            <button
+                                                title="Imprimir"
+                                                disabled={pdfLoading || !url}
+                                                onClick={() => {
+                                                    const iframe = document.createElement("iframe");
+                                                    iframe.style.display = "none";
+                                                    iframe.src = url;
+                                                    document.body.appendChild(iframe);
+                                                    iframe.onload = () => {
+                                                        iframe.contentWindow.print();
+                                                        setTimeout(() => document.body.removeChild(iframe), 1000);
+                                                    };
+                                                }}
+                                            >
+                                                <AiOutlinePrinter />
+                                            </button>
+                                        )}
+                                    </BlobProvider>
                             </div>
                         </div>
 
@@ -315,9 +359,13 @@ export default function StudentMain() {
                         <p className="sm-consejo-text">
                             "{primerNombre}, llevas {grades.length} nota{grades.length !== 1 ? "s" : ""} registrada{grades.length !== 1 ? "s" : ""}
                             {" "}en {materiasCards.length} materia{materiasCards.length !== 1 ? "s" : ""}.
-                            {parseFloat(promedioGeneral) >= 4.0
-                                ? " ¡Sigue así, vas muy bien!"
-                                : " Sigue esforzándote, puedes mejorar."}"
+                            {parseFloat(promedioGeneral) >= 4.6
+                                ? " ¡Excelente desempeño, sigue así!"
+                                : parseFloat(promedioGeneral) >= 4.0
+                                    ? " ¡Vas muy bien, no te detengas!"
+                                    : parseFloat(promedioGeneral) >= 3.0
+                                        ? " Vas bien, pero puedes mejorar aún más."
+                                        : " Sigue esforzándote, puedes lograrlo."}"
                         </p>
                     </div>
                 </div>

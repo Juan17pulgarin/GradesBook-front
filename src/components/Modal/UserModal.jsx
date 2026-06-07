@@ -569,8 +569,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                                 <label>Teléfono</label>
                                 <div className="input-icon">
-                                    <span><MdOutlineCall />
-</span>
+                                    <span><MdOutlineCall /></span>
                                     <input name="telefono" type="text" placeholder="Ej: 3132794970"
                                         value={form.telefono} onChange={handleChange} />
                                 </div>

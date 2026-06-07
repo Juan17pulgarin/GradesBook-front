@@ -1,43 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-.subject-page{
-    padding: 40px;
-    background: #f3f6f9;
-    min-height: 100vh;
+.subject-page {
     font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 2rem 2.5rem;
+    background: #f1f5f9;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.subject-page *, .subject-page *::before, .subject-page *::after {
+    box-sizing: border-box;
 }
 
 /* ================= HEADER ================= */
 
-.subject-header{
+.subject-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 45px;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
 }
 
-.section-label{
-    font-size: 15px;
+.section-label {
+    font-size: 0.72rem;
     font-weight: 800;
     color: #55710f;
-    letter-spacing: 2px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
-.subject-header h1{
-    font-size: 50px;
-    line-height: 0.95;
-    color: #2b3137;
-    margin-top: 10px;
+.subject-header h1 {
+    font-size: 2rem;
     font-weight: 800;
+    line-height: 1.1;
+    color: #0f172a;
+    margin: 0.3rem 0 0 0;
 }
 
-.subject-header h1 span{
+.subject-header h1 span {
     color: #005b8f;
 }
 
 /* ================= BOTON ================= */
 
-.create-subject-btn{
+.create-subject-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,248 +54,240 @@
     border-radius: 25px;
     background: #f4c842;
     color: #6a5200;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
     font-size: 0.875rem;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background 0.2s, transform 0.15s;
     white-space: nowrap;
     flex-shrink: 0;
+    box-shadow: 0 6px 18px rgba(244, 200, 66, 0.3);
 }
 
-.create-subject-btn:hover{
-    transform: translateY(-3px);
+.create-subject-btn:hover {
+    transform: translateY(-2px);
+    background: #e6b930;
 }
 
-.create-icon{
-    font-size: 20px;
+.create-icon {
+    font-size: 1.1rem;
 }
 
-.btn-text{
-    position: relative;
-    top: 1px;
+.btn-text {
+    font-size: 0.875rem;
+    font-weight: 700;
 }
 
 /* ================= CONTENEDOR TABLA ================= */
 
-.subject-table-container{
-    background: #edf2f5;
-    border-radius: 45px;
-    padding: 40px;
-
-    max-height: 500px; 
-    overflow-y: auto;    
-    overflow-x: auto;    
+.subject-table-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
-.subject-table-header{
+.subject-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.subject-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.subject-table-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.subject-table-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 35px;
+    margin-bottom: 1rem;
 }
 
-.subject-table-header h3{
-    font-size: 32px;
-    color: #455468;
+.subject-table-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
 }
 
-.subject-table-header p{
-    color: #8a97aa;
-    font-size: 18px;
+.subject-table-header p {
+    color: #94a3b8;
+    font-size: 0.82rem;
     font-weight: 500;
+    margin: 0;
 }
 
 /* ================= TABLE ================= */
 
-.subject-table{
+.subject-table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    border-radius: 30px;
-    overflow: hidden;
 }
 
-.subject-table thead{
-    background: #f7fafc;
+.subject-table thead {
+    background: #f8fafc;
 }
 
-.subject-table th{
+.subject-table th {
     text-align: left;
-    padding: 25px;
-    color: #718096;
-    font-size: 15px;
-    letter-spacing: 1px;
+    padding: 12px 16px;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.subject-table td{
-    padding: 25px;
-    border-top: 1px solid #edf2f7;
+.subject-table td {
+    padding: 12px 16px;
+    border-top: 1px solid #f1f5f9;
 }
 
-/* ================= SUBJECT ================= */
+/* ================= SUBJECT NAME ================= */
 
-.subject-name{
+.subject-name {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 12px;
 }
 
-.subject-icon{
-    width: 58px;
-    height: 58px;
-    border-radius: 18px;
+.subject-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     background: #dbeafe;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     color: #005b8f;
-    font-size: 24px;
+    font-size: 1rem;
     font-weight: 800;
+    flex-shrink: 0;
 }
 
-.subject-name span{
-    font-size: 24px;
-    font-weight: 700;
-    color: #2d4831;
+.subject-name span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
 }
 
 /* ================= STATUS ================= */
 
-.status{
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-size: 14px;
+.status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
     font-weight: 700;
 }
 
-.active{
+.active {
     background: #d9f99d;
     color: #4d7c0f;
 }
 
-.inactive{
+.inactive {
     background: #e5e7eb;
     color: #6b7280;
 }
 
 /* ================= BOTON EDITAR ================= */
 
-.edit-btn{
+.edit-btn {
     border: none;
-    background: transparent;
-    font-size: 28px;
+    background: none;
+    font-size: 1.1rem;
     color: #94a3b8;
     cursor: pointer;
-}
-
-/* ================= CARDS ================= */
-
-.subject-bottom-cards{
-    display: flex;
-    flex-direction: row;
-    gap: 22px;
-    width: 100%;
-    margin-top: 20px;
-    margin-bottom: 55px;
-}
-
-.bottom-card{
-    flex: 1;
-    min-width: 0;
-    max-width: 610px;
-    height: 160px;
-
-    padding-left: 25px;
-    padding-right: 10px;
-
-    border-radius: 35px;
-    position: relative;
-
+    padding: 6px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
     display: flex;
     align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
+}
 
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+.edit-btn:hover {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* ================= CARDS INFERIORES ================= */
+
+.subject-bottom-cards {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 1.2rem;
+}
+
+.bottom-card {
+    flex: 1;
+    min-width: 160px;
+    height: 120px;
+    padding: 16px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
 }
 
 /* ================= COLORES ================= */
 
-.blue-card{
-    background: #e0e9eb;
-}
-
-.green-card{
-    background: #B7F387;
-}
-
-.yellow-card{
-    background: #FDD34D;
-}
+.blue-card  { background: #EEF3F5; box-shadow: none; }
+.green-card { background: #b7f387; box-shadow: 0 4px 15px rgba(134,239,71,0.2); }
+.yellow-card{ background: #FDD34D; box-shadow: 0 4px 15px rgba(250,204,21,0.2); }
 
 /* ================= ICONOS ================= */
 
-.bottom-card-icon{
+.bottom-card-icon {
     font-size: 1.6rem;
-    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
-.blue-card .bottom-card-icon{
-    color: #03293c;
-}
+.blue-card   .bottom-card-icon { color: #03293c; }
+.green-card  .bottom-card-icon { color: #3C6600; }
+.yellow-card .bottom-card-icon { color: #7a6300; }
 
-.green-card .bottom-card-icon{
-    color: #3C6600;
-}
+/* ================= CONTENIDO CARD ================= */
 
-.yellow-card .bottom-card-icon{
-    color: #7a6300;
-}
-
-/* ================= CONTENIDO ================= */
-
-.bottom-card-content{
-    margin-left: 12px;
+.bottom-card-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-/* ================= NUMERO ================= */
-
-.bottom-card h2{
-    font-size: 22px;
+.bottom-card h2 {
+    font-size: 1.8rem;
     font-weight: 800;
-    color: #2A3031;
+    color: #0f172a;
     margin: 0;
     line-height: 1;
 }
 
-/* ================= TEXTO ================= */
-
-.bottom-card p{
-    font-size: 16px;
-    font-weight: 700;
-    color: #575C5E;
-    margin-top: 8px;
+.bottom-card p {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    margin-top: 4px;
     line-height: 1.2;
 }
 
 /* ================= RESPONSIVE ================= */
 
-@media(max-width: 1200px){
-
-    .subject-bottom-cards{
-        flex-direction: column;
-    }
-
-    .subject-header{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 25px;
-    }
-
+@media(max-width: 1200px) {
+    .subject-bottom-cards { flex-direction: column; }
+    .subject-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
 }

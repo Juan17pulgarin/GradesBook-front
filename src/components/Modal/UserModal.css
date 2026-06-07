@@ -343,3 +343,88 @@
     grid-template-columns: 1fr;
     max-width: 300px;
 }
+/* ── Estado badge ── */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-active {
+    background: #d9f99d;
+    color: #4d7c0f;
+}
+
+.status-inactive {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* ── Fila inactiva ── */
+.table-row--inactive {
+    opacity: 0.75;
+    background: #fafafa;
+}
+
+/* ── Botón reactivar ── */
+.btn-activate {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: none;
+    background: #d9f99d;
+    color: #4d7c0f;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-activate:hover {
+    background: #bef264;
+}
+
+/* ── Banner inactivo en modal ── */
+.modal-inactive-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 1.5rem;
+    font-size: 0.875rem;
+    color: #7f1d1d;
+}
+
+.btn-reactivate {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    background: #22c55e;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.btn-reactivate:hover:not(:disabled) {
+    background: #16a34a;
+}
+
+.btn-reactivate:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

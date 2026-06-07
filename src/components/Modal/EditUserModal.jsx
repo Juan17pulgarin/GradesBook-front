@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { updateUser } from "../../services/userService";
+import { updateUser, deactivateUser } from "../../services/userService";
 
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaIdCard } from "react-icons/fa";
 import { MdOutlineCall } from "react-icons/md";
+import { MdOutlinePersonAddAlt } from "react-icons/md";
 
 import "./UserModal.css";
 
 export default function EditUserModal({ user, onClose, onSuccess }) {
+    const isActivo = user.activo !== false;
+
     const [form, setForm] = useState({
         nombres: user.nombres || "",
         apellidos: user.apellidos || "",
@@ -18,6 +21,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
     });
 
     const [loading, setLoading] = useState(false);
+    const [activating, setActivating] = useState(false);
     const [error, setError] = useState("");
 
     const handleChange = (e) => {
@@ -34,12 +38,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
 
         setLoading(true);
 
-        console.log("FORM:", form);
-        console.log("USER:", user);
-        console.log("LOCALSTORAGE:", localStorage.getItem("institucion_id"));
-
         try {
-            // 🔥 OBTENER institucion_id SEGURO
             const institucion_id_raw =
                 form.institucion_id ??
                 user.institucion_id ??
@@ -51,9 +50,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                 throw new Error("INSTITUCION_ID_INVALID");
             }
 
-            // 🔥 SOLO ENVIAR CAMPOS QUE CAMBIARON
             const dataToSend = {};
-
             Object.keys(form).forEach((key) => {
                 if (
                     form[key] !== "" &&
@@ -65,13 +62,9 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                 }
             });
 
-            // 🔥 AGREGAR institucion_id SIEMPRE
             dataToSend.institucion_id = institucion_id;
 
-            console.log("DATA QUE SE ENVÍA:", dataToSend);
-
             await updateUser(user.id, dataToSend);
-
             onSuccess();
 
         } catch (err) {
@@ -82,6 +75,19 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
             }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleActivate = async () => {
+        setActivating(true);
+        setError("");
+        try {
+            await deactivateUser(user.id); // PATCH toggle → reactiva si está inactivo
+            onSuccess();
+        } catch (err) {
+            setError(err.response?.data?.message || "Error al reactivar el usuario.");
+        } finally {
+            setActivating(false);
         }
     };
 
@@ -97,6 +103,21 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                     <button className="close-btn" onClick={onClose}>✕</button>
                 </div>
 
+                {/* BANNER INACTIVO */}
+                {!isActivo && (
+                    <div className="modal-inactive-banner">
+                        <span>⚠️ Este usuario está <strong>inactivo</strong>.</span>
+                        <button
+                            className="btn-reactivate"
+                            onClick={handleActivate}
+                            disabled={activating}
+                        >
+                            <MdOutlinePersonAddAlt />
+                            {activating ? "Reactivando..." : "Reactivar usuario"}
+                        </button>
+                    </div>
+                )}
+
                 <div className="modal-body">
                     <div className="form-grid">
 
@@ -106,6 +127,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                                 name="nombres"
                                 value={form.nombres}
                                 onChange={handleChange}
+                                disabled={!isActivo}
                             />
                         </div>
 
@@ -118,6 +140,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                                     type="email"
                                     value={form.email}
                                     onChange={handleChange}
+                                    disabled={!isActivo}
                                 />
                             </div>
                         </div>
@@ -128,6 +151,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                                 name="apellidos"
                                 value={form.apellidos}
                                 onChange={handleChange}
+                                disabled={!isActivo}
                             />
                         </div>
 
@@ -139,6 +163,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                                     name="documento"
                                     value={form.documento}
                                     onChange={handleChange}
+                                    disabled={!isActivo}
                                 />
                             </div>
                         </div>
@@ -151,6 +176,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                                     name="telefono"
                                     value={form.telefono}
                                     onChange={handleChange}
+                                    disabled={!isActivo}
                                 />
                             </div>
                         </div>
@@ -164,13 +190,15 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                     <button className="cancel-btn" onClick={onClose}>
                         Cancelar
                     </button>
-                    <button
-                        className="submit-btn"
-                        onClick={handleSubmit}
-                        disabled={loading}
-                    >
-                        {loading ? "Guardando..." : "Guardar Cambios →"}
-                    </button>
+                    {isActivo && (
+                        <button
+                            className="submit-btn"
+                            onClick={handleSubmit}
+                            disabled={loading}
+                        >
+                            {loading ? "Guardando..." : "Guardar Cambios →"}
+                        </button>
+                    )}
                 </div>
 
             </div>

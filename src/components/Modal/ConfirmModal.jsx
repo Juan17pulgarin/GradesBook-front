@@ -1,17 +1,123 @@
-export default function ConfirmModal({ title, message, onConfirm, onCancel, loading, error }) {
+import { useState } from "react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import ConfirmModal from "../Modal/ConfirmModal";
+
+const PAGE_SIZE = 5;
+
+export default function Table({
+    items = [],
+    columns = [],
+    renderRow,
+    entityLabel = "registro",
+    onDelete,
+    emptyMessage,
+    loading = false,
+    error = false,
+}) {
+    const [page, setPage] = useState(1);
+    const [deleteTarget, setDeleteTarget] = useState(null);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
+
+    const totalPages = Math.ceil(items.length / PAGE_SIZE);
+    const paginated = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+    const handleDelete = async () => {
+        setDeleting(true);
+        setDeleteError("");
+        try {
+            if (onDelete) await onDelete(deleteTarget);
+            setDeleteTarget(null);
+        } catch (err) {
+            setDeleteError(err.response?.data?.message || "Error al eliminar.");
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     return (
-        <div className="modal" onClick={onCancel}>
-            <div className="confirm-card" onClick={(e) => e.stopPropagation()}>
-                <h3>{title}</h3>
-                <p>{message}</p>
-                {error && <p className="modal-error">{error}</p>}
-                <div className="confirm-actions">
-                    <button className="cancel-btn" onClick={onCancel}>Cancelar</button>
-                    <button className="btn-confirm-delete" onClick={onConfirm} disabled={loading}>
-                        {loading ? "Eliminando..." : "Sí, eliminar"}
+        <div className="table-container">
+            {/* Encabezados */}
+            <div className="table-header">
+                {columns.map((col) => (
+                    <span key={col}>{col}</span>
+                ))}
+            </div>
+
+            {/* Estados */}
+            {loading && <p className="table-msg">Cargando {entityLabel}s...</p>}
+            {error && <p className="table-msg">Error al cargar datos</p>}
+            {!loading && !error && items.length === 0 && (
+                <p className="table-msg">
+                    {emptyMessage || `No hay ${entityLabel}s registrados`}
+                </p>
+            )}
+
+            {/* Filas */}
+            {!loading && !error && paginated.map((item) =>
+                renderRow(item, setDeleteTarget)
+            )}
+
+            {/* Paginación */}
+            <div className="pagination">
+                <span>
+                    Mostrando {paginated.length} de {items.length} {entityLabel}s
+                </span>
+                <div className="pagination-controls">
+                    <button
+                        className="btn-arrow"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                    >
+                        <FiChevronLeft />
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                        <button
+                            key={n}
+                            className={n === page ? "active-page" : ""}
+                            onClick={() => setPage(n)}
+                        >
+                            {n}
+                        </button>
+                    ))}
+
+                    <button
+                        className="btn-arrow"
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages || totalPages === 0}
+                    >
+                        <FiChevronRight />
                     </button>
                 </div>
             </div>
+
+            {/* Modal de confirmación de eliminación */}
+            {deleteTarget && (
+                <ConfirmModal
+                    title={deleteTarget.activo === false ? `¿Reactivar ${entityLabel}?` : `¿Desactivar ${entityLabel}?`}
+                    message={
+                        deleteTarget.activo === false ? (
+                            <>
+                                Esto reactivará a{" "}
+                                <strong>{deleteTarget.nombres} {deleteTarget.apellidos}</strong>
+                                {" "}y podrá acceder nuevamente al sistema.
+                            </>
+                        ) : (
+                            <>
+                                Esto desactivará a{" "}
+                                <strong>{deleteTarget.nombres} {deleteTarget.apellidos}</strong>
+                                . Podrás reactivarlo después.
+                            </>
+                        )
+                    }
+                    confirmLabel={deleteTarget.activo === false ? "Sí, reactivar" : "Sí, desactivar"}
+                    onConfirm={handleDelete}
+                    onCancel={() => setDeleteTarget(null)}
+                    loading={deleting}
+                    error={deleteError}
+                />
+            )}
         </div>
     );
 }
