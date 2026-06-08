@@ -1,526 +1,686 @@
 import { useState, useEffect } from "react";
 import {
-  FaBookOpen,
-  FaFlask,
-  FaLandmark,
-  FaCalendarAlt,
-  FaFileUpload,
-  FaPlus,
-  FaFileExcel,
-  FaArrowRight,
-  FaEllipsisV,
+  FaBookOpen, FaFlask, FaLandmark,
+  FaCalendarAlt, FaFileUpload,
+  FaFileExcel, FaArrowRight, FaPlus,
 } from "react-icons/fa";
-
 import { FiLogOut } from "react-icons/fi";
+import { IoClose } from "react-icons/io5";
 import api from "../../api/api";
+import { getMyLoads, getStudentsByLoad } from "../../services/academicLoadService";
+import { getPeriods } from "../../services/periodService";
+import { getGradesByActivity } from "../../services/gradeService";
 import "./TeachersMain.css";
 
-/* ================= MODAL ================= */
-function StudentModal({
-  student,
-  activityId, setActivityId,
-  nota, setNota,
-  observacion, setObservacion,
-  onClose,
-  onSave,
-}) {
-  if (!student) return null;
-  return (
-    <div className="modal-overlay">
-      <div className="modal-box">
-        <div className="modal-header">
-          <h2>Registrar Nota</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
-        </div>
-        <div className="student-data">
-          <p><strong>Estudiante:</strong> {student.nombre}</p>
-          <p><strong>ID:</strong> #{student.id}</p>
-        </div>
-        <form className="grade-form" onSubmit={onSave}>
-          <div className="form-group">
-            <label>Actividad ID</label>
-            <input
-              type="number"
-              value={activityId}
-              onChange={(e) => setActivityId(e.target.value)}
-              placeholder="Ej: 13"
-            />
-          </div>
-          <div className="form-group">
-            <label>Nota</label>
-            <input
-              type="number"
-              step="0.1"
-              value={nota}
-              onChange={(e) => setNota(e.target.value)}
-              placeholder="Ej: 2.0"
-            />
-          </div>
-          <div className="form-group">
-            <label>Observación</label>
-            <textarea
-              value={observacion}
-              onChange={(e) => setObservacion(e.target.value)}
-              placeholder="Mejorar trabajo"
-            />
-          </div>
-          <button type="submit" className="submit-btn">Guardar Nota</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-/* ================= HELPERS ================= */
-const RISK_THRESHOLD = 6.0;
 const STUDENTS_PER_PAGE = 5;
 
 function computeStats(students) {
-  const graded = students.filter((s) => s.nota !== "--" && s.nota !== null);
-  const avg =
-    graded.length > 0
-      ? graded.reduce((acc, s) => acc + parseFloat(s.nota), 0) / graded.length
-      : 0;
-  const pctCalificados =
-    students.length > 0
-      ? Math.round((graded.length / students.length) * 100)
-      : 0;
-  const atRisk = graded.filter((s) => parseFloat(s.nota) < RISK_THRESHOLD).length;
-
-  return {
-    avg: avg.toFixed(2),
-    pctCalificados,
-    atRisk,
-  };
+  const graded = students.filter((s) => s.promedio !== null);
+  const avg = graded.length > 0
+    ? graded.reduce((acc, s) => acc + s.promedio, 0) / graded.length
+    : 0;
+  const pctCalificados = students.length > 0
+    ? Math.round((graded.length / students.length) * 100)
+    : 0;
+  return { avg: avg.toFixed(2), pctCalificados };
 }
 
-/* ================= SUBJECT ICON ================= */
 function SubjectIcon({ index }) {
   if (index === 0) return <FaBookOpen />;
   if (index === 1) return <FaFlask />;
   return <FaLandmark />;
 }
 
-/* ================= MAIN ================= */
+// Detectar periodo activo
+function getPeriodoActivo(periods) {
+  if (!periods || periods.length === 0) return null;
+  const hoy = new Date();
+  return periods.find((p) => {
+    const ini = new Date(p.fecha_inicio);
+    const fin = new Date(p.fecha_fin);
+    return hoy >= ini && hoy <= fin;
+  }) || periods[periods.length - 1];
+}
+
+/* ── MODAL CARGAR NOTAS ── igual estructura que UserModal ── */
+function GradePanelModal({ loads, activities, onClose, onSave }) {
+  const [selectedLoadId, setSelectedLoadId] = useState("");
+  const [selectedActivity, setSelectedActivity] = useState("");
+  const [students, setStudents] = useState([]);
+  const [grades, setGrades] = useState({});
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const [activitiesForLoad, setActivitiesForLoad] = useState([]);
+  const [checkingActivities, setCheckingActivities] = useState(false);
+
+  const handleSelectLoad = async (loadId) => {
+    setSelectedLoadId(loadId);
+    setSelectedActivity("");
+    setGrades({});
+    setError("");
+    setSuccessMsg("");
+    setActivitiesForLoad([]);
+    if (!loadId) { setStudents([]); return; }
+    try {
+      setLoadingStudents(true);
+      // Cargar estudiantes
+      const res = await getStudentsByLoad(loadId);
+      const loadedStudents = res.data.map((m) => ({
+        id: m.usuarios.id,
+        nombre: `${m.usuarios.apellidos}, ${m.usuarios.nombres}`,
+      }));
+      setStudents(loadedStudents);
+
+      // Filtrar actividades que aún tienen estudiantes sin nota
+      setCheckingActivities(true);
+      const candidatas = activities.filter((a) => a.carga_academica_id === parseInt(loadId));
+      const pendientes = [];
+      for (const act of candidatas) {
+        try {
+          const gradesRes = await getGradesByActivity(act.id);
+          const estudiantesConNota = new Set(gradesRes.data.map((g) => g.estudiante_id));
+          const faltanNotas = loadedStudents.some((s) => !estudiantesConNota.has(s.id));
+          if (faltanNotas) pendientes.push(act);
+        } catch {
+          // Si falla la consulta asumir que no tiene notas
+          pendientes.push(act);
+        }
+      }
+      setActivitiesForLoad(pendientes);
+    } catch {
+      setError("Error cargando datos.");
+    } finally {
+      setLoadingStudents(false);
+      setCheckingActivities(false);
+    }
+  };
+
+  const handleSaveAll = async () => {
+    if (!selectedActivity) { setError("Selecciona una actividad."); return; }
+    const entries = Object.entries(grades).filter(([, v]) => v !== "");
+    if (entries.length === 0) { setError("Ingresa al menos una nota."); return; }
+    setSaving(true);
+    setError(""); setSuccessMsg("");
+    let ok = 0, fail = 0;
+    for (const [estudiante_id, nota] of entries) {
+      try {
+        await api.post("/grades", {
+          actividad_id: parseInt(selectedActivity),
+          estudiante_id: parseInt(estudiante_id),
+          nota: parseFloat(nota),
+        });
+        ok++;
+      } catch { fail++; }
+    }
+    setSaving(false);
+    if (fail > 0 && ok === 0) {
+      setError("No se guardaron las notas (ya existen o hubo un error).");
+    } else if (fail > 0) {
+      setSuccessMsg(`${ok} guardadas.`);
+      setError(`${fail} ya existían o fallaron.`);
+      onSave();
+    } else {
+      onSave();
+      onClose();
+    }
+  };
+
+  return (
+    <div className="modal" onClick={onClose}>
+      <div className="modal-container modal-container--wide" onClick={(e) => e.stopPropagation()}>
+
+        {/* HEADER igual a UserModal */}
+        <div className="modal-header">
+          <div>
+            <h2>Cargar Notas</h2>
+            <p>REGISTRO DE CALIFICACIONES</p>
+          </div>
+          <button className="close-btn" onClick={onClose}><IoClose /></button>
+        </div>
+
+        <div className="modal-body">
+          {/* FILTROS */}
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Materia – Curso</label>
+              <select value={selectedLoadId} onChange={(e) => handleSelectLoad(e.target.value)}>
+                <option value="">Seleccione materia</option>
+                {loads.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.materias?.nombre} — {l.cursos?.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Actividad con notas pendientes</label>
+              <select
+                value={selectedActivity}
+                onChange={(e) => setSelectedActivity(e.target.value)}
+                disabled={!selectedLoadId || checkingActivities || activitiesForLoad.length === 0}
+              >
+                <option value="">
+                  {checkingActivities
+                    ? "Verificando actividades..."
+                    : activitiesForLoad.length === 0 && selectedLoadId
+                      ? "Todas las actividades tienen notas completas"
+                      : "Seleccione actividad"}
+                </option>
+                {activitiesForLoad.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.nombre} ({a.periodos?.nombre})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* TABLA ESTUDIANTES */}
+          {selectedLoadId && (
+            <div className="grade-panel-table">
+              <div className="grade-panel-thead">
+                <span>Estudiante</span>
+                <span>Nota (1.0 – 5.0)</span>
+              </div>
+              {loadingStudents ? (
+                <p className="grade-panel-empty">Cargando estudiantes...</p>
+              ) : students.length === 0 ? (
+                <p className="grade-panel-empty">No hay estudiantes matriculados en este curso.</p>
+              ) : (
+                students.map((s) => (
+                  <div className="grade-panel-row" key={s.id}>
+                    <span>{s.nombre}</span>
+                    <input
+                      type="number" step="0.1" min="1" max="5"
+                      placeholder="—"
+                      value={grades[s.id] || ""}
+                      onChange={(e) =>
+                        setGrades((prev) => ({ ...prev, [s.id]: e.target.value }))
+                      }
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {error && <p className="modal-error">{error}</p>}
+          {successMsg && <p className="grade-panel-success">{successMsg}</p>}
+        </div>
+
+        {/* FOOTER igual a UserModal */}
+        <div className="modal-footer">
+          <button className="cancel-btn" onClick={onClose}>Cancelar</button>
+          <button
+            className="submit-btn"
+            onClick={handleSaveAll}
+            disabled={saving || !selectedLoadId || !selectedActivity}
+          >
+            {saving ? "Guardando..." : "Guardar Notas →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ── MODAL NUEVA ACTIVIDAD ── */
+function ActivityModal({ loads, periods, onClose, onSave }) {
+  const [form, setForm] = useState({
+    nombre: "",
+    carga_academica_id: "",
+    periodo_id: "",
+    porcentaje: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async () => {
+    if (!form.nombre || !form.carga_academica_id || !form.periodo_id || !form.porcentaje) {
+      setError("Todos los campos son obligatorios."); return;
+    }
+    setSaving(true); setError("");
+    try {
+      await api.post("/activities", {
+        nombre: form.nombre,
+        carga_academica_id: parseInt(form.carga_academica_id),
+        periodo_id: parseInt(form.periodo_id),
+        porcentaje: parseFloat(form.porcentaje),
+      });
+      onSave();
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || "Error al crear la actividad.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="modal" onClick={onClose}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div>
+            <h2>Nueva Actividad</h2>
+            <p>REGISTRO DE ACTIVIDAD ACADÉMICA</p>
+          </div>
+          <button className="close-btn" onClick={onClose}><IoClose /></button>
+        </div>
+        <div className="modal-body">
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Nombre de la actividad *</label>
+              <input
+                name="nombre"
+                placeholder="Ej: Parcial 1, Taller, Quiz..."
+                value={form.nombre}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Materia – Curso *</label>
+              <select name="carga_academica_id" value={form.carga_academica_id} onChange={handleChange}>
+                <option value="">Seleccione materia</option>
+                {loads.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.materias?.nombre} — {l.cursos?.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Periodo *</label>
+              <select name="periodo_id" value={form.periodo_id} onChange={handleChange}>
+                <option value="">Seleccione periodo</option>
+                {periods.map((p) => (
+                  <option key={p.id} value={p.id}>{p.nombre}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Porcentaje (%) *</label>
+              <input
+                name="porcentaje"
+                type="number" min="1" max="100" step="1"
+                placeholder="Ej: 20"
+                value={form.porcentaje}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          {error && <p className="modal-error">{error}</p>}
+        </div>
+        <div className="modal-footer">
+          <button className="cancel-btn" onClick={onClose}>Cancelar</button>
+          <button className="submit-btn" onClick={handleSubmit} disabled={saving}>
+            {saving ? "Creando..." : "Crear Actividad →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── MAIN ── */
 function TeachersMain() {
-  const [subjects, setSubjects] = useState([]);
-const [courses, setCourses] = useState([]);
-const [activities, setActivities] = useState([]);
-const [allSubjects, setAllSubjects] = useState([]);
+  const [loads, setLoads] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [periods, setPeriods] = useState([]);
+  const [activeLoadIndex, setActiveLoadIndex] = useState(0);
+  const [studentsByLoad, setStudentsByLoad] = useState({});
+  const [pendingGrades, setPendingGrades] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [savingAll, setSavingAll] = useState(false);
+  const [saveMsg, setSaveMsg] = useState("");
 
+  const [selectedActivity, setSelectedActivity] = useState("");
+  const [openGradePanel, setOpenGradePanel] = useState(false);
+  const [openActivityModal, setOpenActivityModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-const [activeSubjectIndex, setActiveSubjectIndex] = useState(0);
+  useEffect(() => { loadData(); }, []);
 
-const [studentsBySubject, setStudentsBySubject] = useState({});
-const [loading, setLoading] = useState(true);
-const [loadingStudents, setLoadingStudents] = useState(false);
-
-// Modal estudiante (registro individual)
-const [selectedStudent, setSelectedStudent] = useState(null);
-const [activityId, setActivityId] = useState("");
-const [nota, setNota] = useState("");
-const [observacion, setObservacion] = useState("");
-
-// Modal cargar notas (panel nuevo)
-const [openGradePanel, setOpenGradePanel] = useState(false);
-
-// filtros modal
-const [selectedCourse, setSelectedCourse] = useState("");
-const [selectedSubject, setSelectedSubject] = useState("");
-const [selectedActivity, setSelectedActivity] = useState("");
-
-// paginación
-const [currentPage, setCurrentPage] = useState(1);
-
-  // ── Load subjects once ──
-  useEffect(() => {
-    loadSubjects();
-    loadFilters();
-  }, []);
-
-  const loadSubjects = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const subjectsRes = await api.get("/subjects");
-      const user = JSON.parse(localStorage.getItem("user"));
-
-      let teacherSubjects = [];
-      if (user?.id === 3) {
-        teacherSubjects = subjectsRes.data.filter((s) =>
-          [1, 2, 3].includes(s.id)
-        );
-      } else if (user?.id === 4) {
-        teacherSubjects = subjectsRes.data.filter((s) =>
-          [4, 5].includes(s.id)
-        );
-      } else {
-        teacherSubjects = subjectsRes.data.slice(0, 3);
+      const [loadsRes, activitiesRes, periodsRes] = await Promise.all([
+        getMyLoads(),
+        api.get("/activities"),
+        getPeriods(),
+      ]);
+      setLoads(loadsRes.data);
+      setActivities(activitiesRes.data);
+      setPeriods(periodsRes.data);
+      if (loadsRes.data.length > 0) {
+        await fetchStudentsForLoad(loadsRes.data[0].id);
       }
-
-      setSubjects(teacherSubjects);
-
-      // Load students for the first subject immediately
-      if (teacherSubjects.length > 0) {
-        await loadStudentsForSubject(teacherSubjects[0].id);
-      }
-    } catch (error) {
-      console.error("Error cargando materias:", error);
+    } catch (err) {
+      console.error("Error cargando datos:", err);
     } finally {
       setLoading(false);
     }
   };
-  const loadFilters = async () => {
-  try {
-    const [coursesRes, subjectsRes, activitiesRes] = await Promise.all([
-    api.get("/courses"),
-    api.get("/subjects"),
-    api.get("/activities"),
-  ]);
 
-  setCourses(coursesRes.data);
-  setAllSubjects(subjectsRes.data); 
-  setActivities(activitiesRes.data);
-  } catch (error) {
-    console.error("Error cargando filtros:", error);
-  }
-};
-
-  // ── Load students for a subject (with lazy cache) ──
-  const loadStudentsForSubject = async (subjectId) => {
-    // Already cached? Skip API call
-    if (studentsBySubject[subjectId]) return;
-
+  const fetchStudentsForLoad = async (loadId) => {
+    if (studentsByLoad[loadId]) return;
     try {
       setLoadingStudents(true);
-
-      // Option A: endpoint by subject → /subjects/:id/students
-      // Option B: filter from /users + /grades
-      // Using Option B for compatibility with your existing API shape:
-      const [usersRes, gradesRes] = await Promise.all([
-        api.get("/users"),
-        api.get(`/grades?subject_id=${subjectId}`).catch(() => ({ data: [] })),
-      ]);
-
-      const onlyStudents = usersRes.data.filter(
-        (u) => u.tipo === "ESTUDIANTE"
-      );
-
-      // Build a quick grade lookup: estudiante_id -> nota
-      const gradeMap = {};
-      (gradesRes.data || []).forEach((g) => {
-        gradeMap[g.estudiante_id] = g.nota;
-      });
-
-      const formatted = onlyStudents.map((student) => ({
-        id: student.id,
-        nombre: `${student.apellidos}, ${student.nombres}`,
-        nota: gradeMap[student.id] ?? "--",
-        asistencia: student.asistencia ?? "100%",
+      const res = await getStudentsByLoad(loadId);
+      const formatted = res.data.map((m) => ({
+        id: m.usuarios.id,
+        nombre: `${m.usuarios.apellidos}, ${m.usuarios.nombres}`,
+        promedio: null,
       }));
-
-      setStudentsBySubject((prev) => ({
-        ...prev,
-        [subjectId]: formatted,
-      }));
-    } catch (error) {
-      console.error("Error cargando estudiantes:", error);
-      setStudentsBySubject((prev) => ({
-        ...prev,
-        [subjectId]: [],
-      }));
+      setStudentsByLoad((prev) => ({ ...prev, [loadId]: formatted }));
+    } catch (err) {
+      console.error("Error cargando estudiantes:", err);
+      setStudentsByLoad((prev) => ({ ...prev, [loadId]: [] }));
     } finally {
       setLoadingStudents(false);
     }
   };
 
-  // ── Switch subject ──
-  const handleSelectSubject = async (index) => {
-    setActiveSubjectIndex(index);
-    setCurrentPage(1);
-    const subject = subjects[index];
-    if (subject) {
-      await loadStudentsForSubject(subject.id);
+  // Cuando se selecciona una actividad, cargar las notas reales de esa actividad
+  const handleActivityChange = async (activityId) => {
+    setSelectedActivity(activityId);
+    setSaveMsg("");
+    const loadId = activeLoad?.id;
+    if (!activityId || !loadId) return;
+    try {
+      const res = await getGradesByActivity(activityId);
+      const gradeMap = {};
+      res.data.forEach((g) => {
+        gradeMap[g.estudiante_id] = parseFloat(g.nota);
+      });
+      setStudentsByLoad((prev) => ({
+        ...prev,
+        [loadId]: (prev[loadId] || []).map((s) => ({
+          ...s,
+          promedio: gradeMap[s.id] !== undefined ? gradeMap[s.id] : null,
+        })),
+      }));
+    } catch {
+      // No hay notas aún — dejar promedio en null
     }
   };
 
-  // ── Save grade ──
-  const handleSaveGrade = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post("/grades", {
-        actividad_id: parseInt(activityId),
-        estudiante_id: selectedStudent.id,
-        nota: parseFloat(nota),
-        observacion,
-      });
-
-      // Update nota in local cache
-      const subjectId = subjects[activeSubjectIndex]?.id;
-      if (subjectId) {
-        setStudentsBySubject((prev) => ({
-          ...prev,
-          [subjectId]: (prev[subjectId] || []).map((s) =>
-            s.id === selectedStudent.id
-              ? { ...s, nota: parseFloat(nota) }
-              : s
-          ),
-        }));
-      }
-
-      alert("Nota guardada correctamente");
-      setSelectedStudent(null);
-      setActivityId("");
-      setNota("");
-      setObservacion("");
-    } catch (error) {
-  console.error("ERROR:", error);
-
-  console.log("STATUS:", error.response?.status);
-  console.log("DATA:", error.response?.data);
-
-  alert(
-    error.response?.data?.message ||
-    error.message ||
-    "Error guardando nota"
-  );
-}
+  const handleSelectLoad = async (index) => {
+    setActiveLoadIndex(index);
+    setCurrentPage(1);
+    setSelectedActivity("");
+    setSaveMsg("");
+    const load = loads[index];
+    if (load) await fetchStudentsForLoad(load.id);
   };
 
-  // ── Derived data ──
-  const activeSubject = subjects[activeSubjectIndex] ?? null;
-  const currentStudents = activeSubject
-    ? studentsBySubject[activeSubject.id] ?? []
-    : [];
-  const stats = computeStats(currentStudents);
+  const handleNoteChange = (studentId, value) => {
+    const loadId = activeLoad?.id;
+    if (!loadId) return;
+    setPendingGrades((prev) => ({
+      ...prev,
+      [loadId]: { ...(prev[loadId] || {}), [studentId]: value },
+    }));
+  };
 
-  // Pagination
+  const handleSaveChanges = async () => {
+    const loadId = activeLoad?.id;
+    if (!selectedActivity) { setSaveMsg("⚠ Selecciona una actividad antes de guardar."); return; }
+    const pending = pendingGrades[loadId] || {};
+    const entries = Object.entries(pending).filter(([, v]) => v !== "");
+    if (entries.length === 0) { setSaveMsg("⚠ No hay notas para guardar."); return; }
+
+    setSavingAll(true);
+    setSaveMsg("");
+    let ok = 0, fail = 0;
+
+    for (const [estudiante_id, nota] of entries) {
+      try {
+        await api.post("/grades", {
+          actividad_id: parseInt(selectedActivity),
+          estudiante_id: parseInt(estudiante_id),
+          nota: parseFloat(nota),
+        });
+        setStudentsByLoad((prev) => ({
+          ...prev,
+          [loadId]: (prev[loadId] || []).map((s) =>
+            s.id === parseInt(estudiante_id) ? { ...s, promedio: parseFloat(nota) } : s
+          ),
+        }));
+        ok++;
+      } catch { fail++; }
+    }
+
+    setPendingGrades((prev) => ({ ...prev, [loadId]: {} }));
+    setSavingAll(false);
+    if (fail > 0 && ok === 0) {
+      setSaveMsg("❌ No se guardaron (ya existen o hubo un error).");
+    } else if (fail > 0) {
+      setSaveMsg(`✅ ${ok} guardadas. ❌ ${fail} ya existían.`);
+    } else {
+      setSaveMsg(`✅ ${ok} nota(s) guardadas correctamente.`);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  };
+
+  const activeLoad = loads[activeLoadIndex] ?? null;
+  const currentStudents = activeLoad ? (studentsByLoad[activeLoad.id] ?? []) : [];
+  const stats = computeStats(currentStudents);
   const totalPages = Math.max(1, Math.ceil(currentStudents.length / STUDENTS_PER_PAGE));
   const paginatedStudents = currentStudents.slice(
     (currentPage - 1) * STUDENTS_PER_PAGE,
     currentPage * STUDENTS_PER_PAGE
   );
-
-  const handleExportExcel = () => {
-  alert("Exportando planilla Excel...");
-};
-
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  window.location.href = "/";
-};
+  const activeActivities = activeLoad
+    ? activities.filter((a) => a.carga_academica_id === activeLoad.id)
+    : [];
+  const activePending = activeLoad ? (pendingGrades[activeLoad.id] || {}) : {};
+  const periodoActivo = getPeriodoActivo(periods);
 
   return (
     <div className="dashboard-layout">
 
-      {/* ── SIDEBAR ── */}
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <div>
           <div className="logo-box">
-            <div className="logo-text">
-              <h2>Virtual Campus</h2>
-              <p>Gestión Académica</p>
-            </div>
+            <h2>Virtual Campus</h2>
+            <p>Gestión Académica</p>
           </div>
-
-          <button
-  className="sidebar-btn active-btn"
-  onClick={() => {
-    console.log("CLICK CARGAR NOTAS");
-    setOpenGradePanel(true);
-  }}
->
-  <FaFileUpload />
-  <span>Cargar Notas</span>
-</button>
+          <button className="sidebar-btn active-btn" onClick={() => setOpenGradePanel(true)}>
+            <FaFileUpload />
+            <span>Cargar Notas</span>
+          </button>
         </div>
-
         <div className="sidebar-links">
-  <p
-    style={{
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      gap: "4px"
-    }}
-    onClick={handleLogout}
-  >
-    Cerrar Sesión <FiLogOut />
-  </p>
-</div>
+          <p onClick={handleLogout}>Cerrar Sesión <FiLogOut /></p>
+        </div>
       </aside>
 
-      {/* ── MAIN ── */}
+      {/* MAIN */}
       <div className="main-wrapper">
-
-        {/* TOPBAR */}
         <div className="topbar">
           <h2 className="brand">GradesBook</h2>
           <div className="topbar-right">
-            <input
-              type="text"
-              placeholder="Buscar alumnos..."
-              className="search-input"
-            />
-            <div className="profile-avatar">A</div>
+            <input type="text" placeholder="Buscar alumnos..." className="search-input" />
+            <div className="profile-avatar">D</div>
           </div>
         </div>
 
         <div className="TeachersMain-page">
 
-          {/* PAGE HEADER */}
           <div className="main-header">
             <div>
               <span className="top-text">GESTIÓN DE CALIFICACIONES</span>
               <h1>Cargar Notas</h1>
-              <p>Selecciona una materia para actualizar los registros académicos.</p>
+              <p>Selecciona una materia y actividad para registrar las calificaciones.</p>
             </div>
+            {/* PERIODO ACTIVO */}
             <div className="period-box">
               <FaCalendarAlt />
-              <span>Ciclo Lectivo 2026</span>
+              <span>
+                {periodoActivo
+                  ? periodoActivo.nombre
+                  : "Sin periodo activo"}
+              </span>
             </div>
           </div>
 
-          {/* CONTENT */}
           <div className="main-content">
 
-            {/* LEFT: SUBJECTS */}
+            {/* MATERIAS */}
             <div className="subjects-section scroll-box">
               <h2>Mis Clases Activas</h2>
-
               {loading ? (
-                <p style={{ color: "#888", padding: "1rem 0" }}>Cargando materias...</p>
+                <p style={{ color: "#94a3b8", fontSize: "0.875rem", padding: "1rem 0" }}>
+                  Cargando materias...
+                </p>
+              ) : loads.length === 0 ? (
+                <p style={{ color: "#94a3b8", fontSize: "0.875rem", padding: "1rem 0" }}>
+                  No tienes materias asignadas.
+                </p>
               ) : (
-                subjects.map((subject, index) => (
+                loads.map((load, index) => (
                   <div
-                    className={`subject-card ${index === activeSubjectIndex ? "active" : ""}`}
-                    key={subject.id}
-                    onClick={() => handleSelectSubject(index)}
-                    style={{ cursor: "pointer" }}
+                    key={load.id}
+                    className={`subject-card ${index === activeLoadIndex ? "active" : ""}`}
+                    onClick={() => handleSelectLoad(index)}
                   >
-                    <div className="subject-icon">
-                      <SubjectIcon index={index} />
-                    </div>
-
+                    <div className="subject-icon"><SubjectIcon index={index} /></div>
                     <div className="subject-info">
                       <div className="subject-badge">
-                        {index === activeSubjectIndex ? "EN CURSO" : "PENDIENTE"}
+                        {index === activeLoadIndex ? "EN CURSO" : "PENDIENTE"}
                       </div>
-                      <h3>{subject.nombre}</h3>
-                      <p>{subject.curso ?? "Curso Asignado"}</p>
+                      <h3>{load.materias?.nombre}</h3>
+                      <p>{load.cursos?.nombre}</p>
                       <small>
-                        {studentsBySubject[subject.id]?.length ?? "--"} Alumnos
+                        {studentsByLoad[load.id]
+                          ? `${studentsByLoad[load.id].length} alumnos`
+                          : "—"}
                       </small>
                     </div>
-
                     <FaArrowRight className="subject-arrow" />
                   </div>
                 ))
               )}
             </div>
 
-            {/* RIGHT: STUDENTS */}
+            {/* ESTUDIANTES */}
             <div className="right-side">
-              <div className="students-section scroll-box">
+              <div className="students-section">
 
                 <div className="students-header">
                   <div>
                     <h2>Listado de Alumnos</h2>
-                    {activeSubject && (
-                      <p>
-                        {activeSubject.unidad ?? `Materia #${activeSubject.id}`}
-                      </p>
+                    {activeLoad && (
+                      <p>{activeLoad.materias?.nombre} — {activeLoad.cursos?.nombre}</p>
                     )}
                   </div>
-
                   <div className="students-header-actions">
-                    <button className="excel-btn" onClick={handleExportExcel}>
-                      <FaFileExcel />
-                      <span>Planilla Excel</span>
+                    <button className="excel-btn">
+                      <FaFileExcel /><span>Planilla Excel</span>
                     </button>
-                    <button className="save-btn">Guardar Cambios</button>
+                    <button className="save-btn" onClick={() => setOpenActivityModal(true)}>
+                      <FaPlus /> Nueva Actividad
+                    </button>
                   </div>
                 </div>
 
+                {/* SELECTOR DE ACTIVIDAD */}
+                <div className="activity-selector">
+                  <label>Actividad a calificar</label>
+                  <select
+                    value={selectedActivity}
+                    onChange={(e) => handleActivityChange(e.target.value)}
+                    disabled={activeActivities.length === 0}
+                  >
+                    <option value="">
+                      {activeActivities.length === 0
+                        ? "Sin actividades en esta materia"
+                        : "Seleccione actividad"}
+                    </option>
+                    {activeActivities.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.nombre} ({a.periodos?.nombre})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* TABLA */}
                 <div className="students-table">
-                  <div className="table-header">
+                  <div className="table-header table-header--grades">
                     <span>ALUMNO</span>
-                    <span>NOTA PARCIAL</span>
-                    <span>ASISTENCIA</span>
-                    <span>ACCIONES</span>
+                    <span>NOTA REGISTRADA</span>
+                    <span>NUEVA NOTA</span>
                   </div>
 
                   {loadingStudents ? (
                     <div className="table-loading">Cargando alumnos...</div>
                   ) : paginatedStudents.length === 0 ? (
-                    <div className="table-loading">Sin alumnos registrados.</div>
+                    <div className="table-loading">
+                      {loading ? "Cargando..." : "Sin alumnos matriculados en este curso."}
+                    </div>
                   ) : (
                     paginatedStudents.map((student) => {
-                      const notaNum =
-                        student.nota !== "--" ? parseFloat(student.nota) : null;
-                      const isRisk = notaNum !== null && notaNum < RISK_THRESHOLD;
-
+                      const pendingVal = activePending[student.id] || "";
                       return (
-                        <div className="table-row" key={student.id}>
+                        <div className="table-row table-row--grades" key={student.id}>
                           <div className="student-cell">
-                            <div className={`avatar ${isRisk ? "avatar-risk" : ""}`}>
+                            <div className="avatar">
                               {student.nombre.charAt(0)}
                             </div>
-                            <div>
-                              <h4>{student.nombre}</h4>
-                              <p>ID: #{student.id}</p>
-                            </div>
+                            <h4>{student.nombre}</h4>
                           </div>
-
-                          <div className={`grade-box ${isRisk ? "grade-risk" : ""}`}>
-                            {student.nota !== "--"
-                              ? parseFloat(student.nota).toFixed(2)
+                          <div className="grade-box">
+                            {student.promedio !== null
+                              ? student.promedio.toFixed(2)
                               : "--"}
                           </div>
-
-                          <div
-                            className={`attendance ${
-                              parseInt(student.asistencia) < 85
-                                ? "attendance-low"
-                                : "attendance-ok"
-                            }`}
-                          >
-                            {student.asistencia}
-                          </div>
-
-                          <div className="actions">
-                            <button
-                              className="plus-btn"
-                              onClick={() => setSelectedStudent(student)}
-                              title="Registrar nota"
-                            >
-                              <FaPlus />
-                            </button>
-                            <button className="menu-btn" title="Más opciones">
-                              <FaEllipsisV />
-                            </button>
-                          </div>
+                          <input
+                            className="grade-input"
+                            type="number" step="0.1" min="1" max="5"
+                            placeholder="—"
+                            value={pendingVal}
+                            onChange={(e) => handleNoteChange(student.id, e.target.value)}
+                          />
                         </div>
                       );
                     })
                   )}
                 </div>
 
-                {/* FOOTER: autosave + paginación */}
+                {/* FOOTER */}
                 <div className="table-footer">
-                  <span className="autosave-text">
-                    Cambios guardados automáticamente hace 2 minutos.
-                  </span>
-                  <div className="pagination">
+                  <div className="footer-left">
                     <span>
-                      Página {currentPage} de {totalPages}
+                      {currentStudents.length} alumno{currentStudents.length !== 1 ? "s" : ""} en este curso
                     </span>
+                    {saveMsg && <span className="save-msg">{saveMsg}</span>}
+                  </div>
+                  <div className="footer-right">
+                    <div className="pagination">
+                      <button className="page-btn" disabled={currentPage <= 1} onClick={() => setCurrentPage((p) => p - 1)}>‹</button>
+                      <span>Pág. {currentPage}/{totalPages}</span>
+                      <button className="page-btn" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>›</button>
+                    </div>
                     <button
-                      className="page-btn"
-                      disabled={currentPage >= totalPages}
-                      onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                      className="save-btn"
+                      onClick={handleSaveChanges}
+                      disabled={savingAll || !selectedActivity}
                     >
-                      &rsaquo;
+                      {savingAll ? "Guardando..." : "Guardar Cambios"}
                     </button>
                   </div>
                 </div>
@@ -529,128 +689,42 @@ const handleLogout = () => {
             </div>
           </div>
 
-          {/* ── STATS BAR ── */}
+          {/* STATS — sin alumnos en riesgo */}
           <div className="stats-bar">
             <div className="stat-item">
-              <span className="stat-icon stat-blue">↗</span>
+              <span className="stat-blue">↗</span>
               <span>Promedio General:</span>
               <strong className="stat-blue">{stats.avg}</strong>
             </div>
-
             <div className="stat-item">
-              <span className="stat-icon stat-green">✔</span>
-              <span className="stat-pill stat-green">
-                {stats.pctCalificados}% Calificado
-              </span>
-            </div>
-
-            <div className="stat-item">
-              <span className="stat-icon stat-amber">⚠</span>
-              <span>{stats.atRisk} Alumnos en Riesgo</span>
+              <span className="stat-green">✔</span>
+              <span>{stats.pctCalificados}% Calificado</span>
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* ── MODAL ── */}
-      <StudentModal
-        student={selectedStudent}
-        activityId={activityId}
-        setActivityId={setActivityId}
-        nota={nota}
-        setNota={setNota}
-        observacion={observacion}
-        setObservacion={setObservacion}
-        onClose={() => setSelectedStudent(null)}
-        onSave={handleSaveGrade}
-      />
-      {/* ── MODAL CARGAR NOTAS ── */}
-{openGradePanel && (
-  <div className="modal-overlay">
-    <div className="modal-box">
+      {/* MODAL NUEVA ACTIVIDAD */}
+      {openActivityModal && (
+        <ActivityModal
+          loads={loads}
+          periods={periods}
+          onClose={() => setOpenActivityModal(false)}
+          onSave={loadData}
+        />
+      )}
 
-      <div className="modal-header">
-        <h2>Cargar Notas</h2>
-        <button
-          className="close-btn"
-          onClick={() => setOpenGradePanel(false)}
-        >
-          ×
-        </button>
-      </div>
-
-      {/* CURSO */}
-      <div className="form-group">
-        <label>Curso</label>
-        <select
-          value={selectedCourse}
-          onChange={(e) => setSelectedCourse(e.target.value)}
-        >
-          <option value="">Seleccione curso</option>
-          {courses.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nombre}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* MATERIA */}
-      <div className="form-group">
-  <label>Materia</label>
-  <select
-    value={selectedSubject}
-    onChange={(e) => setSelectedSubject(e.target.value)}
-  >
-    <option value="">Seleccione materia</option>
-
-    {allSubjects.map((s) => (
-      <option key={s.id} value={s.id}>
-        {s.nombre}
-      </option>
-    ))}
-  </select>
-</div>
-
-      {/* ACTIVIDAD */}
-      <div className="form-group">
-        <label>Actividad</label>
-        <select
-          value={selectedActivity}
-          onChange={(e) => setSelectedActivity(e.target.value)}
-        >
-          <option value="">Seleccione actividad</option>
-          {activities
-            .filter(a => Number(a.subject_id) === Number(selectedSubject))
-            .map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.nombre}
-              </option>
-            ))}
-        </select>
-      </div>
-
-      <button
-        className="submit-btn"
-        onClick={() => {
-          console.log({
-            curso: selectedCourse,
-            materia: selectedSubject,
-            actividad: selectedActivity,
-          });
-
-          setOpenGradePanel(false);
-        }}
-      >
-        Continuar
-      </button>
-
+      {/* MODAL CARGAR NOTAS */}
+      {openGradePanel && (
+        <GradePanelModal
+          loads={loads}
+          activities={activities}
+          onClose={() => setOpenGradePanel(false)}
+          onSave={loadData}
+        />
+      )}
     </div>
-  </div>
-)}
-    </div>
-    
   );
 }
 

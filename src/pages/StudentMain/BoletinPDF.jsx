@@ -198,13 +198,6 @@ function EstadoBadge({ nota }) {
     );
 }
 
-/**
- * Props:
- *  - estudiante: { nombreCompleto: string }
- *  - periodo: { nombre: string, fecha_inicio: string, fecha_fin: string }
- *  - boletin: [{ asignatura, nota, comentario }]
- *  - promedioGeneral: string | number
- */
 export default function BoletinPDF({ estudiante, periodo, boletin, promedioGeneral }) {
     const fechaEmision = new Date().toLocaleDateString("es-CO", {
         year: "numeric", month: "long", day: "numeric",

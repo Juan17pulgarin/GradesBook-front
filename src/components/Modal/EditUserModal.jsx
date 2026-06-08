@@ -5,6 +5,8 @@ import { MdOutlineMailOutline } from "react-icons/md";
 import { FaIdCard } from "react-icons/fa";
 import { MdOutlineCall } from "react-icons/md";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
+import { FiAlertTriangle } from "react-icons/fi";
+
 
 import "./UserModal.css";
 
@@ -105,7 +107,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
                 {/* BANNER INACTIVO */}
                 {!isActivo && (
                     <div className="modal-inactive-banner">
-                        <span>⚠️ Este usuario está <strong>inactivo</strong>.</span>
+                        <span><FiAlertTriangle /> Este usuario está <strong>inactivo</strong>.</span>
                         <button
                             className="btn-reactivate"
                             onClick={handleActivate}

@@ -411,3 +411,86 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
+/* ── Filter toggle activos/inactivos ── */
+.filter-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover { background: #f1f5f9; }
+
+.filter-btn--active {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: white;
+}
+
+.filter-btn--inactive-tab.filter-btn--active {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: white;
+}
+
+/* ── Fila inactiva ── */
+.table-row--inactive { opacity: 0.7; background: #fafafa; }
+
+/* ── Status badge ── */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+.status-active  { background: #d9f99d; color: #4d7c0f; }
+.status-inactive{ background: #fee2e2; color: #b91c1c; }
+
+/* ── Botón reactivar ── */
+.btn-activate {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: none;
+    background: #d9f99d;
+    color: #4d7c0f;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.btn-activate:hover { background: #bef264; }
+
+/* ── Botón confirmar reactivar ── */
+.btn-confirm-activate {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background: #22c55e;
+    color: white;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-confirm-activate:hover:not(:disabled) { background: #16a34a; }
+.btn-confirm-activate:disabled { opacity: 0.6; cursor: not-allowed; }

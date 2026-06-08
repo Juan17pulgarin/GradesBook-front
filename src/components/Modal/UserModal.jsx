@@ -12,6 +12,8 @@ import { HiOutlineLockClosed } from "react-icons/hi";
 import { MdOutlineCall } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { IoMdEyeOff } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
+
 
 
 import "./UserModal.css";
@@ -378,7 +380,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                         className="close-btn"
                         onClick={onClose}
                     >
-                        ✕
+                        <IoClose />
                     </button>
 
                 </div>

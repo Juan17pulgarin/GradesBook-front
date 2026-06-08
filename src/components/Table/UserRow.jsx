@@ -12,7 +12,6 @@ export default function UserRow({ user, badge, extraCol, onDelete, onEdit, idPre
                     <p style={{ color: isActivo ? "" : "#94a3b8" }}>
                         {user.nombres} {user.apellidos}
                     </p>
-                    <span>ID: {idPrefix}{user.id}</span>
                 </div>
             </div>
 
@@ -24,13 +23,8 @@ export default function UserRow({ user, badge, extraCol, onDelete, onEdit, idPre
                 <span className="badge">{extraCol}</span>
             )}
 
-            {/* ESTADO */}
-            <span className={`status-badge ${isActivo ? "status-active" : "status-inactive"}`}>
-                {isActivo ? "Activo" : "Inactivo"}
-            </span>
-
             <div className="actions">
-                {onEdit && (
+                {onEdit && isActivo && (
                     <button className="btn-edit" title="Editar" onClick={() => onEdit(user)}>
                         <FiEdit2 />
                     </button>
