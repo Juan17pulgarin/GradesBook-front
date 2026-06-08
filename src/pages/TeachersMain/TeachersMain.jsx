@@ -14,15 +14,36 @@ import "./TeachersMain.css";
 
 const STUDENTS_PER_PAGE = 5;
 
+// Colores de avatar según índice
+const AVATAR_COLORS = [
+  { bg: "#dbeafe", color: "#2563eb" },
+  { bg: "#fce7f3", color: "#db2777" },
+  { bg: "#d1fae5", color: "#059669" },
+  { bg: "#fef3c7", color: "#d97706" },
+  { bg: "#ede9fe", color: "#7c3aed" },
+  { bg: "#fee2e2", color: "#dc2626" },
+];
+
+function getAvatarColor(index) {
+  return AVATAR_COLORS[index % AVATAR_COLORS.length];
+}
+
+// Iniciales a partir de "Apellido, Nombre"
+function getInitials(nombre) {
+  const parts = nombre.replace(",", "").trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return parts[0]?.slice(0, 2).toUpperCase() || "?";
+}
+
 function computeStats(students) {
   const graded = students.filter((s) => s.promedio !== null);
   const avg = graded.length > 0
     ? graded.reduce((acc, s) => acc + s.promedio, 0) / graded.length
     : 0;
-  const pctCalificados = students.length > 0
+  const pct = students.length > 0
     ? Math.round((graded.length / students.length) * 100)
     : 0;
-  return { avg: avg.toFixed(2), pctCalificados };
+  return { avg: avg.toFixed(2), pct };
 }
 
 function SubjectIcon({ index }) {
@@ -31,61 +52,53 @@ function SubjectIcon({ index }) {
   return <FaLandmark />;
 }
 
-// Detectar periodo activo
 function getPeriodoActivo(periods) {
   if (!periods || periods.length === 0) return null;
   const hoy = new Date();
-  return periods.find((p) => {
-    const ini = new Date(p.fecha_inicio);
-    const fin = new Date(p.fecha_fin);
-    return hoy >= ini && hoy <= fin;
-  }) || periods[periods.length - 1];
+  return periods.find((p) =>
+    hoy >= new Date(p.fecha_inicio) && hoy <= new Date(p.fecha_fin)
+  ) || periods[periods.length - 1];
 }
 
-/* ── MODAL CARGAR NOTAS ── igual estructura que UserModal ── */
+/* ── MODAL CARGAR NOTAS ── */
 function GradePanelModal({ loads, activities, onClose, onSave }) {
   const [selectedLoadId, setSelectedLoadId] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
   const [students, setStudents] = useState([]);
   const [grades, setGrades] = useState({});
   const [loadingStudents, setLoadingStudents] = useState(false);
+  const [checkingActivities, setCheckingActivities] = useState(false);
+  const [activitiesForLoad, setActivitiesForLoad] = useState([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-
-  const [activitiesForLoad, setActivitiesForLoad] = useState([]);
-  const [checkingActivities, setCheckingActivities] = useState(false);
 
   const handleSelectLoad = async (loadId) => {
     setSelectedLoadId(loadId);
     setSelectedActivity("");
     setGrades({});
-    setError("");
-    setSuccessMsg("");
+    setError(""); setSuccessMsg("");
     setActivitiesForLoad([]);
     if (!loadId) { setStudents([]); return; }
     try {
       setLoadingStudents(true);
-      // Cargar estudiantes
       const res = await getStudentsByLoad(loadId);
-      const loadedStudents = res.data.map((m) => ({
+      const loaded = res.data.map((m) => ({
         id: m.usuarios.id,
         nombre: `${m.usuarios.apellidos}, ${m.usuarios.nombres}`,
       }));
-      setStudents(loadedStudents);
+      setStudents(loaded);
 
-      // Filtrar actividades que aún tienen estudiantes sin nota
+      // Filtrar actividades con notas pendientes
       setCheckingActivities(true);
       const candidatas = activities.filter((a) => a.carga_academica_id === parseInt(loadId));
       const pendientes = [];
       for (const act of candidatas) {
         try {
-          const gradesRes = await getGradesByActivity(act.id);
-          const estudiantesConNota = new Set(gradesRes.data.map((g) => g.estudiante_id));
-          const faltanNotas = loadedStudents.some((s) => !estudiantesConNota.has(s.id));
-          if (faltanNotas) pendientes.push(act);
+          const gr = await getGradesByActivity(act.id);
+          const conNota = new Set(gr.data.map((g) => g.estudiante_id));
+          if (loaded.some((s) => !conNota.has(s.id))) pendientes.push(act);
         } catch {
-          // Si falla la consulta asumir que no tiene notas
           pendientes.push(act);
         }
       }
@@ -102,8 +115,7 @@ function GradePanelModal({ loads, activities, onClose, onSave }) {
     if (!selectedActivity) { setError("Selecciona una actividad."); return; }
     const entries = Object.entries(grades).filter(([, v]) => v !== "");
     if (entries.length === 0) { setError("Ingresa al menos una nota."); return; }
-    setSaving(true);
-    setError(""); setSuccessMsg("");
+    setSaving(true); setError(""); setSuccessMsg("");
     let ok = 0, fail = 0;
     for (const [estudiante_id, nota] of entries) {
       try {
@@ -117,22 +129,19 @@ function GradePanelModal({ loads, activities, onClose, onSave }) {
     }
     setSaving(false);
     if (fail > 0 && ok === 0) {
-      setError("No se guardaron las notas (ya existen o hubo un error).");
+      setError("No se guardaron (ya existen o hubo un error).");
     } else if (fail > 0) {
       setSuccessMsg(`${ok} guardadas.`);
       setError(`${fail} ya existían o fallaron.`);
       onSave();
     } else {
-      onSave();
-      onClose();
+      onSave(); onClose();
     }
   };
 
   return (
     <div className="modal" onClick={onClose}>
       <div className="modal-container modal-container--wide" onClick={(e) => e.stopPropagation()}>
-
-        {/* HEADER igual a UserModal */}
         <div className="modal-header">
           <div>
             <h2>Cargar Notas</h2>
@@ -140,9 +149,7 @@ function GradePanelModal({ loads, activities, onClose, onSave }) {
           </div>
           <button className="close-btn" onClick={onClose}><IoClose /></button>
         </div>
-
         <div className="modal-body">
-          {/* FILTROS */}
           <div className="form-grid">
             <div className="form-group">
               <label>Materia – Curso</label>
@@ -170,15 +177,12 @@ function GradePanelModal({ loads, activities, onClose, onSave }) {
                       : "Seleccione actividad"}
                 </option>
                 {activitiesForLoad.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.nombre} ({a.periodos?.nombre})
-                  </option>
+                  <option key={a.id} value={a.id}>{a.nombre} ({a.periodos?.nombre})</option>
                 ))}
               </select>
             </div>
           </div>
 
-          {/* TABLA ESTUDIANTES */}
           {selectedLoadId && (
             <div className="grade-panel-table">
               <div className="grade-panel-thead">
@@ -188,37 +192,36 @@ function GradePanelModal({ loads, activities, onClose, onSave }) {
               {loadingStudents ? (
                 <p className="grade-panel-empty">Cargando estudiantes...</p>
               ) : students.length === 0 ? (
-                <p className="grade-panel-empty">No hay estudiantes matriculados en este curso.</p>
-              ) : (
-                students.map((s) => (
+                <p className="grade-panel-empty">No hay estudiantes matriculados.</p>
+              ) : students.map((s, i) => {
+                const colors = getAvatarColor(i);
+                return (
                   <div className="grade-panel-row" key={s.id}>
-                    <span>{s.nombre}</span>
+                    <div className="grade-panel-student">
+                      <div className="gp-avatar" style={{ background: colors.bg, color: colors.color }}>
+                        {getInitials(s.nombre)}
+                      </div>
+                      <span>{s.nombre}</span>
+                    </div>
                     <input
                       type="number" step="0.1" min="1" max="5"
                       placeholder="—"
                       value={grades[s.id] || ""}
-                      onChange={(e) =>
-                        setGrades((prev) => ({ ...prev, [s.id]: e.target.value }))
-                      }
+                      onChange={(e) => setGrades((prev) => ({ ...prev, [s.id]: e.target.value }))}
                     />
                   </div>
-                ))
-              )}
+                );
+              })}
             </div>
           )}
 
           {error && <p className="modal-error">{error}</p>}
           {successMsg && <p className="grade-panel-success">{successMsg}</p>}
         </div>
-
-        {/* FOOTER igual a UserModal */}
         <div className="modal-footer">
           <button className="cancel-btn" onClick={onClose}>Cancelar</button>
-          <button
-            className="submit-btn"
-            onClick={handleSaveAll}
-            disabled={saving || !selectedLoadId || !selectedActivity}
-          >
+          <button className="submit-btn" onClick={handleSaveAll}
+            disabled={saving || !selectedLoadId || !selectedActivity}>
             {saving ? "Guardando..." : "Guardar Notas →"}
           </button>
         </div>
@@ -227,22 +230,15 @@ function GradePanelModal({ loads, activities, onClose, onSave }) {
   );
 }
 
-
 /* ── MODAL NUEVA ACTIVIDAD ── */
 function ActivityModal({ loads, periods, onClose, onSave }) {
-  const [form, setForm] = useState({
-    nombre: "",
-    carga_academica_id: "",
-    periodo_id: "",
-    porcentaje: "",
-  });
+  const [form, setForm] = useState({ nombre: "", carga_academica_id: "", periodo_id: "", porcentaje: "", fecha: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async () => {
-    if (!form.nombre || !form.carga_academica_id || !form.periodo_id || !form.porcentaje) {
+    if (!form.nombre || !form.carga_academica_id || !form.periodo_id || !form.porcentaje || !form.fecha) {
       setError("Todos los campos son obligatorios."); return;
     }
     setSaving(true); setError("");
@@ -252,45 +248,33 @@ function ActivityModal({ loads, periods, onClose, onSave }) {
         carga_academica_id: parseInt(form.carga_academica_id),
         periodo_id: parseInt(form.periodo_id),
         porcentaje: parseFloat(form.porcentaje),
+        fecha: form.fecha,
       });
-      onSave();
-      onClose();
+      onSave(); onClose();
     } catch (err) {
       setError(err.response?.data?.message || "Error al crear la actividad.");
-    } finally {
-      setSaving(false);
-    }
+    } finally { setSaving(false); }
   };
 
   return (
     <div className="modal" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <div>
-            <h2>Nueva Actividad</h2>
-            <p>REGISTRO DE ACTIVIDAD ACADÉMICA</p>
-          </div>
+          <div><h2>Nueva Actividad</h2><p>REGISTRO DE ACTIVIDAD ACADÉMICA</p></div>
           <button className="close-btn" onClick={onClose}><IoClose /></button>
         </div>
         <div className="modal-body">
           <div className="form-grid">
             <div className="form-group">
               <label>Nombre de la actividad *</label>
-              <input
-                name="nombre"
-                placeholder="Ej: Parcial 1, Taller, Quiz..."
-                value={form.nombre}
-                onChange={handleChange}
-              />
+              <input name="nombre" placeholder="Ej: Parcial 1, Taller..." value={form.nombre} onChange={handleChange} />
             </div>
             <div className="form-group">
               <label>Materia – Curso *</label>
               <select name="carga_academica_id" value={form.carga_academica_id} onChange={handleChange}>
                 <option value="">Seleccione materia</option>
                 {loads.map((l) => (
-                  <option key={l.id} value={l.id}>
-                    {l.materias?.nombre} — {l.cursos?.nombre}
-                  </option>
+                  <option key={l.id} value={l.id}>{l.materias?.nombre} — {l.cursos?.nombre}</option>
                 ))}
               </select>
             </div>
@@ -298,20 +282,17 @@ function ActivityModal({ loads, periods, onClose, onSave }) {
               <label>Periodo *</label>
               <select name="periodo_id" value={form.periodo_id} onChange={handleChange}>
                 <option value="">Seleccione periodo</option>
-                {periods.map((p) => (
-                  <option key={p.id} value={p.id}>{p.nombre}</option>
-                ))}
+                {periods.map((p) => <option key={p.id} value={p.id}>{p.nombre}</option>)}
               </select>
             </div>
             <div className="form-group">
               <label>Porcentaje (%) *</label>
-              <input
-                name="porcentaje"
-                type="number" min="1" max="100" step="1"
-                placeholder="Ej: 20"
-                value={form.porcentaje}
-                onChange={handleChange}
-              />
+              <input name="porcentaje" type="number" min="1" max="100" step="1"
+                placeholder="Ej: 20" value={form.porcentaje} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label>Fecha *</label>
+              <input name="fecha" type="date" value={form.fecha} onChange={handleChange} />
             </div>
           </div>
           {error && <p className="modal-error">{error}</p>}
@@ -339,7 +320,6 @@ function TeachersMain() {
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [savingAll, setSavingAll] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
-
   const [selectedActivity, setSelectedActivity] = useState("");
   const [openGradePanel, setOpenGradePanel] = useState(false);
   const [openActivityModal, setOpenActivityModal] = useState(false);
@@ -358,18 +338,21 @@ function TeachersMain() {
       setLoads(loadsRes.data);
       setActivities(activitiesRes.data);
       setPeriods(periodsRes.data);
+      // Reset cache so next load refreshes data
+      setStudentsByLoad({});
       if (loadsRes.data.length > 0) {
-        await fetchStudentsForLoad(loadsRes.data[0].id);
+        await fetchStudentsForLoad(loadsRes.data[0].id, {}, periodsRes.data);
       }
     } catch (err) {
-      console.error("Error cargando datos:", err);
+      console.error("Error:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchStudentsForLoad = async (loadId) => {
-    if (studentsByLoad[loadId]) return;
+  const fetchStudentsForLoad = async (loadId, existingCache, allPeriods) => {
+    const cache = existingCache ?? studentsByLoad;
+    if (cache[loadId]) return;
     try {
       setLoadingStudents(true);
       const res = await getStudentsByLoad(loadId);
@@ -378,7 +361,32 @@ function TeachersMain() {
         nombre: `${m.usuarios.apellidos}, ${m.usuarios.nombres}`,
         promedio: null,
       }));
+      // Guardar primero sin promedios
       setStudentsByLoad((prev) => ({ ...prev, [loadId]: formatted }));
+
+      // Cargar promedio de cada estudiante en paralelo
+      const periodsToUse = allPeriods ?? periods;
+      const periodoActivo = getPeriodoActivo(periodsToUse);
+      if (periodoActivo && formatted.length > 0) {
+        const promedios = await Promise.all(
+          formatted.map(async (s) => {
+            try {
+              const r = await api.get(`/grades/average/${s.id}/${loadId}/${periodoActivo.id}`);
+              return { id: s.id, promedio: parseFloat(r.data.promedio ?? 0) || null };
+            } catch {
+              return { id: s.id, promedio: null };
+            }
+          })
+        );
+        const promedioMap = Object.fromEntries(promedios.map((p) => [p.id, p.promedio]));
+        setStudentsByLoad((prev) => ({
+          ...prev,
+          [loadId]: (prev[loadId] ?? formatted).map((s) => ({
+            ...s,
+            promedio: promedioMap[s.id] !== undefined ? promedioMap[s.id] : null,
+          })),
+        }));
+      }
     } catch (err) {
       console.error("Error cargando estudiantes:", err);
       setStudentsByLoad((prev) => ({ ...prev, [loadId]: [] }));
@@ -387,27 +395,51 @@ function TeachersMain() {
     }
   };
 
-  // Cuando se selecciona una actividad, cargar las notas reales de esa actividad
+  // Al seleccionar actividad: cargar nota de esa actividad Y promedio general del estudiante
   const handleActivityChange = async (activityId) => {
     setSelectedActivity(activityId);
     setSaveMsg("");
     const loadId = activeLoad?.id;
     if (!activityId || !loadId) return;
+
     try {
-      const res = await getGradesByActivity(activityId);
+      // 1. Notas de la actividad seleccionada
+      const gradesRes = await getGradesByActivity(activityId);
       const gradeMap = {};
-      res.data.forEach((g) => {
+      gradesRes.data.forEach((g) => {
         gradeMap[g.estudiante_id] = parseFloat(g.nota);
       });
+
+      // 2. Promedio por estudiante en esta carga + periodo activo
+      const periodoActivo = getPeriodoActivo(periods);
+      const students = studentsByLoad[loadId] || [];
+
+      const promedioMap = {};
+      if (periodoActivo) {
+        await Promise.all(students.map(async (s) => {
+          try {
+            const avgRes = await api.get(
+              `/grades/average/${s.id}/${loadId}/${periodoActivo.id}`
+            );
+            promedioMap[s.id] = parseFloat(avgRes.data.promedio ?? 0);
+          } catch {
+            promedioMap[s.id] = null;
+          }
+        }));
+      }
+
       setStudentsByLoad((prev) => ({
         ...prev,
         [loadId]: (prev[loadId] || []).map((s) => ({
           ...s,
-          promedio: gradeMap[s.id] !== undefined ? gradeMap[s.id] : null,
+          // nota de la actividad seleccionada para la columna "Nota Registrada"
+          notaActividad: gradeMap[s.id] !== undefined ? gradeMap[s.id] : null,
+          // promedio real del estudiante en la carga/periodo
+          promedio: promedioMap[s.id] !== undefined ? promedioMap[s.id] : null,
         })),
       }));
     } catch {
-      // No hay notas aún — dejar promedio en null
+      // silencioso
     }
   };
 
@@ -417,7 +449,15 @@ function TeachersMain() {
     setSelectedActivity("");
     setSaveMsg("");
     const load = loads[index];
-    if (load) await fetchStudentsForLoad(load.id);
+    if (load) {
+      // Limpiar cache de esta carga para forzar recarga con promedios frescos
+      setStudentsByLoad((prev) => {
+        const next = { ...prev };
+        delete next[load.id];
+        return next;
+      });
+      await fetchStudentsForLoad(load.id, {}, undefined);
+    }
   };
 
   const handleNoteChange = (studentId, value) => {
@@ -436,10 +476,8 @@ function TeachersMain() {
     const entries = Object.entries(pending).filter(([, v]) => v !== "");
     if (entries.length === 0) { setSaveMsg("⚠ No hay notas para guardar."); return; }
 
-    setSavingAll(true);
-    setSaveMsg("");
+    setSavingAll(true); setSaveMsg("");
     let ok = 0, fail = 0;
-
     for (const [estudiante_id, nota] of entries) {
       try {
         await api.post("/grades", {
@@ -447,25 +485,36 @@ function TeachersMain() {
           estudiante_id: parseInt(estudiante_id),
           nota: parseFloat(nota),
         });
-        setStudentsByLoad((prev) => ({
-          ...prev,
-          [loadId]: (prev[loadId] || []).map((s) =>
-            s.id === parseInt(estudiante_id) ? { ...s, promedio: parseFloat(nota) } : s
-          ),
-        }));
         ok++;
       } catch { fail++; }
     }
-
     setPendingGrades((prev) => ({ ...prev, [loadId]: {} }));
     setSavingAll(false);
-    if (fail > 0 && ok === 0) {
-      setSaveMsg("❌ No se guardaron (ya existen o hubo un error).");
-    } else if (fail > 0) {
-      setSaveMsg(`✅ ${ok} guardadas. ❌ ${fail} ya existían.`);
-    } else {
-      setSaveMsg(`✅ ${ok} nota(s) guardadas correctamente.`);
+    // Refrescar promedios tras guardar
+    if (ok > 0) {
+      const periodoActivo = getPeriodoActivo(periods);
+      if (periodoActivo && activeLoad) {
+        const updated = await Promise.all(
+          (studentsByLoad[activeLoad.id] || []).map(async (s) => {
+            try {
+              const r = await api.get(`/grades/average/${s.id}/${activeLoad.id}/${periodoActivo.id}`);
+              return { id: s.id, promedio: parseFloat(r.data.promedio ?? 0) || null };
+            } catch { return { id: s.id, promedio: null }; }
+          })
+        );
+        const map = Object.fromEntries(updated.map((p) => [p.id, p.promedio]));
+        setStudentsByLoad((prev) => ({
+          ...prev,
+          [activeLoad.id]: (prev[activeLoad.id] || []).map((s) => ({
+            ...s,
+            promedio: map[s.id] !== undefined ? map[s.id] : s.promedio,
+          })),
+        }));
+      }
     }
+    if (fail > 0 && ok === 0) setSaveMsg("❌ No se guardaron (ya existen o hubo un error).");
+    else if (fail > 0) setSaveMsg(`✅ ${ok} guardadas. ❌ ${fail} ya existían.`);
+    else setSaveMsg(`✅ ${ok} nota(s) guardadas correctamente.`);
   };
 
   const handleLogout = () => {
@@ -490,8 +539,6 @@ function TeachersMain() {
 
   return (
     <div className="dashboard-layout">
-
-      {/* SIDEBAR */}
       <aside className="sidebar">
         <div>
           <div className="logo-box">
@@ -499,8 +546,7 @@ function TeachersMain() {
             <p>Gestión Académica</p>
           </div>
           <button className="sidebar-btn active-btn" onClick={() => setOpenGradePanel(true)}>
-            <FaFileUpload />
-            <span>Cargar Notas</span>
+            <FaFileUpload /><span>Cargar Notas</span>
           </button>
         </div>
         <div className="sidebar-links">
@@ -508,7 +554,6 @@ function TeachersMain() {
         </div>
       </aside>
 
-      {/* MAIN */}
       <div className="main-wrapper">
         <div className="topbar">
           <h2 className="brand">GradesBook</h2>
@@ -519,154 +564,116 @@ function TeachersMain() {
         </div>
 
         <div className="TeachersMain-page">
-
           <div className="main-header">
             <div>
               <span className="top-text">GESTIÓN DE CALIFICACIONES</span>
               <h1>Cargar Notas</h1>
               <p>Selecciona una materia y actividad para registrar las calificaciones.</p>
             </div>
-            {/* PERIODO ACTIVO */}
             <div className="period-box">
               <FaCalendarAlt />
-              <span>
-                {periodoActivo
-                  ? periodoActivo.nombre
-                  : "Sin periodo activo"}
-              </span>
+              <span>{periodoActivo ? periodoActivo.nombre : "Sin periodo activo"}</span>
             </div>
           </div>
 
           <div className="main-content">
-
             {/* MATERIAS */}
             <div className="subjects-section scroll-box">
               <h2>Mis Clases Activas</h2>
               {loading ? (
-                <p style={{ color: "#94a3b8", fontSize: "0.875rem", padding: "1rem 0" }}>
-                  Cargando materias...
-                </p>
+                <p className="tm-empty-msg">Cargando materias...</p>
               ) : loads.length === 0 ? (
-                <p style={{ color: "#94a3b8", fontSize: "0.875rem", padding: "1rem 0" }}>
-                  No tienes materias asignadas.
-                </p>
-              ) : (
-                loads.map((load, index) => (
-                  <div
-                    key={load.id}
-                    className={`subject-card ${index === activeLoadIndex ? "active" : ""}`}
-                    onClick={() => handleSelectLoad(index)}
-                  >
-                    <div className="subject-icon"><SubjectIcon index={index} /></div>
-                    <div className="subject-info">
-                      <div className="subject-badge">
-                        {index === activeLoadIndex ? "EN CURSO" : "PENDIENTE"}
-                      </div>
-                      <h3>{load.materias?.nombre}</h3>
-                      <p>{load.cursos?.nombre}</p>
-                      <small>
-                        {studentsByLoad[load.id]
-                          ? `${studentsByLoad[load.id].length} alumnos`
-                          : "—"}
-                      </small>
-                    </div>
-                    <FaArrowRight className="subject-arrow" />
+                <p className="tm-empty-msg">No tienes materias asignadas.</p>
+              ) : loads.map((load, index) => (
+                <div
+                  key={load.id}
+                  className={`subject-card ${index === activeLoadIndex ? "active" : ""}`}
+                  onClick={() => handleSelectLoad(index)}
+                >
+                  <div className="subject-icon"><SubjectIcon index={index} /></div>
+                  <div className="subject-info">
+                    <div className="subject-badge">{index === activeLoadIndex ? "EN CURSO" : "PENDIENTE"}</div>
+                    <h3>{load.materias?.nombre}</h3>
+                    <p>{load.cursos?.nombre}</p>
+                    <small>{studentsByLoad[load.id] ? `${studentsByLoad[load.id].length} alumnos` : "—"}</small>
                   </div>
-                ))
-              )}
+                  <FaArrowRight className="subject-arrow" />
+                </div>
+              ))}
             </div>
 
             {/* ESTUDIANTES */}
             <div className="right-side">
               <div className="students-section">
-
                 <div className="students-header">
                   <div>
                     <h2>Listado de Alumnos</h2>
-                    {activeLoad && (
-                      <p>{activeLoad.materias?.nombre} — {activeLoad.cursos?.nombre}</p>
-                    )}
+                    {activeLoad && <p>{activeLoad.materias?.nombre} — {activeLoad.cursos?.nombre}</p>}
                   </div>
                   <div className="students-header-actions">
-                    <button className="excel-btn">
-                      <FaFileExcel /><span>Planilla Excel</span>
-                    </button>
-                    <button className="save-btn" onClick={() => setOpenActivityModal(true)}>
+                    <button className="excel-btn"><FaFileExcel /><span>Planilla Excel</span></button>
+                    <button className="save-btn save-btn--secondary" onClick={() => setOpenActivityModal(true)}>
                       <FaPlus /> Nueva Actividad
                     </button>
+                    <button className="save-btn" onClick={handleSaveChanges} disabled={savingAll || !selectedActivity}>
+                      {savingAll ? "Guardando..." : "Guardar Cambios"}
+                    </button>
                   </div>
-                </div>
-
-                {/* SELECTOR DE ACTIVIDAD */}
-                <div className="activity-selector">
-                  <label>Actividad a calificar</label>
-                  <select
-                    value={selectedActivity}
-                    onChange={(e) => handleActivityChange(e.target.value)}
-                    disabled={activeActivities.length === 0}
-                  >
-                    <option value="">
-                      {activeActivities.length === 0
-                        ? "Sin actividades en esta materia"
-                        : "Seleccione actividad"}
-                    </option>
-                    {activeActivities.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.nombre} ({a.periodos?.nombre})
-                      </option>
-                    ))}
-                  </select>
                 </div>
 
                 {/* TABLA */}
                 <div className="students-table">
-                  <div className="table-header table-header--grades">
+                  <div className="tm-table-head">
                     <span>ALUMNO</span>
-                    <span>NOTA REGISTRADA</span>
+                    <span>NOTA PARCIAL</span>
                     <span>NUEVA NOTA</span>
                   </div>
 
                   {loadingStudents ? (
                     <div className="table-loading">Cargando alumnos...</div>
                   ) : paginatedStudents.length === 0 ? (
-                    <div className="table-loading">
-                      {loading ? "Cargando..." : "Sin alumnos matriculados en este curso."}
-                    </div>
-                  ) : (
-                    paginatedStudents.map((student) => {
-                      const pendingVal = activePending[student.id] || "";
-                      return (
-                        <div className="table-row table-row--grades" key={student.id}>
-                          <div className="student-cell">
-                            <div className="avatar">
-                              {student.nombre.charAt(0)}
-                            </div>
-                            <h4>{student.nombre}</h4>
+                    <div className="table-loading">{loading ? "Cargando..." : "Sin alumnos matriculados."}</div>
+                  ) : paginatedStudents.map((student, idx) => {
+                    const colors = getAvatarColor((currentPage - 1) * STUDENTS_PER_PAGE + idx);
+                    const pendingVal = activePending[student.id] || "";
+                    const nota = student.promedio;
+                    return (
+                      <div className="tm-table-row" key={student.id}>
+                        {/* ALUMNO */}
+                        <div className="tm-student-cell">
+                          <div className="tm-avatar" style={{ background: colors.bg, color: colors.color }}>
+                            {getInitials(student.nombre)}
                           </div>
-                          <div className="grade-box">
-                            {student.promedio !== null
-                              ? student.promedio.toFixed(2)
-                              : "--"}
+                          <div className="tm-student-info">
+                            <span className="tm-student-apellido">
+                              {student.nombre.split(",")[0]?.trim()}
+                            </span>
+                            <span className="tm-student-nombre">
+                              {student.nombre.split(",")[1]?.trim()}
+                            </span>
                           </div>
-                          <input
-                            className="grade-input"
-                            type="number" step="0.1" min="1" max="5"
-                            placeholder="—"
-                            value={pendingVal}
-                            onChange={(e) => handleNoteChange(student.id, e.target.value)}
-                          />
                         </div>
-                      );
-                    })
-                  )}
+                        {/* NOTA PARCIAL */}
+                        <div className={`tm-grade-pill ${nota !== null && nota < 3.0 ? "tm-grade-pill--low" : nota !== null ? "tm-grade-pill--ok" : "tm-grade-pill--empty"}`}>
+                          {nota !== null ? nota.toFixed(2) : "--"}
+                        </div>
+                        {/* NUEVA NOTA */}
+                        <input
+                          className="grade-input"
+                          type="number" step="0.1" min="1" max="5"
+                          placeholder="—"
+                          value={pendingVal}
+                          onChange={(e) => handleNoteChange(student.id, e.target.value)}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* FOOTER */}
                 <div className="table-footer">
                   <div className="footer-left">
-                    <span>
-                      {currentStudents.length} alumno{currentStudents.length !== 1 ? "s" : ""} en este curso
-                    </span>
+                    <span>{currentStudents.length} alumno{currentStudents.length !== 1 ? "s" : ""}</span>
                     {saveMsg && <span className="save-msg">{saveMsg}</span>}
                   </div>
                   <div className="footer-right">
@@ -675,21 +682,13 @@ function TeachersMain() {
                       <span>Pág. {currentPage}/{totalPages}</span>
                       <button className="page-btn" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>›</button>
                     </div>
-                    <button
-                      className="save-btn"
-                      onClick={handleSaveChanges}
-                      disabled={savingAll || !selectedActivity}
-                    >
-                      {savingAll ? "Guardando..." : "Guardar Cambios"}
-                    </button>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
 
-          {/* STATS — sin alumnos en riesgo */}
+          {/* STATS */}
           <div className="stats-bar">
             <div className="stat-item">
               <span className="stat-blue">↗</span>
@@ -698,31 +697,19 @@ function TeachersMain() {
             </div>
             <div className="stat-item">
               <span className="stat-green">✔</span>
-              <span>{stats.pctCalificados}% Calificado</span>
+              <span>{stats.pct}% Calificado</span>
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* MODAL NUEVA ACTIVIDAD */}
       {openActivityModal && (
-        <ActivityModal
-          loads={loads}
-          periods={periods}
-          onClose={() => setOpenActivityModal(false)}
-          onSave={loadData}
-        />
+        <ActivityModal loads={loads} periods={periods}
+          onClose={() => setOpenActivityModal(false)} onSave={loadData} />
       )}
-
-      {/* MODAL CARGAR NOTAS */}
       {openGradePanel && (
-        <GradePanelModal
-          loads={loads}
-          activities={activities}
-          onClose={() => setOpenGradePanel(false)}
-          onSave={loadData}
-        />
+        <GradePanelModal loads={loads} activities={activities}
+          onClose={() => setOpenGradePanel(false)} onSave={loadData} />
       )}
     </div>
   );

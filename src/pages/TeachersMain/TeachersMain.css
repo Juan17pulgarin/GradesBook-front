@@ -883,3 +883,155 @@ html, body { overflow-x: hidden; }
     padding: 8px 12px;
     margin: 0;
 }
+/* ════════════════════════════════════════
+   TABLA REDISEÑADA (igual a la imagen)
+════════════════════════════════════════ */
+
+.TeachersMain-page .tm-table-head {
+    display: grid;
+    grid-template-columns: 2fr 120px 120px;
+    padding: 10px 16px;
+    color: #94a3b8;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.TeachersMain-page .tm-table-row {
+    display: grid;
+    grid-template-columns: 2fr 120px 120px;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f8fafc;
+    transition: background 0.1s;
+}
+
+.TeachersMain-page .tm-table-row:hover { background: #fafcff; }
+.TeachersMain-page .tm-table-row:last-child { border-bottom: none; }
+
+/* ── Avatar con iniciales de dos letras ── */
+.TeachersMain-page .tm-student-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.TeachersMain-page .tm-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+}
+
+.TeachersMain-page .tm-student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.TeachersMain-page .tm-student-apellido {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.TeachersMain-page .tm-student-nombre {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #64748b;
+    line-height: 1.2;
+}
+
+/* ── Pill de nota (como en la imagen) ── */
+.TeachersMain-page .tm-grade-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.TeachersMain-page .tm-grade-pill--ok {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.TeachersMain-page .tm-grade-pill--low {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.TeachersMain-page .tm-grade-pill--empty {
+    background: #f1f5f9;
+    color: #94a3b8;
+    letter-spacing: 0.1em;
+}
+
+/* ── Input nueva nota ── */
+.TeachersMain-page .grade-input {
+    width: 100px;
+    padding: 7px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    outline: none;
+    background: #f8fafc;
+    transition: border-color 0.15s;
+    text-align: center;
+}
+
+.TeachersMain-page .grade-input:focus {
+    border-color: #2563eb;
+    background: white;
+}
+
+/* ── Botón secundario ── */
+.TeachersMain-page .save-btn--secondary {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    box-shadow: none !important;
+    border: 1.5px solid #e2e8f0;
+}
+
+.TeachersMain-page .save-btn--secondary:hover {
+    background: #e2e8f0 !important;
+}
+
+/* ── Msg vacío ── */
+.TeachersMain-page .tm-empty-msg {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    padding: 1rem 0;
+}
+
+/* ── Modal cargar notas: student cell ── */
+.grade-panel-student {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gp-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
