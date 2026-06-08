@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-import Logo from "../../assets/images/logo.png";
+import Logo from "../../assets/images/Logo.png";
 
 import Input from "../../components/Input/Input";
 import PasswordInput from "../../components/Input/PasswordInput";
