@@ -3,6 +3,7 @@ import { getUsers } from "../../services/userService";
 import { getSubjects } from "../../services/subjectService";
 import { getAcademicLoads } from "../../services/academicLoadService";
 import { getPeriods, createPeriod, updatePeriod } from "../../services/periodService";
+import api from "../../api/api";
 
 import StatCard from "../../components/Cards/StatCard";
 import TeacherProgress from "../../components/Cards/TeacherProgress";
@@ -25,6 +26,7 @@ export default function MainPage() {
 
     // Modal estado
     const [openPeriodModal, setOpenPeriodModal] = useState(false);
+    const [promedioGeneral, setPromedioGeneral] = useState(null);
     const [periodForm, setPeriodForm] = useState({ fecha_inicio: "", fecha_fin: "" });
     const [periodError, setPeriodError] = useState("");
     const [periodLoading, setPeriodLoading] = useState(false);
@@ -57,8 +59,9 @@ export default function MainPage() {
             getSubjects(),
             getAcademicLoads(),
             getPeriods(),
+            api.get("/grades/school-average").catch(() => ({ data: null })),
         ])
-            .then(([teachersRes, subjectsRes, loadsRes, periodsRes]) => {
+            .then(([teachersRes, subjectsRes, loadsRes, periodsRes, schoolAvgRes]) => {
                 setTeachers(teachersRes.data);
                 setSubjects(subjectsRes.data);
                 setLoads(loadsRes.data);
@@ -72,6 +75,9 @@ export default function MainPage() {
                         return hoy >= inicio && hoy <= fin;
                     });
                     setSelectedPeriod(periodoActivo || periodsRes.data[0]);
+                }
+                if (schoolAvgRes?.data?.promedio_general != null) {
+                    setPromedioGeneral(parseFloat(schoolAvgRes.data.promedio_general).toFixed(2));
                 }
                 setLoading(false);
             })
@@ -372,18 +378,18 @@ export default function MainPage() {
             <div className="cards">
                 <StatCard
                     title="Promedio General"
-                    value="—"
-                    subtitle="Disponible próximamente"
-                    color="default"
-                    badge="⏳ Pendiente"
+                    value={promedioGeneral !== null ? promedioGeneral : "—"}
+                    subtitle={promedioGeneral !== null ? "Promedio institucional" : "Sin notas registradas"}
+                    color={promedioGeneral !== null ? (parseFloat(promedioGeneral) >= 3.0 ? "green" : "default") : "default"}
+                    badge={promedioGeneral !== null ? (parseFloat(promedioGeneral) >= 4.0 ? "⭐ Excelente" : parseFloat(promedioGeneral) >= 3.0 ? "✅ Aprobado" : "⚠ En riesgo") : "Sin datos"}
                     icon={FaArrowTrendUp}
-                    valueColor="#cbd5e1"
-                    titleColor="#94a3b8"
+                    valueColor={promedioGeneral !== null ? "#406C00" : "#cbd5e1"}
+                    titleColor={promedioGeneral !== null ? "#406C00" : "#94a3b8"}
                     subColor="#94a3b8"
-                    iconColor="#cbd5e1"
+                    iconColor={promedioGeneral !== null ? "#406C00" : "#cbd5e1"}
                     iconStyle={{
                         fontSize: "1.3rem",
-                        background: "#f1f5f9",
+                        background: promedioGeneral !== null ? "#d4f7a0" : "#f1f5f9",
                         padding: "10px",
                         borderRadius: "50%",
                         width: "44px",

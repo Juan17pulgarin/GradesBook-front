@@ -11,7 +11,7 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoMdTime } from "react-icons/io";
 import { RiUserAddLine } from "react-icons/ri";
 import { IoCalendarNumber } from "react-icons/io5";
-
+import { FaUserFriends } from "react-icons/fa";
 import { HiOutlineViewGrid } from "react-icons/hi";
 import { HiOutlineBars3 } from "react-icons/hi2";
 
@@ -199,7 +199,7 @@ export default function Courses() {
                                     <IoCalendarNumber /> Año: {course.anio}
                                 </p>
                                 <p>
-                                    👥 {course.capacidad_maxima} Alumnos
+                                    <FaUserFriends /> {course.capacidad_maxima} Alumnos
                                 </p>
                             </div>
                         </div>

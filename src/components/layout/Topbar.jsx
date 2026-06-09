@@ -1,35 +1,24 @@
 import { FaSearch } from "react-icons/fa";
+import UserAvatar from "../Avatar/UserAvatar";
 import "./MainLayout.css";
 
 export default function Topbar() {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const primerNombre = user.nombres?.split(" ")[0] || user.nombre?.split(" ")[0] || "U";
+
     return (
         <div className="topbar">
-
-            {/* TÍTULO */}
             <div className="topbar-left">
                 <h2>GradesBook</h2>
             </div>
-
-            {/* DERECHA */}
             <div className="topbar-right">
-
-                {/* BUSCADOR */}
                 <div className="search-box">
                     <FaSearch className="search-icon" />
-                    <input
-                        type="text"
-                        placeholder="Buscar alumnos, profesores..."
-                    />
+                    <input type="text" placeholder="Buscar alumnos, profesores..." />
                 </div>
-
-                {/* AVATAR */}
                 <div className="avatar">
-                    <img
-                        src="https://i.pravatar.cc/40"
-                        alt="user"
-                    />
+                    <UserAvatar nombre={primerNombre} size={36} fontSize="0.875rem" />
                 </div>
-
             </div>
         </div>
     );

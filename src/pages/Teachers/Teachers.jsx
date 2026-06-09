@@ -109,7 +109,7 @@ export default function TeachersPage() {
                 color="green" 
                 icon={FaRegCircleCheck}
                 valueColor="#2A3031" 
-                titleColor="#d4f8e8" 
+                titleColor="#575C5E" 
                 iconColor="#FFFFFF"
                 iconStyle={{ fontSize: "1.6rem", 
                     background: "#3C6600", 

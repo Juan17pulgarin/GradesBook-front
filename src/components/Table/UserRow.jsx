@@ -1,4 +1,6 @@
 import { FiTrash2, FiEdit2 } from "react-icons/fi";
+
+import UserAvatar from "../Avatar/UserAvatar";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 
 export default function UserRow({ user, badge, extraCol, onDelete, onEdit, idPrefix = "" }) {
@@ -7,7 +9,7 @@ export default function UserRow({ user, badge, extraCol, onDelete, onEdit, idPre
     return (
         <div className={`table-row ${!isActivo ? "table-row--inactive" : ""}`}>
             <div className="name">
-                <img src="https://i.pravatar.cc/40" alt="avatar" style={{ opacity: isActivo ? 1 : 0.45 }} />
+                <UserAvatar nombre={user.nombres} size={38} fontSize="0.875rem" style={{ opacity: isActivo ? 1 : 0.45 }} />
                 <div>
                     <p style={{ color: isActivo ? "" : "#94a3b8" }}>
                         {user.nombres} {user.apellidos}
