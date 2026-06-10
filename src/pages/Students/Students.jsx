@@ -35,10 +35,21 @@ export default function Students() {
             getEnrollments(),
         ])
             .then(([studentsRes, enrollmentsRes]) => {
+                const enrolls = enrollmentsRes.data;
                 const backIds = new Set(studentsRes.data.map((s) => s.id));
                 setInactivos((prev) => prev.filter((s) => !backIds.has(s.id)));
-                setStudents(studentsRes.data.map((s) => ({ ...s, activo: true })));
-                setEnrollments(enrollmentsRes.data);
+                
+                const enriched = studentsRes.data.map((s) => {
+                    const enrollment = enrolls.find((e) => e.estudiante_id === s.id);
+                    return {
+                        ...s,
+                        activo: true,
+                        curso: enrollment?.cursos?.nombre || "Sin curso"
+                    };
+                });
+                
+                setStudents(enriched);
+                setEnrollments(enrolls);
                 setLoading(false);
             })
             .catch((err) => {
@@ -51,8 +62,8 @@ export default function Students() {
     useEffect(() => { fetchStudents(); }, []);
 
     const getCurso = (studentId) => {
-        const enrollment = enrollments.find((e) => e.estudiante_id === studentId);
-        return enrollment?.cursos?.nombre || "Sin curso";
+        const student = students.find((s) => s.id === studentId);
+        return student?.curso || "Sin curso";
     };
 
     const handleDesactivar = async (student) => {

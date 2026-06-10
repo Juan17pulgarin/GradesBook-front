@@ -150,14 +150,6 @@ export default function Courses() {
                 <h3>
                     Listado de Cursos
                 </h3>
-                <div className="view-buttons">
-                    <button>
-                        <HiOutlineViewGrid />
-                    </button>
-                    <button>
-                        <HiOutlineBars3 />
-                    </button>
-                </div>
             </div>
 
             {/* ================= GRID ================= */}
