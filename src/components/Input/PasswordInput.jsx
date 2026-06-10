@@ -15,7 +15,6 @@ export default function PasswordInput({
 
             <div className="password-header">
                 <label>{label}</label>
-                <span className="forgot">¿La olvidaste?</span>
             </div>
 
             <div className="input-container">
