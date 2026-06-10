@@ -15,6 +15,8 @@ import { IoCaretBack, IoCaretForward } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { IoCalendarNumber } from "react-icons/io5";
 import { BiSolidBookBookmark } from "react-icons/bi";
+import { BsRocketTakeoff } from "react-icons/bs";
+
 
 import "./StudentMain.css";
 
@@ -174,7 +176,7 @@ export default function StudentMain() {
                 {/* HERO */}
                 <div className="sm-hero">
                     <div className="sm-hero-left">
-                        <h1>¡Hola, {primerNombre}! 🚀</h1>
+                        <h1>¡Hola, {primerNombre}! <BsRocketTakeoff /></h1>
                         <p>Estás teniendo un trimestre increíble. ¡Sigue brillando como una estrella!</p>
                         <button className="sm-hero-btn" onClick={() => setShowBoletin(true)}>
                             Ver Boletín Completo
