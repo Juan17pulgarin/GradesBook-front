@@ -42,18 +42,21 @@ export default function TeachersPage() {
                 const enriched = teachersRes.data.map((t) => {
                     const load = loads.find((l) => l.docente_id === t.id);
                     const subject = load ? subjects.find((s) => s.id === load.materia_id) : null;
+
                     return {
                         ...t,
-                        activo: true,
                         materia: subject?.nombre || "Sin asignar",
                         load_id: load?.id || null,
                     };
                 });
 
-                const backIds = new Set(teachersRes.data.map((t) => t.id));
-                setInactivos((prev) => prev.filter((t) => !backIds.has(t.id)));
-                setTeachers(enriched);
-                setTotalMaterias(subjects.length);
+                // 🔥 AQUÍ ESTÁ EL FIX (SEPARAR ACTIVOS E INACTIVOS)
+                const activos = enriched.filter(t => t.activo !== false);
+                const inactivos = enriched.filter(t => t.activo === false);
+
+                setTeachers(activos);
+                setInactivos(inactivos);
+                setTotalMaterias(subjectsRes.data.length);
                 setLoading(false);
             })
             .catch((err) => {
@@ -77,7 +80,7 @@ export default function TeachersPage() {
         fetchData();
     };
 
-    const total   = teachers.length + inactivos.length;
+    const total = teachers.length + inactivos.length;
     const activos = teachers.length;
 
     return (
@@ -96,50 +99,56 @@ export default function TeachersPage() {
             </div>
 
             <div className="cards">
-                <StatCard 
-                title="Total Docentes" 
-                value={total} 
-                color="default" 
-                icon={FaUsers}
-                valueColor="#2A3031" 
-                titleColor="#575C5E" 
-                iconColor="#FFFFFF"
-                iconStyle={{ fontSize: "1.6rem", 
-                    background: "#0284c7", 
-                    padding: "12px", 
-                    borderRadius: "50%", 
-                    width: "52px", 
-                    height: "52px" }}
+                <StatCard
+                    title="Total Docentes"
+                    value={total}
+                    color="default"
+                    icon={FaUsers}
+                    valueColor="#2A3031"
+                    titleColor="#575C5E"
+                    iconColor="#FFFFFF"
+                    iconStyle={{
+                        fontSize: "1.6rem",
+                        background: "#0284c7",
+                        padding: "12px",
+                        borderRadius: "50%",
+                        width: "52px",
+                        height: "52px"
+                    }}
                 />
-                <StatCard 
-                title="Docentes Activos" 
-                value={activos} 
-                color="green" 
-                icon={FaRegCircleCheck}
-                valueColor="#2A3031" 
-                titleColor="#575C5E" 
-                iconColor="#FFFFFF"
-                iconStyle={{ fontSize: "1.6rem", 
-                    background: "#3C6600", 
-                    padding: "12px", 
-                    borderRadius: "50%", 
-                    width: "52px", 
-                    height: "52px" }}
+                <StatCard
+                    title="Docentes Activos"
+                    value={activos}
+                    color="green"
+                    icon={FaRegCircleCheck}
+                    valueColor="#2A3031"
+                    titleColor="#575C5E"
+                    iconColor="#FFFFFF"
+                    iconStyle={{
+                        fontSize: "1.6rem",
+                        background: "#3C6600",
+                        padding: "12px",
+                        borderRadius: "50%",
+                        width: "52px",
+                        height: "52px"
+                    }}
                 />
-                <StatCard 
-                title="Materias Cubiertas" 
-                value={totalMaterias} 
-                color="yellow" 
-                icon={MdMenuBook}
-                valueColor="#2A3031" 
-                titleColor="#5C4900" 
-                iconColor="#463600"
-                iconStyle={{ fontSize: "1.6rem", 
-                    background: "#EEC540", 
-                    padding: "12px", 
-                    borderRadius: "50%", 
-                    width: "52px", 
-                    height: "52px" }}
+                <StatCard
+                    title="Materias Cubiertas"
+                    value={totalMaterias}
+                    color="yellow"
+                    icon={MdMenuBook}
+                    valueColor="#2A3031"
+                    titleColor="#5C4900"
+                    iconColor="#463600"
+                    iconStyle={{
+                        fontSize: "1.6rem",
+                        background: "#EEC540",
+                        padding: "12px",
+                        borderRadius: "50%",
+                        width: "52px",
+                        height: "52px"
+                    }}
                 />
             </div>
 
