@@ -220,7 +220,7 @@
     font-weight: 700;
     cursor: pointer;
     font-size: 0.8rem;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     transition: background 0.2s;
 }
 
@@ -235,7 +235,7 @@
     font-weight: 700;
     cursor: pointer;
     font-size: 0.8rem;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -511,7 +511,7 @@
     border-radius: 10px;
     padding: 10px 14px;
     outline: none;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.875rem;
     background: #f8fafc;
     transition: border-color 0.15s;
@@ -534,7 +534,7 @@
     border-radius: 20px;
     font-weight: 700;
     cursor: pointer;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.875rem;
     margin-top: 6px;
     transition: background 0.2s;
@@ -561,7 +561,11 @@
     flex-shrink: 0;
 }
 
-.logo-box { margin-bottom: 1.5rem; }
+.logo-box { 
+    margin-bottom: 1.5rem;
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+
+}
 .logo-box h2 { font-size: 1.2rem; color: #0f172a; font-weight: 800; margin: 0 0 2px 0; }
 .logo-box p  { color: #94a3b8; font-size: 0.8rem; font-weight: 600; margin: 0; }
 
@@ -577,7 +581,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .active-btn { background: #1098e8; color: white; }
@@ -608,7 +612,14 @@
     border-bottom: 1px solid #e2e8f0;
 }
 
-.brand { color: #1098e8; font-size: 1.3rem; font-weight: 800; margin: 0; }
+.brand { 
+    color: #1098e8; 
+    font-size: 1.3rem; 
+    font-weight: 800; 
+    margin: 0; 
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+}
 
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 
@@ -620,7 +631,7 @@
     width: 220px;
     outline: none;
     font-size: 0.875rem;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .profile-avatar {
@@ -721,7 +732,7 @@ html, body { overflow-x: hidden; }
     border: 1.5px solid #e2e8f0;
     border-radius: 10px;
     font-size: 0.875rem;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     outline: none;
     background: #f8fafc;
     width: 100%;
@@ -765,7 +776,7 @@ html, body { overflow-x: hidden; }
     border: 1.5px solid #e2e8f0;
     background: white;
     color: #475569;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
@@ -801,7 +812,7 @@ html, body { overflow-x: hidden; }
     border-radius: 10px;
     padding: 8px 12px;
     font-size: 0.875rem;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     outline: none;
     background: white;
     transition: border-color 0.15s;
@@ -828,7 +839,7 @@ html, body { overflow-x: hidden; }
     border: 1.5px solid #e2e8f0;
     border-radius: 10px;
     font-size: 0.875rem;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     outline: none;
     background: #f8fafc;
     transition: border-color 0.15s;
@@ -986,7 +997,7 @@ html, body { overflow-x: hidden; }
     border: 1.5px solid #e2e8f0;
     border-radius: 10px;
     font-size: 0.875rem;
-    font-family: inherit;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     outline: none;
     background: #f8fafc;
     transition: border-color 0.15s;
@@ -1014,6 +1025,7 @@ html, body { overflow-x: hidden; }
 .TeachersMain-page .tm-empty-msg {
     color: #94a3b8;
     font-size: 0.875rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     padding: 1rem 0;
 }
 

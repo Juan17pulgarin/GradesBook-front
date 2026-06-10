@@ -84,6 +84,7 @@ function GradePanelModal({ loads, activities, onClose, onSave }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [selectedActivity, setSelectedActivity] = useState("");
 
   const activitiesForLoad = selectedLoadId
     ? activities.filter((a) => a.carga_academica_id === parseInt(selectedLoadId))
@@ -431,7 +432,7 @@ function TeachersMain() {
   const handleRefreshPromedios = async () => {
     if (!activeLoad) return;
     await cargarEstudiantesConPromedios(activeLoad.id, activities, periods);
-    setSaveMsg("✅ Vista actualizada correctamente.");
+    setSaveMsg("Vista actualizada correctamente.");
     setTimeout(() => setSaveMsg(""), 3000);
   };
 
@@ -533,9 +534,6 @@ function TeachersMain() {
                     )}
                   </div>
                   <div className="students-header-actions">
-                    <button className="excel-btn">
-                      <FaFileExcel /><span>Planilla Excel</span>
-                    </button>
                     <button
                       className="save-btn save-btn--secondary"
                       onClick={() => setOpenActivityModal(true)}
