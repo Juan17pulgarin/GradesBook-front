@@ -22,11 +22,14 @@ export default function TeachersPage() {
     const [teachers, setTeachers] = useState([]);
     const [inactivos, setInactivos] = useState([]);
     const [totalMaterias, setTotalMaterias] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [editTeacher, setEditTeacher] = useState(null);
     const [showInactivos, setShowInactivos] = useState(false);
 
     const fetchData = () => {
+        setLoading(true);
         Promise.all([
             getUsers("DOCENTE"),
             getAcademicLoads(),
@@ -51,20 +54,25 @@ export default function TeachersPage() {
                 setInactivos((prev) => prev.filter((t) => !backIds.has(t.id)));
                 setTeachers(enriched);
                 setTotalMaterias(subjects.length);
+                setLoading(false);
             })
-            .catch((err) => console.error("Error:", err));
+            .catch((err) => {
+                console.error("Error:", err);
+                setError(true);
+                setLoading(false);
+            });
     };
 
     useEffect(() => { fetchData(); }, []);
 
     const handleDesactivar = async (teacher) => {
-        await deactivateUser(teacher.id);
+        await deactivateUser(teacher.id, false);
         setTeachers((prev) => prev.filter((t) => t.id !== teacher.id));
         setInactivos((prev) => [...prev, { ...teacher, activo: false }]);
     };
 
     const handleReactivar = async (teacher) => {
-        await deactivateUser(teacher.id);
+        await deactivateUser(teacher.id, true);
         setInactivos((prev) => prev.filter((t) => t.id !== teacher.id));
         fetchData();
     };
@@ -156,6 +164,8 @@ export default function TeachersPage() {
                     columns={COLUMNS}
                     entityLabel="docente"
                     onDelete={handleDesactivar}
+                    loading={loading}
+                    error={error}
                     renderRow={(teacher, setDeleteTarget) => (
                         <UserRow
                             key={teacher.id}

@@ -45,7 +45,7 @@ export default function Login() {
             // Guardar token y datos del usuario
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
-            localStorage.setItem("institucion_id", res.data.institucion_id);
+            localStorage.setItem("institucion_id", res.data.user.institucion_id);
 
             // Redirigir según el tipo de usuario
 

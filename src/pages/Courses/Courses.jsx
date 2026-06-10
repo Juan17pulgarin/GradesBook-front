@@ -65,7 +65,7 @@ export default function Courses() {
                         Gestión de Cursos
                     </h1>
                     <p>
-                        Bienvenido de nuevo. Aquí puedes organizar los grupos y asignaciones del ciclo escolar 2024.
+                        Bienvenido de nuevo. Aquí puedes organizar los grupos y asignaciones del ciclo escolar 2026.
                     </p>
                 </div>
 

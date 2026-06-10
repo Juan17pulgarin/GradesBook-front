@@ -56,13 +56,13 @@ export default function Students() {
     };
 
     const handleDesactivar = async (student) => {
-        await deactivateUser(student.id);
+        await deactivateUser(student.id, false);
         setStudents((prev) => prev.filter((s) => s.id !== student.id));
         setInactivos((prev) => [...prev, { ...student, activo: false }]);
     };
 
     const handleReactivar = async (student) => {
-        await deactivateUser(student.id);
+        await deactivateUser(student.id, true);
         setInactivos((prev) => prev.filter((s) => s.id !== student.id));
         fetchStudents();
     };
@@ -146,6 +146,7 @@ export default function Students() {
 
             {!showInactivos ? (
                 <Table
+                    key="activos"
                     items={students}
                     columns={COLUMNS}
                     entityLabel="estudiante"
@@ -165,6 +166,7 @@ export default function Students() {
                 />
             ) : (
                 <Table
+                    key="inactivos"
                     items={inactivos}
                     columns={COLUMNS}
                     entityLabel="estudiante"

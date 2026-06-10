@@ -19,7 +19,6 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
         email: user.email || "",
         documento: user.documento || "",
         telefono: user.telefono || "",
-        institucion_id: user.institucion_id || ""
     });
 
     const [loading, setLoading] = useState(false);
@@ -40,30 +39,14 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
         setLoading(true);
 
         try {
-            const institucion_id_raw =
-                form.institucion_id ??
-                user.institucion_id ??
-                localStorage.getItem("institucion_id");
-
-            const institucion_id = Number(institucion_id_raw);
+            // Leer institucion_id siempre del localStorage (el objeto user del listado no lo trae)
+            const institucion_id = Number(localStorage.getItem("institucion_id"));
 
             if (!institucion_id || Number.isNaN(institucion_id)) {
                 throw new Error("INSTITUCION_ID_INVALID");
             }
 
-            const dataToSend = {};
-            Object.keys(form).forEach((key) => {
-                if (
-                    form[key] !== "" &&
-                    form[key] !== null &&
-                    form[key] !== undefined &&
-                    form[key] !== user[key]
-                ) {
-                    dataToSend[key] = form[key];
-                }
-            });
-
-            dataToSend.institucion_id = institucion_id;
+            const dataToSend = { ...form, institucion_id };
 
             await updateUser(user.id, dataToSend);
             onSuccess();
@@ -83,7 +66,7 @@ export default function EditUserModal({ user, onClose, onSuccess }) {
         setActivating(true);
         setError("");
         try {
-            await deactivateUser(user.id); // PATCH toggle → reactiva si está inactivo
+            await deactivateUser(user.id, true);
             onSuccess();
         } catch (err) {
             setError(err.response?.data?.message || "Error al reactivar el usuario.");

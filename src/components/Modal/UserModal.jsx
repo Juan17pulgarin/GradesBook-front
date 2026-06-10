@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { createUser } from "../../services/userService";
 import { getSubjects, createSubject } from "../../services/subjectService";
 import { getCourses, createCourse } from "../../services/courseService";
-import { createAcademicLoad } from "../../services/academicLoadService";
+import { createAcademicLoad, getAcademicLoads } from "../../services/academicLoadService";
 import { createEnrollment } from "../../services/enrollmentService";
 
 import { MdOutlineMailOutline } from "react-icons/md";
@@ -71,6 +71,7 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
     const [subjects, setSubjects] = useState([]);
     const [courses, setCourses] = useState([]);
+    const [academicLoads, setAcademicLoads] = useState([]);
 
     /* GENERALES */
 
@@ -85,18 +86,31 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
         Promise.all([
             getSubjects(),
             getCourses(),
+            getAcademicLoads(),
         ])
-            .then(([subjectsRes, coursesRes]) => {
-
+            .then(([subjectsRes, coursesRes, loadsRes]) => {
                 setSubjects(subjectsRes.data);
                 setCourses(coursesRes.data);
-
+                setAcademicLoads(loadsRes.data);
             })
             .catch(err =>
                 console.error("Error cargando datos:", err)
             );
 
     }, []);
+
+    /* Materias disponibles según el curso seleccionado */
+    const availableSubjects = loadForm.curso_id
+        ? subjects.filter((subject) => {
+            // Excluir materias que ya tienen carga en el curso seleccionado
+            const alreadyAssigned = academicLoads.some(
+                (load) =>
+                    load.materia_id === subject.id &&
+                    load.curso_id === parseInt(loadForm.curso_id)
+            );
+            return !alreadyAssigned;
+        })
+        : subjects;
 
     /* HANDLES */
 
@@ -106,11 +120,14 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
             [e.target.name]: e.target.value
         });
 
-    const handleLoadChange = (e) =>
-        setLoadForm({
-            ...loadForm,
-            [e.target.name]: e.target.value
-        });
+    const handleLoadChange = (e) => {
+        const updated = { ...loadForm, [e.target.name]: e.target.value };
+        // Si cambia el curso, resetear la materia seleccionada para evitar inconsistencias
+        if (e.target.name === "curso_id") {
+            updated.materia_id = "";
+        }
+        setLoadForm(updated);
+    };
 
     const handleEnrollChange = (e) =>
         setEnrollForm({
@@ -444,13 +461,6 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
                             </div>
 
                             <div className="form-group">
-                                <label>Email Institucional *</label>
-                                <div className="input-icon">
-                                    <span><MdOutlineMailOutline /></span>
-                                    <input name="email" type="email" placeholder="juan@gradesbook.com"
-                                        value={form.email} onChange={handleChange} />
-                                </div>
-
                                 <label>Capacidad Máxima *</label>
 
                                 <input
@@ -581,37 +591,11 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                     )}
 
-                    {/* PASO 2 */}
+                    {/* PASO 2 - DOCENTE */}
 
                     {step === 2 && tipo === "DOCENTE" && (
 
                         <div className="form-grid">
-
-                            <div className="form-group">
-
-                                <label>Materia *</label>
-
-                                <select
-                                    name="materia_id"
-                                    value={loadForm.materia_id}
-                                    onChange={handleLoadChange}
-                                >
-                                    <option value="">
-                                        Selecciona una materia
-                                    </option>
-
-                                    {subjects.map((subject) => (
-                                        <option
-                                            key={subject.id}
-                                            value={subject.id}
-                                        >
-                                            {subject.nombre}
-                                        </option>
-                                    ))}
-
-                                </select>
-
-                            </div>
 
                             <div className="form-group">
 
@@ -639,9 +623,42 @@ export default function UserModal({ tipo, onClose, onSuccess }) {
 
                             </div>
 
+                            <div className="form-group">
+
+                                <label>Materia *</label>
+
+                                <select
+                                    name="materia_id"
+                                    value={loadForm.materia_id}
+                                    onChange={handleLoadChange}
+                                    disabled={!loadForm.curso_id}
+                                >
+                                    <option value="">
+                                        {loadForm.curso_id
+                                            ? availableSubjects.length === 0
+                                                ? "No hay materias disponibles para este curso"
+                                                : "Selecciona una materia"
+                                            : "Primero selecciona un curso"}
+                                    </option>
+
+                                    {availableSubjects.map((subject) => (
+                                        <option
+                                            key={subject.id}
+                                            value={subject.id}
+                                        >
+                                            {subject.nombre}
+                                        </option>
+                                    ))}
+
+                                </select>
+
+                            </div>
+
                         </div>
 
                     )}
+
+                    {/* PASO 2 - ESTUDIANTE */}
 
                     {step === 2 && tipo === "ESTUDIANTE" && (
 
